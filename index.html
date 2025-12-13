@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- CSP -->
+    <meta http-equiv="Content-Security-Policy" content="
+        default-src 'self'; 
+        script-src 'self' https://cdnjs.cloudflare.com; 
+        style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; 
+        font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; 
+        img-src 'self' data: https://via.placeholder.com; 
+        connect-src 'self';
+    ">
+
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22><rect width=%2264%22 height=%2264%22 rx=%2216%22 fill=%22%230d1117%22 /><text x=%2250%25%22 y=%2255%25%22 font-family=%22monospace%22 font-weight=%22bold%22 font-size=%2232%22 fill=%22%2358a6ff%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22>&lt;/&gt;</text></svg>">
+
+    <title>Dev Portfolio | Code & Gaming</title>
+    
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" 
+            xintegrity="sha512-dLxUelApnYxpLt6K2qm55wo5OGowFrkMCa/ASCyYiUc1ztX8GT09S/m89B+cCvbraX2jP9c2Q14MA96dS7oBdA==" 
+            crossorigin="anonymous" 
+            referrerpolicy="no-referrer"></script>
+    
+    <!-- Fonts & CSS -->
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div id="canvas-container"></div>
+
+    <!-- Terminal -->
+    <div class="terminal-wrapper">
+        <button id="terminal-toggle" class="terminal-btn">
+            <span class="cmd-icon">>_</span> Terminal
+        </button>
+        
+        <div id="terminal-window" class="terminal-window hidden-term">
+            <div class="terminal-header">
+                <span class="term-title">visitor@yash-portfolio:~</span>
+                <div class="term-controls">
+                    <span class="term-dot close" id="close-term"></span>
+                </div>
+            </div>
+            <div class="terminal-body" id="terminal-body">
+                <div class="term-line">Welcome to YashOS v1.0.0</div>
+                <div class="term-line">Type <span class="cmd-highlight">'help'</span> to see available commands.</div>
+                <br>
+            </div>
+            <div class="terminal-input-area">
+                <span class="prompt">➜ ~</span>
+                <input type="text" id="terminal-input" autocomplete="off" spellcheck="false">
+            </div>
+        </div>
+    </div>
+
+    <main>
+        <nav>
+            <div class="logo">Portfolio</div>
+            <div class="nav-right">
+                <div class="social-links">
+                    <a href="projects.html">Projects</a>
+                    <a href="#contact">Let's Connect</a>
+                </div>
+            </div>
+        </nav>
+
+        <!-- About -->
+        <section class="about-container" id="about">
+            <div class="about-image">    
+                <!-- Placeholder -->
+            </div>
+
+            <div class="about-text">
+                <h2>About <span class="gradient-text">Me</span></h2>
+                <p><strong>Name:</strong> Yash Nitin Sarode</p>
+                <p>
+                    I love building things. Tech isn’t just a career, it’s fun. Most of my work is in web-adjacent and software projects, where I experiment, break things, and figure out how to turn ideas into reality.
+                </p>
+                <p>
+                    As a first-year Computer Science Engineering student at VIT Vellore, I’m sharpening my skills in DSA, problem-solving, and scalable systems.
+                </p>
+                <p class="fun-fact">
+                    When I'm not coding, I'm watching anime or grinding Valorant!
+                </p>
+            </div>
+
+            <div class="about-sidebar">
+                <div class="info-card">
+                    <h3>Education</h3>
+                    <div class="school-name">VIT University</div>
+                    <div class="degree">B.Tech Computer Science</div>
+                    <div class="year-tag">1st Year</div>
+                </div>
+
+                <div class="info-card">
+                    <h3>Tech Stack</h3>
+                    <div class="skills-wrapper">
+                        <span class="skill-tag">HTML</span>
+                        <span class="skill-tag">CSS</span>
+                        <span class="skill-tag">JavaScript</span>
+                        <span class="skill-tag">Python</span>
+                        <span class="skill-tag">C</span>
+                        <span class="skill-tag firebase">Firebase</span>
+                    </div>
+                </div>
+                <div class="info-card">
+                    <h3>Learning</h3>
+                    <div class="skills-wrapper">
+                        <span class="skill-tag">React.js</span>
+                        <span class="skill-tag">Three.js</span>
+                        <span class="skill-tag">JavaScript</span>
+                        <span class="skill-tag">Mastering DSA</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Hero -->
+        <section class="hero">
+            <h1>Building <br> <span class="gradient-text">Digital Reality</span></h1>
+            <p class="subtitle">Full Stack Developer by day. Competitive gamer by night. Creating interactive experiences on the web.</p>
+        </section>
+
+        <!-- Stats -->
+        <section class="stats-container">
+            <div class="stat-card">
+                <div class="stat-title">LeetCode</div>
+                <div class="stat-value">~5,000,000</div>
+                <div class="rank-badge">Just started 😊</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-title">Valorant Rank</div>
+                <div class="stat-value">Gold 3</div>
+                <div class="rank-badge">Yoru Main</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-title">Anime Watched</div>
+                <div class="stat-value">12</div>
+                <div class="rank-badge">Binge Status: Active</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-title">Coffee Intake</div>
+                <div class="stat-value">∞ Cups</div>
+                <div class="rank-badge">Fuel Source</div>
+            </div>
+        </section>
+
+        <!-- Contact -->
+        <section class="contact-section" id="contact">
+            <h2>Let's <span class="gradient-text">Connect</span></h2>
+            <div class="contact-grid">
+                
+                <a href="https://github.com/YashSarode1224" target="_blank" rel="noopener noreferrer" class="contact-card">
+                    <div class="icon-box">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+                    </div>
+                    <h3>GitHub</h3>
+                    <p>Check out my repos</p>
+                </a>
+
+                <a href="https://www.linkedin.com/in/yashnsarode/" target="_blank" rel="noopener noreferrer" class="contact-card">
+                    <div class="icon-box">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
+                    </div>
+                    <h3>LinkedIn</h3>
+                    <p>Let's network</p>
+                </a>
+
+                <a href="mailto:workyashsarode@gmail.com" class="contact-card">
+                    <div class="icon-box">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                    </div>
+                    <h3>Email</h3>
+                    <p>workyashsarode@gmail.com</p>
+                </a>
+            </div>
+        </section>
+
+    </main>
+    
+    <script src="script.js"></script>
+</body>
+</html>
