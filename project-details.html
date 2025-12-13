@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SECURITY HEADERS -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: https://via.placeholder.com; connect-src 'self';">
+
+    <!-- FAVICON -->
+    <link rel="icon" href="favicon.png">
+    <title>Yash Sarode</title>
+    
+    <!-- SECURE SCRIPT -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" 
+            xintegrity="sha512-dLxUelApnYxpLt6K2qm55wo5OGowFrkMCa/ASCyYiUc1ztX8GT09S/m89B+cCvbraX2jP9c2Q14MA96dS7oBdA==" 
+            crossorigin="anonymous" 
+            referrerpolicy="no-referrer"></script>
+            
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div id="canvas-container"></div>
+
+    <main>
+        <nav>
+            <div class="logo">Portfolio</div>
+            <div class="nav-right">
+                <div class="social-links">
+                    <a href="projects.html">← Back to Projects</a>
+                </div>
+            </div>
+        </nav>
+
+        <section class="project-details-container">
+            
+            <!-- Left: Slider -->
+            <div class="project-showcase">
+                <div class="slider-container">
+                    <div class="slider-track" id="sliderTrack">
+                        <!-- SKELETON INJECTED HERE BY JS -->
+                    </div>
+                    <button class="slider-btn prev-btn" id="prevBtn">❮</button>
+                    <button class="slider-btn next-btn" id="nextBtn">❯</button>
+                    <div class="slider-dots" id="sliderDots"></div>
+                </div>
+            </div>
+
+            <!-- Right: Details -->
+            <div class="about-text">
+                <h2 id="project-title">
+                    <!-- SKELETON INJECTED HERE -->
+                </h2>
+                
+                <div class="skills-wrapper" id="project-tech" style="margin-bottom: 20px;">
+                    <!-- SKELETON INJECTED HERE -->
+                </div>
+
+                <div id="dynamic-content" class="description-section" style="min-height: 150px;">
+                    <h3 id="slide-title" style="color: var(--accent-color); margin-bottom: 10px;"></h3>
+                    <p id="slide-desc" style="color: var(--text-main); line-height: 1.6;"></p>
+                </div>
+                
+                <div class="info-card" style="margin-top: 30px;">
+                    <h3>Project Overview</h3>
+                    <p id="project-full-desc" style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.6;">
+                        <!-- SKELETON INJECTED HERE -->
+                    </p>
+                </div>
+
+                <br>
+                <div class="btn-group">
+                    <!-- SECURE LINKS -->
+                    <a href="#" id="live-link" class="visit-btn" target="_blank" rel="noopener noreferrer">View Live</a>
+                    <a href="#" id="repo-link" class="visit-btn" style="border-color: var(--text-muted); color: var(--text-muted);" target="_blank" rel="noopener noreferrer">GitHub</a>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <script src="script.js"></script>
+</body>
+</html>
