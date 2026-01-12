@@ -59,7 +59,7 @@ if (container) {
     });
     const particlesMesh = new THREE.Points(particlesGeo, particlesMat);
     scene.add(particlesMesh);
-
+    
     // Matrix Vars
     const fontSize = 14;
     const fontFamily = 'JetBrains Mono, monospace'; 
@@ -67,7 +67,7 @@ if (container) {
     let drops = [];
     let mouseX = 0;
     let mouseY = 0;
-    let windowHalfX = window.innerWidth / 2;
+    let windowHalfX = window.innerWidth / 2;                      
     let windowHalfY = window.innerHeight / 2;
 
     document.addEventListener('mousemove', (event) => {
@@ -193,7 +193,7 @@ function loadProjectDetails(id) {
     
     const titleEl = document.getElementById('project-title');
     const descEl = document.getElementById('project-full-desc');
-    
+
     if(titleEl) titleEl.innerText = data.title;
     if(descEl) descEl.innerText = data.fullDesc;
     
@@ -349,7 +349,8 @@ function initTerminal() {
     const wrapper = document.querySelector('.terminal-wrapper');
     if(wrapper) {
         wrapper.style.position = 'fixed';
-        wrapper.style.left = '20px';
+        wrapper.style.left = '20px'; // Enforced Left
+        wrapper.style.right = 'auto'; // Clear Right
         wrapper.style.bottom = '20px';
         wrapper.style.zIndex = '10000';
     }
