@@ -202,6 +202,71 @@ p.subtitle::before {
     margin-bottom: 10px;
 }
 
+/* --- LEETCODE SPECIFIC STYLES --- */
+.lc-content {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-top: 5px;
+}
+
+.lc-total {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255,255,255,0.02);
+    border-radius: 50%;
+    width: 80px;
+    height: 80px;
+    border: 2px solid var(--accent-color); /* Restored Blue Border */
+    /* Removed box-shadow (brightning) */
+}
+
+.lc-count {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: var(--text-string); /* Restored Blue Text */
+}
+
+.lc-label {
+    font-size: 0.6rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+}
+
+.lc-details {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.lc-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.lc-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 2px;
+    margin-right: 8px;
+    display: inline-block;
+}
+
+/* LeetCode Colors - Shadows removed */
+.lc-dot.easy { background-color: #00b8a3; }
+.lc-dot.medium { background-color: #ffc01e; }
+.lc-dot.hard { background-color: #ff375f; }
+
+.lc-num { color: var(--text-main); font-weight: bold; }
+
+/* -------------------------------- */
+
 .stat-value {
     font-size: 1.5rem;
     font-weight: 700;
@@ -595,11 +660,11 @@ p.subtitle::before {
 .terminal-wrapper {
     position: fixed;
     bottom: 20px;
-    left: 20px; 
+    left: 20px; /* Changed to LEFT */
     z-index: 10000; 
     display: flex;
-    flex-direction: column-reverse; 
-    align-items: flex-start;
+    flex-direction: column-reverse;         
+    align-items: flex-start; /* Aligns items to the left */
 }
 
 .terminal-btn {
@@ -637,7 +702,7 @@ p.subtitle::before {
     overflow: hidden;
     box-shadow: 0 10px 30px rgba(0,0,0,0.5);
     transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-    transform-origin: bottom left;
+    transform-origin: bottom left; /* Animation starts from bottom left */
     backdrop-filter: blur(10px);
 }
 
