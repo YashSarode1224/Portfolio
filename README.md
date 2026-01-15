@@ -8,5 +8,4 @@ It's a website built with HTML, CSS, and JavaScript. It features:
 * A fake terminal window you can type commands into.
 * A list of my projects and contact info.
 
-### How to open it on your computer
 here is the link for my website-->https://yashsarodeportfolio.vercel.app/
