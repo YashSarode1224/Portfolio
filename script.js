@@ -2728,111 +2728,162 @@ function initTerminal() {
     // ==========================================
     const animeCharacters = [
         {
-            ascii:
-` BLUE LOCK
- Yoichi Isagi  #11
- -------------------------
- Position :- Striker
- Weapon   :- Direct Shot
- Skill    :- Spatial Awareness
- Ego      :- S-Tier
- Status   :- Awakened
- -------------------------
- "I will be the one who
-  devours this chance."`
+            name: "Monkey D. Luffy",
+            anime: "ONE PIECE",
+            quote: "I'm gonna be King of the Pirates!",
+            portrait: [
+                "         _....._         ",
+                "      .-'       '-.      ",
+                "    .'   .-------. '.    ",
+                "   /=== ( STRAW ) ===\\   ",
+                "  |=====(  HAT  )=====|  ",
+                "  |___________________|  ",
+                "     / /||| | |||\\ \\     ",
+                "    | / ___   ___ \\ |    ",
+                "    | |( O ) ( O )| |    ",
+                "    | \\ ---   --- / |    ",
+                "    |      _   _    |    ",
+                "    |     ( _|_ )   |    ",
+                "    \\    |_______|   /   ",
+                "     '.  \\_______/ .'    ",
+                "       '._ ===== _.'     ",
+                "         / === \\         "
+            ]
         },
         {
-            ascii:
-` BLUE LOCK
- Meguru Bachira  #8
- -------------------------
- Position :- Midfielder
- Weapon   :- Monster Dribble
- Skill    :- Raw Instinct
- Ego      :- Chaotic
- Status   :- Monster Unleashed
- -------------------------
- "The monster inside me
-  is finally free."`
+            name: "Roronoa Zoro",
+            anime: "ONE PIECE",
+            quote: "Nothing happened.",
+            portrait: [
+                "       .---.---.---.     ",
+                "      /  / / | \\ \\  \\    ",
+                "     /  / /  |  \\ \\  \\   ",
+                "    |=================|  ",
+                "    |   ___     ___   |  ",
+                "    |  / / \\   /   \\  |  ",
+                "    | | / X | | (O) | |o ",
+                "    |  \\___/   \\___/  |o ",
+                "    |   ============  |o ",
+                "    \\   [===SWORD===] /  ",
+                "     '.  \\_______/  .'   ",
+                "       '._ ====== _.'    ",
+                "         /  /|\\  \\       "
+            ]
         },
         {
-            ascii:
-` BLUE LOCK
- Rin Itoshi  #10
- -------------------------
- Position :- Forward
- Weapon   :- Left Foot Cannon
- Skill    :- Predator Eye
- Ego      :- SS-Tier
- Status   :- Prodigy
- -------------------------
- "If you stand in my path,
-  I will devour you."`
+            name: "Naruto Uzumaki",
+            anime: "NARUTO",
+            quote: "Dattebayo! That's my nindo!",
+            portrait: [
+                "      \\ \\  |||  / /      ",
+                "     --\\ \\-|||-/ /--     ",
+                "    .----------------.   ",
+                "    |  [===(@)===]   |   ",
+                "    '----------------'   ",
+                "     / /| | | | |\\ \\     ",
+                "    | / ___   ___ \\ |    ",
+                "    | |( O ) ( O )| |    ",
+                "   =| \\ ---   --- / |=   ",
+                "   =|    -  _  -    |=   ",
+                "   =|   =- ( ) -=   |=   ",
+                "    \\    \\_____/    /    ",
+                "     '.   =====   .'     ",
+                "       '._     _.'       ",
+                "         / === \\         "
+            ]
         },
         {
-            ascii:
-` ONE PIECE
- Monkey D. Luffy
- -------------------------
- Crew     :- Straw Hat Pirates
- Role     :- Captain
- Fruit    :- Gomu Gomu no Mi
- Bounty   :- 3,000,000,000
- Dream    :- King of Pirates
- -------------------------
- "I'm gonna be the
-  King of the Pirates!"`
+            name: "Kakashi Hatake",
+            anime: "NARUTO",
+            quote: "In the ninja world, those who abandon friends are worse than scum.",
+            portrait: [
+                "        / / / / /        ",
+                "       /_/_/_/_/         ",
+                "     .------------.      ",
+                "    /   [==@==]    \\     ",
+                "   |==============|      ",
+                "   |  \\\\      ___ |      ",
+                "   |   \\\\    ( O )|      ",
+                "   |    \\\\    --- |      ",
+                "   |#################|   ",
+                "   |#################|   ",
+                "   | ############### |   ",
+                "    \\###############/    ",
+                "     '.###########.'     ",
+                "       '._     _.'       ",
+                "         / === \\         "
+            ]
         },
         {
-            ascii:
-` ONE PIECE
- Roronoa Zoro
- -------------------------
- Crew     :- Straw Hat Pirates
- Role     :- Swordsman
- Style    :- Santoryu
- Bounty   :- 1,111,000,000
- Dream    :- World's Strongest
- -------------------------
- "Nothing happened."`
+            name: "Yoichi Isagi",
+            anime: "BLUE LOCK #11",
+            quote: "I will be the one who devours this chance.",
+            portrait: [
+                "         || | ||         ",
+                "       /\\|| | ||/\\       ",
+                "      /  \\| | |/  \\      ",
+                "     /  /|| | ||\\  \\     ",
+                "    |  / ___   ___ \\|    ",
+                "    | | [ @ ] [ @ ]||    ",
+                "    | | (o o) (o o)||    ",
+                "    |  \\     <     /|    ",
+                "    |   \\  .---.  / |    ",
+                "     \\   \\ `---' / /     ",
+                "      '.  '=====' .'     ",
+                "        '._     _.'      ",
+                "        |BLUELOCK|       ",
+                "        |  #11   |       "
+            ]
         },
         {
-            ascii:
-` NARUTO
- Naruto Uzumaki
- -------------------------
- Village  :- Konohagakure
- Rank     :- Seventh Hokage
- Jutsu    :- Rasengan / Shadow Clone
- Tailed   :- Nine-Tails (Kurama)
- Status   :- Legendary
- -------------------------
- "I never go back on
-  my word. Dattebayo!"`
-        },
-        {
-            ascii:
-` NARUTO
- Kakashi Hatake
- -------------------------
- Village  :- Konohagakure
- Rank     :- Sixth Hokage
- Jutsu    :- Chidori / Sharingan
- Nickname :- Copy Ninja
- Status   :- Elite Jonin
- -------------------------
- "Those who break the rules
-  are scum. But those who
-  abandon friends are worse."`
+            name: "Meguru Bachira",
+            anime: "BLUE LOCK #8",
+            quote: "I'll follow my monster to the end.",
+            portrait: [
+                "      .-------------.    ",
+                "     /  ~ ~ ~ ~ ~ ~  \\   ",
+                "    / ~ ~ ~ ~ ~ ~ ~ ~ \\  ",
+                "   | ~ /|  | |  |\\ ~  |  ",
+                "   |  / |  | |  | \\ ~ |  ",
+                "   | |  ___   ___  | |   ",
+                "   | | ( ^ ) ( ^ ) | |   ",
+                "   | | ( O ) ( O ) | |   ",
+                "   |  \\     v     /  |   ",
+                "   |   \\  \\___/  /   |   ",
+                "   \\    \\___q___/    /   ",
+                "    '.             .'    ",
+                "      '._ #08 _.'        ",
+                "         | === |         "
+            ]
         }
     ];
 
     function printAnimeCharacter() {
         const char = animeCharacters[Math.floor(Math.random() * animeCharacters.length)];
-        const pre = document.createElement('pre');
-        pre.className = 'term-ascii';
-        pre.textContent = char.ascii;
-        body.appendChild(pre);
+        const header = `[ ${char.anime} // ${char.name} ]`;
+        const lines = char.portrait.join('\n');
+        const quote = `"${char.quote}"`;
+
+        const container = document.createElement('div');
+        container.className = 'term-anime-card';
+
+        const headerEl = document.createElement('div');
+        headerEl.className = 'term-anime-header';
+        headerEl.textContent = header;
+
+        const artEl = document.createElement('pre');
+        artEl.className = 'term-ascii';
+        artEl.textContent = lines;
+
+        const quoteEl = document.createElement('div');
+        quoteEl.className = 'term-anime-quote';
+        quoteEl.textContent = quote;
+
+        container.appendChild(headerEl);
+        container.appendChild(artEl);
+        container.appendChild(quoteEl);
+
+        body.appendChild(container);
         body.scrollTop = body.scrollHeight;
     }
 

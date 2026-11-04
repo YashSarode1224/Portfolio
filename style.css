@@ -456,6 +456,7 @@ p.subtitle::before { content: '↓ '; color: var(--ink); font-weight: 700; }
 }
 
 .terminal-window {
+    pointer-events: auto;
     display: flex;
     width: min(390px, calc(100vw - 32px));
     height: 420px;
@@ -540,6 +541,27 @@ p.subtitle::before { content: '↓ '; color: var(--ink); font-weight: 700; }
     font-size: 0.76rem;
     line-height: 1.55;
     background: #0d0e12;
+    pointer-events: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    scrollbar-color: var(--pink) #111215;
+}
+
+.terminal-body::-webkit-scrollbar {
+    width: 6px;
+}
+
+.terminal-body::-webkit-scrollbar-track {
+    background: #111215;
+}
+
+.terminal-body::-webkit-scrollbar-thumb {
+    background: var(--pink);
+    border-radius: 0;
+}
+
+.terminal-body::-webkit-scrollbar-thumb:hover {
+    background: var(--yellow);
 }
 
 .term-line {
@@ -629,19 +651,48 @@ p.subtitle::before { content: '↓ '; color: var(--ink); font-weight: 700; }
     letter-spacing: 0.05em;
 }
 
-.term-ascii {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.68rem;
-    line-height: 1.3;
-    color: var(--yellow);
-    background: rgba(255, 255, 255, 0.04);
+.term-anime-card {
+    margin: 8px 0;
     padding: 10px 12px;
+    background: rgba(255, 255, 255, 0.03);
     border: 1.5px solid var(--green);
     border-radius: 0;
-    margin: 6px 0;
+    box-shadow: 3px 3px 0 var(--green);
+}
+
+.term-anime-header {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.74rem;
+    font-weight: 800;
+    color: var(--pink);
+    margin-bottom: 6px;
+    letter-spacing: 0.03em;
+}
+
+.term-ascii {
+    display: block;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    line-height: 1.15;
+    color: var(--yellow);
+    background: transparent;
+    padding: 0;
+    margin: 0;
+    border: none;
     overflow-x: auto;
     white-space: pre;
     max-width: 100%;
+}
+
+.term-anime-quote {
+    margin-top: 8px;
+    padding-top: 6px;
+    border-top: 1px dashed rgba(255, 255, 255, 0.18);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    font-style: italic;
+    color: var(--paper);
+    line-height: 1.4;
 }
 
 /* Violent Glitch Animation */
