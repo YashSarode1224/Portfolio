@@ -2169,6 +2169,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initInteractions();
     initTerminal();
     initThemeSwitcher();
+    initDraggableStickers();
 });
 
 function showSkeletonLoader() {
@@ -2352,50 +2353,45 @@ function initDraggableStickers() {
         let currentRotation = baseRotation;
         let hasMoved = false;
 
-        sticker.addEventListener('pointerdown', (e) => {
-            // Only primary mouse button or touch
+        function startDrag(e) {
+            // Primary mouse button or touch only
             if (e.button !== undefined && e.button !== 0) return;
+            e.preventDefault();
             isDragging = true;
             hasMoved = false;
             startPointerX = e.clientX;
             startPointerY = e.clientY;
             sticker.classList.add('is-dragging');
-            try {
-                sticker.setPointerCapture(e.pointerId);
-            } catch (err) {}
-        });
 
-        sticker.addEventListener('pointermove', (e) => {
-            if (isDragging) {
-                const deltaX = e.clientX - startPointerX;
-                const deltaY = e.clientY - startPointerY;
-                if (Math.hypot(deltaX, deltaY) > 3) hasMoved = true;
+            window.addEventListener('pointermove', onMove, { passive: false });
+            window.addEventListener('pointerup', endDrag);
+            window.addEventListener('pointercancel', endDrag);
+        }
 
-                // Subtle dynamic swing angle based on horizontal drag delta
-                const tilt = Math.max(-14, Math.min(14, deltaX * 0.1));
-                currentRotation = baseRotation + tilt;
+        function onMove(e) {
+            if (!isDragging) return;
+            e.preventDefault();
+            const deltaX = e.clientX - startPointerX;
+            const deltaY = e.clientY - startPointerY;
+            if (Math.hypot(deltaX, deltaY) > 2) hasMoved = true;
 
-                const posX = currentTranslateX + deltaX;
-                const posY = currentTranslateY + deltaY;
+            const tilt = Math.max(-15, Math.min(15, deltaX * 0.08));
+            currentRotation = baseRotation + tilt;
 
-                sticker.style.transform = `translate3d(${posX}px, ${posY}px, 0) rotate(${currentRotation}deg) scale(1.05)`;
-            } else {
-                // Interactive 3D cursor tilt on hover
-                const rect = sticker.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-                const centerX = rect.width / 2;
-                const centerY = rect.height / 2;
-                const tiltX = ((y - centerY) / centerY) * -6;
-                const tiltY = ((x - centerX) / centerX) * 6;
-                sticker.style.transform = `translate3d(${currentTranslateX}px, ${currentTranslateY}px, 0) perspective(400px) rotateX(${tiltX}deg) rotateY(${tiltY}deg) rotate(${baseRotation}deg)`;
-            }
-        });
+            const posX = currentTranslateX + deltaX;
+            const posY = currentTranslateY + deltaY;
 
-        const stopDrag = (e) => {
+            sticker.style.transform = `translate3d(${posX}px, ${posY}px, 0) rotate(${currentRotation}deg) scale(1.06)`;
+        }
+
+        function endDrag(e) {
             if (!isDragging) return;
             isDragging = false;
             sticker.classList.remove('is-dragging');
+
+            window.removeEventListener('pointermove', onMove);
+            window.removeEventListener('pointerup', endDrag);
+            window.removeEventListener('pointercancel', endDrag);
 
             if (hasMoved) {
                 const deltaX = e.clientX - startPointerX;
@@ -2404,17 +2400,29 @@ function initDraggableStickers() {
                 currentTranslateY += deltaY;
             }
 
-            // Natural settling bounce
+            // Natural settling spring bounce
             sticker.style.transition = 'transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease';
             sticker.style.transform = `translate3d(${currentTranslateX}px, ${currentTranslateY}px, 0) rotate(${baseRotation}deg) scale(1)`;
 
             setTimeout(() => {
                 sticker.style.transition = 'box-shadow 0.18s ease, transform 0.12s ease';
             }, 350);
-        };
+        }
 
-        sticker.addEventListener('pointerup', stopDrag);
-        sticker.addEventListener('pointercancel', stopDrag);
+        sticker.addEventListener('pointerdown', startDrag);
+
+        // Interactive 3D cursor tilt on hover when not actively dragging
+        sticker.addEventListener('pointermove', (e) => {
+            if (isDragging) return;
+            const rect = sticker.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            const centerX = rect.width / 2;
+            const centerY = rect.height / 2;
+            const tiltX = ((y - centerY) / centerY) * -6;
+            const tiltY = ((x - centerX) / centerX) * 6;
+            sticker.style.transform = `translate3d(${currentTranslateX}px, ${currentTranslateY}px, 0) perspective(400px) rotateX(${tiltX}deg) rotateY(${tiltY}deg) rotate(${baseRotation}deg)`;
+        });
 
         sticker.addEventListener('mouseleave', () => {
             if (!isDragging) {
