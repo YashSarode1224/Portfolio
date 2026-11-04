@@ -2330,6 +2330,127 @@ function initInteractions() {
     }
 }
 
+
+// ==========================================
+// TACTILE DRAGGABLE STICKER PHYSICS (ABOUT SECTION)
+// ==========================================
+function initDraggableStickers() {
+    const stickers = document.querySelectorAll('.draggable-sticker');
+    if (!stickers.length) return;
+
+    stickers.forEach((sticker) => {
+        let isDragging = false;
+        let startPointerX = 0;
+        let startPointerY = 0;
+        let currentTranslateX = 0;
+        let currentTranslateY = 0;
+        const baseRotation = sticker.classList.contains('sticker-y') ? -7 : 0;
+        let currentRotation = baseRotation;
+        let hasMoved = false;
+
+        sticker.addEventListener('pointerdown', (e) => {
+            // Only primary mouse button or touch
+            if (e.button !== undefined && e.button !== 0) return;
+            isDragging = true;
+            hasMoved = false;
+            startPointerX = e.clientX;
+            startPointerY = e.clientY;
+            sticker.classList.add('is-dragging');
+            try {
+                sticker.setPointerCapture(e.pointerId);
+            } catch (err) {}
+        });
+
+        sticker.addEventListener('pointermove', (e) => {
+            if (isDragging) {
+                const deltaX = e.clientX - startPointerX;
+                const deltaY = e.clientY - startPointerY;
+                if (Math.hypot(deltaX, deltaY) > 3) hasMoved = true;
+
+                // Subtle dynamic swing angle based on horizontal drag delta
+                const tilt = Math.max(-14, Math.min(14, deltaX * 0.1));
+                currentRotation = baseRotation + tilt;
+
+                const posX = currentTranslateX + deltaX;
+                const posY = currentTranslateY + deltaY;
+
+                sticker.style.transform = `translate3d(${posX}px, ${posY}px, 0) rotate(${currentRotation}deg) scale(1.05)`;
+            } else {
+                // Interactive 3D cursor tilt on hover
+                const rect = sticker.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                const tiltX = ((y - centerY) / centerY) * -6;
+                const tiltY = ((x - centerX) / centerX) * 6;
+                sticker.style.transform = `translate3d(${currentTranslateX}px, ${currentTranslateY}px, 0) perspective(400px) rotateX(${tiltX}deg) rotateY(${tiltY}deg) rotate(${baseRotation}deg)`;
+            }
+        });
+
+        const stopDrag = (e) => {
+            if (!isDragging) return;
+            isDragging = false;
+            sticker.classList.remove('is-dragging');
+
+            if (hasMoved) {
+                const deltaX = e.clientX - startPointerX;
+                const deltaY = e.clientY - startPointerY;
+                currentTranslateX += deltaX;
+                currentTranslateY += deltaY;
+            }
+
+            // Natural settling bounce
+            sticker.style.transition = 'transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease';
+            sticker.style.transform = `translate3d(${currentTranslateX}px, ${currentTranslateY}px, 0) rotate(${baseRotation}deg) scale(1)`;
+
+            setTimeout(() => {
+                sticker.style.transition = 'box-shadow 0.18s ease, transform 0.12s ease';
+            }, 350);
+        };
+
+        sticker.addEventListener('pointerup', stopDrag);
+        sticker.addEventListener('pointercancel', stopDrag);
+
+        sticker.addEventListener('mouseleave', () => {
+            if (!isDragging) {
+                sticker.style.transform = `translate3d(${currentTranslateX}px, ${currentTranslateY}px, 0) rotate(${baseRotation}deg)`;
+            }
+        });
+
+        // Double-click to snap back to original position
+        sticker.addEventListener('dblclick', () => {
+            currentTranslateX = 0;
+            currentTranslateY = 0;
+            currentRotation = baseRotation;
+            sticker.style.transition = 'transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1)';
+            sticker.style.transform = `translate3d(0px, 0px, 0) rotate(${baseRotation}deg)`;
+            setTimeout(() => {
+                sticker.style.transition = 'box-shadow 0.18s ease, transform 0.12s ease';
+            }, 450);
+        });
+    });
+
+    // 3D perspective hover for Education Card
+    const tiltCards = document.querySelectorAll('.tilt-card');
+    tiltCards.forEach(card => {
+        card.addEventListener('mousemove', (e) => {
+            const rect = card.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            const centerX = rect.width / 2;
+            const centerY = rect.height / 2;
+            const rotateX = ((y - centerY) / centerY) * -5;
+            const rotateY = ((x - centerX) / centerX) * 5;
+            card.style.transform = `perspective(600px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-2px)`;
+        });
+        card.addEventListener('mouseleave', () => {
+            card.style.transform = 'perspective(600px) rotateX(0deg) rotateY(0deg) translateY(0px)';
+        });
+    });
+}
+
+
 // --- Terminal Logic ---
 function initTerminal() {
     const toggleBtn = document.getElementById('terminal-toggle');
@@ -2361,6 +2482,310 @@ function initTerminal() {
         termWindow.classList.add('hidden-term');
     });
 
+    // ==========================================
+    // 🐍 RETRO SNAKE GAME
+    // ==========================================
+    let isSnakeRunning = false;
+    let snakeHighScore = 0;
+
+    function startSnakeGame() {
+        if (isSnakeRunning) return;
+        isSnakeRunning = true;
+
+        addLine("--- 🐍 RETRO SNAKE ---", "cmd-highlight");
+        addLine("Controls: [Arrow Keys] or [W A S D] to Move. Press [Q] or [ESC] to Exit.", "term-dim");
+
+        const canvas = document.createElement('canvas');
+        canvas.className = 'term-snake-canvas';
+        canvas.width = 300;
+        canvas.height = 180;
+        body.appendChild(canvas);
+
+        const status = document.createElement('div');
+        status.className = 'term-snake-status';
+        status.innerText = `SCORE: 0  |  BEST: ${snakeHighScore}`;
+        body.appendChild(status);
+
+        body.scrollTop = body.scrollHeight;
+
+        const ctx = canvas.getContext('2d');
+        const cols = 20;
+        const rows = 12;
+        const cellSize = 15;
+
+        let snake = [
+            { x: 5, y: 6 },
+            { x: 4, y: 6 },
+            { x: 3, y: 6 }
+        ];
+        let dir = { x: 1, y: 0 };
+        let nextDir = { x: 1, y: 0 };
+        let food = { x: 14, y: 6 };
+        let score = 0;
+        let gameOver = false;
+        let intervalId = null;
+
+        function placeFood() {
+            let attempts = 0;
+            while (attempts < 100) {
+                const fx = Math.floor(Math.random() * cols);
+                const fy = Math.floor(Math.random() * rows);
+                const onSnake = snake.some(s => s.x === fx && s.y === fy);
+                if (!onSnake) {
+                    food = { x: fx, y: fy };
+                    return;
+                }
+                attempts++;
+            }
+        }
+
+        function draw() {
+            // Background
+            ctx.fillStyle = '#08090b';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Subtle grid dots
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.08)';
+            for (let x = cellSize; x < canvas.width; x += cellSize) {
+                for (let y = cellSize; y < canvas.height; y += cellSize) {
+                    ctx.fillRect(x - 0.5, y - 0.5, 1, 1);
+                }
+            }
+
+            // Draw Food (Apple)
+            ctx.fillStyle = '#ff3366';
+            ctx.fillRect(food.x * cellSize + 2, food.y * cellSize + 2, cellSize - 4, cellSize - 4);
+            ctx.strokeStyle = '#ffbe0b';
+            ctx.lineWidth = 1.5;
+            ctx.strokeRect(food.x * cellSize + 2, food.y * cellSize + 2, cellSize - 4, cellSize - 4);
+
+            // Draw Snake
+            snake.forEach((seg, idx) => {
+                if (idx === 0) {
+                    ctx.fillStyle = '#bef264'; // Head
+                } else {
+                    ctx.fillStyle = '#a3e635'; // Body
+                }
+                ctx.fillRect(seg.x * cellSize + 1, seg.y * cellSize + 1, cellSize - 2, cellSize - 2);
+                ctx.strokeStyle = '#050505';
+                ctx.lineWidth = 1.5;
+                ctx.strokeRect(seg.x * cellSize + 1, seg.y * cellSize + 1, cellSize - 2, cellSize - 2);
+
+                // Eyes on head
+                if (idx === 0) {
+                    ctx.fillStyle = '#050505';
+                    ctx.fillRect(seg.x * cellSize + 4, seg.y * cellSize + 4, 2.5, 2.5);
+                    ctx.fillRect(seg.x * cellSize + cellSize - 6, seg.y * cellSize + 4, 2.5, 2.5);
+                }
+            });
+
+            // Game Over overlay
+            if (gameOver) {
+                ctx.fillStyle = 'rgba(8, 9, 11, 0.85)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = '#ff3366';
+                ctx.font = 'bold 15px "DM Mono", monospace';
+                ctx.textAlign = 'center';
+                ctx.fillText('💀 GAME OVER', canvas.width / 2, canvas.height / 2 - 10);
+                ctx.fillStyle = '#faf7ee';
+                ctx.font = '11px "DM Mono", monospace';
+                ctx.fillText(`Final Score: ${score}`, canvas.width / 2, canvas.height / 2 + 10);
+                ctx.fillStyle = '#ffbe0b';
+                ctx.font = '10px "DM Mono", monospace';
+                ctx.fillText('[ENTER] Play Again   [Q] Quit', canvas.width / 2, canvas.height / 2 + 30);
+            }
+        }
+
+        function step() {
+            if (gameOver) return;
+
+            dir = { ...nextDir };
+            const head = snake[0];
+            const newHead = { x: head.x + dir.x, y: head.y + dir.y };
+
+            // Wall collision
+            if (newHead.x < 0 || newHead.x >= cols || newHead.y < 0 || newHead.y >= rows) {
+                gameOver = true;
+                status.innerText = `💀 CRASHED! Final Score: ${score} | [ENTER] Play Again | [Q] Exit`;
+                draw();
+                clearInterval(intervalId);
+                return;
+            }
+
+            // Self collision
+            if (snake.some(s => s.x === newHead.x && s.y === newHead.y)) {
+                gameOver = true;
+                status.innerText = `💀 BIT SELF! Final Score: ${score} | [ENTER] Play Again | [Q] Exit`;
+                draw();
+                clearInterval(intervalId);
+                return;
+            }
+
+            snake.unshift(newHead);
+
+            // Food collision
+            if (newHead.x === food.x && newHead.y === food.y) {
+                score++;
+                if (score > snakeHighScore) snakeHighScore = score;
+                status.innerText = `SCORE: ${score}  |  BEST: ${snakeHighScore}`;
+                placeFood();
+            } else {
+                snake.pop();
+            }
+
+            draw();
+        }
+
+        function resetGame() {
+            snake = [
+                { x: 5, y: 6 },
+                { x: 4, y: 6 },
+                { x: 3, y: 6 }
+            ];
+            dir = { x: 1, y: 0 };
+            nextDir = { x: 1, y: 0 };
+            score = 0;
+            gameOver = false;
+            placeFood();
+            status.innerText = `SCORE: 0  |  BEST: ${snakeHighScore}`;
+            clearInterval(intervalId);
+            intervalId = setInterval(step, 110);
+            draw();
+        }
+
+        function quitSnake() {
+            clearInterval(intervalId);
+            window.removeEventListener('keydown', handleKeyDown);
+            isSnakeRunning = false;
+            input.disabled = false;
+            setTimeout(() => input.focus(), 80);
+            addLine("Exited Snake. Welcome back! Type 'help' for commands.", "term-dim");
+            body.scrollTop = body.scrollHeight;
+        }
+
+        function handleKeyDown(e) {
+            if (e.key === 'q' || e.key === 'Q' || e.key === 'Escape') {
+                e.preventDefault();
+                quitSnake();
+                return;
+            }
+
+            if (gameOver) {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    resetGame();
+                }
+                return;
+            }
+
+            if (e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W') {
+                e.preventDefault();
+                if (dir.y === 0) nextDir = { x: 0, y: -1 };
+            } else if (e.key === 'ArrowDown' || e.key === 's' || e.key === 'S') {
+                e.preventDefault();
+                if (dir.y === 0) nextDir = { x: 0, y: 1 };
+            } else if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') {
+                e.preventDefault();
+                if (dir.x === 0) nextDir = { x: -1, y: 0 };
+            } else if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') {
+                e.preventDefault();
+                if (dir.x === 0) nextDir = { x: 1, y: 0 };
+            }
+        }
+
+        input.disabled = true;
+        input.blur();
+        window.addEventListener('keydown', handleKeyDown);
+        resetGame();
+    }
+
+    // ==========================================
+    // 💥 VIOLENT GLITCH EASTER EGG (sudo rm -rf /)
+    // ==========================================
+    function triggerViolentGlitch() {
+        addLine("[CRITICAL] Unmounting root filesystem / ...", "term-error");
+        addLine("rm: deleting /bin /usr /lib /portfolio ...", "term-error");
+        body.scrollTop = body.scrollHeight;
+
+        const overlay = document.createElement('div');
+        overlay.className = 'violent-glitch-overlay';
+        document.body.appendChild(overlay);
+        document.body.classList.add('violent-glitch-active');
+
+        setTimeout(() => {
+            document.body.classList.remove('violent-glitch-active');
+            if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
+            addLine("Permission denied: Nice try, you can't delete my portfolio 😉.", "term-success");
+            body.scrollTop = body.scrollHeight;
+            if (input) input.focus();
+        }, 1500);
+    }
+
+    // ==========================================
+    // ⚡ ANIME ASCII & QUOTES (BLUELOCK, ONE PIECE, NARUTO)
+    // ==========================================
+    const animeQuotes = [
+        {
+            ascii: `  ⚽ [ BLUE LOCK // PROJECT EGOIST ]
+     ▄▄▄▄▄▄▄
+    █ █   █ █    "I'm not here to be one of the eleven.
+    █ ▄▄█▄▄ █     I'm here to become the world's best egoist!"
+    █ █   █ █     — Yoichi Isagi (No. 11)`
+        },
+        {
+            ascii: `  ⚽ [ BLUE LOCK // MONSTER DRIBBLE ]
+    "If nobody passes to me, I'll just dribble
+     past everyone and score myself. Follow your monster."
+     — Meguru Bachira
+
+    "Lukewarm. If you stand in my path, I'll devour you."
+     — Rin Itoshi (Egoist Prodigy)`
+        },
+        {
+            ascii: `  🏴‍☠️ [ STRAW HAT PIRATES // GRAND LINE ]
+       _~^~^~_
+      /       \     "If you don't take risks,
+    =============    you can't create a future!"
+    \  (o) (o)  /    — Monkey D. Luffy
+     \   ===   /       (King of the Pirates)`
+        },
+        {
+            ascii: `  ⚔️ [ THREE-SWORD STYLE // KING OF HELL ]
+     /| _______________________
+    O|===|_____________________\>
+     \|
+    "Scars on the back are a swordsman's shame.
+     When I decided to follow my dream, I had already discarded my life."
+     — Roronoa Zoro (Straw Hat Swordsman)`
+        },
+        {
+            ascii: `  🍥 [ HIDDEN LEAF // WILL OF FIRE ]
+       _______
+      /  ---  \    "I'm not gonna run away, I never go back on my word!
+     |  (@)    |    That's my nindo: my ninja way!"
+      \_______/     — Naruto Uzumaki (Seventh Hokage)`
+        },
+        {
+            ascii: `  🍃 [ SHINOBI CODE // HIDDEN LEAF ]
+    "A real ninja is one who endures no matter what gets thrown at him.
+     What matters is what you accomplished before you died."
+     — Jiraiya (The Gallant Toad Sage)
+
+    "Those who break the rules are scum, but those who abandon their friends
+     are worse than scum."
+     — Kakashi Hatake (Copy Ninja)`
+        }
+    ];
+
+    function printAnimeQuote() {
+        const quote = animeQuotes[Math.floor(Math.random() * animeQuotes.length)];
+        const pre = document.createElement('pre');
+        pre.className = 'term-ascii';
+        pre.textContent = quote.ascii;
+        body.appendChild(pre);
+        body.scrollTop = body.scrollHeight;
+    }
+
     input.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') {
             const cmd = input.value.trim().toLowerCase();
@@ -2371,19 +2796,34 @@ function initTerminal() {
 
     function processCommand(cmd) {
         addLine(`➜ ~ ${cmd}`, 'cmd-highlight');
-        
+
+        // Check for sudo rm -rf / or rm -rf
+        if (cmd === 'sudo rm -rf /' || cmd === 'rm -rf /' || cmd.startsWith('sudo rm -rf') || cmd.startsWith('rm -rf')) {
+            triggerViolentGlitch();
+            return;
+        }
+
         switch(cmd) {
             case 'help':
                 addLine("Available commands:");
                 addLine("- about: Who am I?");
                 addLine("- skills: My tech stack");
                 addLine("- projects: View my work");
+                addLine("- snake: Play classic retro snake 🐍");
+                addLine("- anime: Blue Lock, One Piece, Naruto quotes ⚡");
                 addLine("- social: Connect with me");
                 addLine("- clear: Clear terminal");
+                addLine("- sudo rm -rf /: [RESTRICTED] ⚠️");
+                break;
+            case 'snake':
+                startSnakeGame();
+                break;
+            case 'anime':
+                printAnimeQuote();
                 break;
             case 'about':
                 addLine("Yash Nitin Sarode. 2nd Year CSE @ VIT Vellore.");
-                addLine("I build web apps and grind Valorant.");
+                addLine("I build web apps, grind DSA in Java, and play Valorant.");
                 break;
             case 'skills':
                 addLine("AI & Data: Python, NumPy, Pandas, Matplotlib, Scikit-Learn, Supervised ML");
@@ -2406,7 +2846,7 @@ function initTerminal() {
                 addLine("Permission denied: You are not root.", "term-error");
                 break;
             default:
-                addLine(`Command not found: ${cmd}`, "term-error");
+                addLine(`Command not found: ${cmd}. Type 'help' for available commands.`, "term-error");
         }
         
         body.scrollTop = body.scrollHeight;
@@ -2419,3 +2859,4 @@ function initTerminal() {
         body.appendChild(div);
     }
 }
+
