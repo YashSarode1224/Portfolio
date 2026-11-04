@@ -51,7 +51,7 @@ body {
     color: var(--ink);
     font-family: 'DM Mono', monospace;
     font-weight: 500;
-    transition: background-color 0.22s ease, color 0.22s ease;
+    transition: none;
 }
 
 /* Authentic Ruled College Notebook Paper Canvas in Sketch Mode (Page Back is Page) */
@@ -187,11 +187,14 @@ p.subtitle { max-width: 650px; padding: 14px 16px; border: var(--border); backgr
 p.subtitle::before { content: '↓ '; color: var(--ink); font-weight: 700; }
 .cursor { width: .55em; background: var(--pink); }
 
-.hidden { opacity: 0; transform: translateY(30px) rotate(1deg); transition: opacity 500ms ease, transform 500ms ease; }
-.show { opacity: 1; transform: translateY(0) rotate(0); }
+.hidden { opacity: 1 !important; transform: none !important; transition: none !important; }
+.show { opacity: 1 !important; transform: none !important; }
 
 /* Shared hard-edged surfaces */
-.stat-card, .info-card, .contact-card {
+.stat-card, .info-card, .contact-card, .project-card, .tilt-card {
+    transform: none !important;
+    transition: none !important;
+    animation: none !important;
     position: relative;
     display: flex;
     flex-direction: column;
@@ -201,14 +204,14 @@ p.subtitle::before { content: '↓ '; color: var(--ink); font-weight: 700; }
     color: var(--ink);
     transition: transform 150ms ease, box-shadow 150ms ease;
 }
-.stat-card:hover, .info-card:hover, .contact-card:hover { transform: translate(5px, 5px) rotate(0deg); box-shadow: 2px 2px 0 var(--ink); }
+.stat-card:hover, .info-card:hover, .contact-card:hover, .project-card:hover, .tilt-card:hover { transform: none !important; box-shadow: var(--shadow) !important; transition: none !important; }
 .stat-card::before, .project-card::before, .info-card::before, .contact-card::before { content: none; }
 
 .stats-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 26px; margin: 42px 0 92px; }
 .stat-card { min-height: 185px; justify-content: center; padding: 24px; background: var(--paper); }
-.stat-card.leetcode-card, .stat-card:nth-child(1) { background: var(--paper); transform: rotate(-0.5deg); }
-.stat-card.anime-card, .stat-card:nth-child(2) { background: var(--yellow); transform: rotate(-1deg); }
-.stat-card.coffee-card, .stat-card:nth-child(3) { background: var(--pink); transform: rotate(1deg); }
+.stat-card.leetcode-card, .stat-card:nth-child(1) { background: var(--paper); transform: none !important; }
+.stat-card.anime-card, .stat-card:nth-child(2) { background: var(--yellow); transform: none !important; }
+.stat-card.coffee-card, .stat-card:nth-child(3) { background: var(--pink); transform: none !important; }
 
 .stat-header-row {
     display: flex;
@@ -1833,13 +1836,18 @@ body.violent-glitch-active {
     transition: transform 0.15s ease;
 }
 
+[data-theme="sketch"] .stat-card::after,
 [data-theme="sketch"] .stat-card:hover::after,
+[data-theme="sketch"] .contact-card::after,
 [data-theme="sketch"] .contact-card:hover::after,
+[data-theme="sketch"] .info-card::after,
 [data-theme="sketch"] .info-card:hover::after,
-[data-theme="sketch"] .theme-toggle-btn:hover::after,
-[data-theme="sketch"] .logo:hover::after,
-[data-theme="sketch"] .visit-btn:hover::after {
-    transform: translate(3px, 3px);
+[data-theme="sketch"] #education-card::after,
+[data-theme="sketch"] #education-card:hover::after,
+[data-theme="sketch"] .tilt-card::after,
+[data-theme="sketch"] .tilt-card:hover::after {
+    transform: translate(6px, 6px) !important;
+    transition: none !important;
 }
 
 [data-theme="sketch"] .project-card,
@@ -1944,8 +1952,8 @@ body.violent-glitch-active {
 [data-theme="sketch"] .sketch-only {
     display: block;
 }
-[data-theme="sketch"] .notebook-hero-section.sketch-only {
-    display: grid !important;
+[data-theme="sketch"] .about-character-wrap.sketch-only {
+    display: flex !important;
 }
 [data-theme="sketch"] .floating-doodle-bar.sketch-only {
     display: flex !important;
@@ -2020,179 +2028,60 @@ body.violent-glitch-active {
     box-shadow: 1px 1px 0 var(--ink);
 }
 
-/* Notebook Sketch Hero Section (Exact match to User Screenshot) */
+/* ==========================================================================
+   HOMEPAGE PRIMARY FRAME: ABOUT + EDUCATION + SKETCH CHARACTER IN ONE FRAME
+   ========================================================================== */
 [data-theme="sketch"] nav {
-    margin-bottom: clamp(10px, 2vw, 22px) !important;
+    margin-bottom: clamp(16px, 2.8vw, 32px) !important;
     padding-top: 8px;
     padding-bottom: 12px;
 }
 
-.notebook-hero-section {
+[data-theme="sketch"] .about-container {
     display: grid;
-    grid-template-columns: minmax(320px, 1.25fr) minmax(280px, 0.95fr);
-    gap: clamp(18px, 3.5vw, 44px);
-    align-items: center;
-    margin: 0 0 clamp(20px, 4vw, 40px);
-    position: relative;
+    grid-template-columns: 140px minmax(320px, 1.25fr) minmax(280px, 340px);
+    gap: clamp(20px, 3.5vw, 44px);
+    align-items: start;
+    margin: 8px 0 60px;
     padding-top: 0;
 }
 
-.highlighter-tape {
-    display: inline-block;
-    background: #fffa75;
-    color: var(--ink);
-    padding: 3px 12px;
-    font-family: 'Caveat', 'Architects Daughter', cursive, sans-serif;
-    font-size: clamp(1.15rem, 2vw, 1.35rem);
-    font-weight: 700;
-    border-radius: 2px 7px 3px 6px;
-    transform: rotate(-1deg);
-    margin-bottom: 10px;
-    box-shadow: 2px 2px 0 rgba(16, 75, 184, 0.15);
+[data-theme="sketch"] .about-text h2 {
+    font-family: 'Caveat', 'Architects Daughter', cursive, sans-serif !important;
+    font-size: clamp(2.4rem, 4vw, 3.4rem);
+    margin-bottom: 12px;
 }
 
-.notebook-hero-title {
-    font-family: 'Caveat', 'Architects Daughter', cursive, sans-serif;
-    line-height: 0.92;
-    margin-bottom: 14px;
-}
-
-.notebook-hero-title .greeting-text {
-    font-size: clamp(2.6rem, 5vw, 3.8rem);
-    font-weight: 700;
-    color: var(--ink);
-    letter-spacing: -0.01em;
-}
-
-.notebook-hero-title .name-text {
-    font-size: clamp(4.2rem, 8.5vw, 6.8rem);
-    font-weight: 700;
-    color: var(--ink);
-    display: inline-block;
-    transform: rotate(-1.5deg);
-    letter-spacing: -0.01em;
-}
-
-.notebook-hero-subtitle {
-    font-family: 'Architects Daughter', 'Caveat', cursive, sans-serif;
-    font-size: clamp(1rem, 1.4vw, 1.15rem);
+[data-theme="sketch"] .about-text p {
+    font-family: 'Patrick Hand', 'Architects Daughter', cursive, sans-serif;
+    font-size: clamp(1.05rem, 1.35vw, 1.22rem);
     line-height: 1.5;
+    margin-bottom: 12px;
     color: var(--ink);
-    max-width: 540px;
-    margin-bottom: 20px;
 }
 
-.notebook-hero-subtitle .annot-opsst {
-    color: var(--muted);
-    font-style: italic;
-}
-
-.notebook-hero-actions {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    position: relative;
-}
-
-.annot-arrow-down {
-    font-family: 'Caveat', cursive;
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: var(--ink);
-    transform: rotate(-6deg);
-    display: inline-block;
-    user-select: none;
-}
-
-.notebook-btn-group {
-    display: flex;
-    gap: 14px;
-    flex-wrap: wrap;
-}
-
-.notebook-btn-solid {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 11px 24px;
-    background: var(--ink);
-    color: #ffffff !important;
-    font-family: 'Caveat', 'Architects Daughter', cursive;
-    font-size: 1.3rem;
-    font-weight: 700;
-    text-decoration: none;
-    border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
-    border: 2px solid var(--ink);
-    box-shadow: 3px 3px 0 rgba(16, 75, 184, 0.25);
-    transition: transform 0.12s ease, background 0.12s ease;
-}
-
-.notebook-btn-solid:hover {
-    transform: translate(2px, 2px);
-    box-shadow: 1px 1px 0 rgba(16, 75, 184, 0.25);
-}
-
-.notebook-btn-outline {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 11px 22px;
-    background: #ffffff;
-    color: var(--ink) !important;
-    font-family: 'Caveat', 'Architects Daughter', cursive;
-    font-size: 1.3rem;
-    font-weight: 700;
-    text-decoration: none;
-    border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
-    border: 2px solid var(--ink);
-    box-shadow: 3px 3px 0 var(--ink);
-    transition: transform 0.12s ease, background 0.12s ease;
-}
-
-.notebook-btn-outline:hover {
-    background: #fffa75;
-    transform: translate(2px, 2px);
-    box-shadow: 1px 1px 0 var(--ink);
-}
-
-.notebook-hero-right {
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    margin-top: -36px;
-}
-
-/* Character Avatar Wrapper */
-.notebook-avatar-wrap {
-    position: relative;
+[data-theme="sketch"] .about-sidebar {
     display: flex;
     flex-direction: column;
+    gap: 16px;
     align-items: center;
 }
 
-[data-theme="sketch"] .nav-say-hi-btn {
-    border: 2px solid var(--ink) !important;
-    border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px !important;
-    padding: 6px 14px !important;
-    font-weight: 700;
-    background: #ffffff;
+[data-theme="sketch"] .about-character-wrap {
+    width: 100%;
+    display: flex;
+    justify-content: center;
 }
 
-[data-theme="sketch"] .nav-say-hi-btn:hover {
-    background: #fffa75 !important;
-    transform: rotate(-1.5deg) scale(1.05);
-}
-
-/* Exact Hand-Drawn Sketch Character & Stage */
-.stage {
+[data-theme="sketch"] .about-character-wrap .stage {
     position: relative;
     justify-self: center;
     width: 100%;
-    max-width: clamp(260px, 26vw, 345px);
+    max-width: clamp(220px, 22vw, 270px);
     margin: -10px auto 0;
 }
 
-.stage svg#boy {
+[data-theme="sketch"] .stage svg#boy {
     width: 100%;
     height: auto;
     display: block;
@@ -2201,15 +2090,15 @@ body.violent-glitch-active {
     cursor: pointer;
 }
 
-#bubble {
+[data-theme="sketch"] #bubble {
     position: absolute;
-    left: -12%;
-    top: 2%;
-    max-width: 195px;
-    padding: 10px 14px;
+    left: -14%;
+    top: 0%;
+    max-width: 185px;
+    padding: 9px 13px;
     font-family: 'Caveat', cursive;
     font-weight: 700;
-    font-size: 20px;
+    font-size: 19px;
     line-height: 1.1;
     background: #fbf8f0;
     border: 3px solid var(--ink);
@@ -2224,12 +2113,12 @@ body.violent-glitch-active {
     color: var(--ink);
 }
 
-#bubble.show {
+[data-theme="sketch"] #bubble.show {
     opacity: 1;
     transform: scale(1) rotate(-3deg);
 }
 
-.dr {
+[data-theme="sketch"] .dr {
     stroke-dasharray: 1;
     stroke-dashoffset: 1;
     animation: dr 1s cubic-bezier(0.5, 0, 0.2, 1) forwards;
@@ -2241,29 +2130,52 @@ body.violent-glitch-active {
     }
 }
 
-.note-a {
+[data-theme="sketch"] .note-a {
     position: absolute;
     font-family: 'Caveat', cursive;
     font-weight: 700;
-    font-size: 21px;
+    font-size: 20px;
     line-height: 1.05;
     pointer-events: none;
     color: var(--ink);
     user-select: none;
 }
 
-@media (max-width: 900px) {
-    .notebook-hero-right {
-        margin-top: 10px;
+[data-theme="sketch"] #education-card {
+    width: 100%;
+    margin: 0;
+}
+
+@media (max-width: 960px) {
+    [data-theme="sketch"] .about-container {
+        grid-template-columns: 1fr;
+        gap: 28px;
     }
-    .stage {
-        max-width: 290px;
-        order: -1;
-        margin-top: 0;
+    [data-theme="sketch"] .about-sidebar {
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 20px;
     }
-    .note-a {
-        display: none;
+    [data-theme="sketch"] .about-character-wrap .stage {
+        max-width: 250px;
     }
+    [data-theme="sketch"] #education-card {
+        max-width: 320px;
+    }
+}
+
+[data-theme="sketch"] .nav-say-hi-btn {
+    border: 2px solid var(--ink) !important;
+    border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px !important;
+    padding: 6px 14px !important;
+    font-weight: 700;
+    background: #ffffff;
+}
+
+[data-theme="sketch"] .nav-say-hi-btn:hover {
+    background: #fffa75 !important;
+    transform: rotate(-1.5deg) scale(1.05);
 }
 
 /* Logo Sketch Underline */
@@ -2297,13 +2209,30 @@ body.violent-glitch-active {
     color: var(--ink);
 }
 
-@media (max-width: 860px) {
-    .notebook-hero-section {
-        grid-template-columns: 1fr;
-        gap: 36px;
-        text-align: left;
-    }
-    .notebook-avatar-wrap {
-        align-items: center;
-    }
+/* Text selection prevention during sketch/doodling */
+[data-theme="sketch"] {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+[data-theme="sketch"] input,
+[data-theme="sketch"] textarea {
+    -webkit-user-select: auto;
+    -moz-user-select: auto;
+    -ms-user-select: auto;
+    user-select: auto;
+}
+
+body.is-doodling,
+body.is-doodling * {
+    -webkit-user-select: none !important;
+    -moz-user-select: none !important;
+    -ms-user-select: none !important;
+    user-select: none !important;
+}
+
+[data-theme="sketch"] .about-text h2 {
+    display: none !important;
 }

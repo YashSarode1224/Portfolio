@@ -2381,6 +2381,15 @@ function initInkDoodler() {
             return;
         }
 
+        // Prevent native browser text selection while doodling
+        e.preventDefault();
+        try {
+            if (window.getSelection) {
+                window.getSelection().removeAllRanges();
+            }
+        } catch (err) {}
+        document.body.classList.add('is-doodling');
+
         isDrawing = true;
         const scrollY = window.scrollY || 0;
         const x = e.clientX;
@@ -2390,6 +2399,7 @@ function initInkDoodler() {
     }
 
     function handlePointerUp() {
+        document.body.classList.remove('is-doodling');
         if (!isDrawing) return;
         isDrawing = false;
         if (activeStroke.length > 1) {
@@ -2401,6 +2411,17 @@ function initInkDoodler() {
 
     window.addEventListener('pointermove', handlePointerMove, { passive: true });
     window.addEventListener('pointerdown', handlePointerDown);
+    // Prevent browser native text selection while doodling on notebook
+    window.addEventListener('selectstart', (e) => {
+        const isSketch = document.documentElement.getAttribute('data-theme') === 'sketch';
+        if (isSketch && (doodleEnabled || isDrawing)) {
+            if (!e.target.closest('input, textarea')) {
+                e.preventDefault();
+                return false;
+            }
+        }
+    });
+
     window.addEventListener('pointerup', handlePointerUp);
     window.addEventListener('pointercancel', handlePointerUp);
 
@@ -2658,36 +2679,7 @@ function initSlider() {
 }
 
 function initInteractions() {
-    const sections = document.querySelectorAll('section, .stat-card, .info-card, .contact-card');
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) entry.target.classList.add('show');
-        });
-    }, { threshold: 0.1 });
-    sections.forEach(sec => {
-        sec.classList.add('hidden');
-        observer.observe(sec);
-    });
-
-    const cards = document.querySelectorAll('.stat-card, .info-card, .contact-card');
-    cards.forEach(card => {
-        card.addEventListener('mousemove', (e) => {
-            const rect = card.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-            const centerX = rect.width / 2;
-            const centerY = rect.height / 2;
-            const rotateX = ((y - centerY) / centerY) * -5;
-            const rotateY = ((x - centerX) / centerX) * 5;
-            card.style.transition = 'transform 0.1s ease-out';
-            card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
-        });
-        card.addEventListener('mouseleave', () => {
-            card.style.transition = 'transform 0.5s ease';
-            card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) scale3d(1, 1, 1)';
-        });
-    });
-
+    // Block animations & 3D tilts disabled across entire website per user specification
     const subtitleElement = document.querySelector('.hero .subtitle');
     if (subtitleElement && subtitleElement.innerText.length === 0) { 
         const textToType = "Full Stack Developer by day. Competitive gamer by night.";
@@ -2751,15 +2743,8 @@ function initDraggableStickers() {
 
                 sticker.style.transform = `translate3d(${posX}px, ${posY}px, 0) rotate(${currentRotation}deg) scale(1.05)`;
             } else {
-                // Interactive 3D cursor tilt on hover
-                const rect = sticker.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-                const centerX = rect.width / 2;
-                const centerY = rect.height / 2;
-                const tiltX = ((y - centerY) / centerY) * -6;
-                const tiltY = ((x - centerX) / centerX) * 6;
-                sticker.style.transform = `translate3d(${currentTranslateX}px, ${currentTranslateY}px, 0) perspective(400px) rotateX(${tiltX}deg) rotateY(${tiltY}deg) rotate(${baseRotation}deg)`;
+                // Keep sticker static on hover
+                sticker.style.transform = `translate3d(${currentTranslateX}px, ${currentTranslateY}px, 0) rotate(${baseRotation}deg)`;
             }
         });
 
@@ -2803,24 +2788,6 @@ function initDraggableStickers() {
             setTimeout(() => {
                 sticker.style.transition = 'box-shadow 0.18s ease, transform 0.12s ease';
             }, 450);
-        });
-    });
-
-    // 3D perspective hover for Education Card
-    const tiltCards = document.querySelectorAll('.tilt-card');
-    tiltCards.forEach(card => {
-        card.addEventListener('mousemove', (e) => {
-            const rect = card.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-            const centerX = rect.width / 2;
-            const centerY = rect.height / 2;
-            const rotateX = ((y - centerY) / centerY) * -5;
-            const rotateY = ((x - centerX) / centerX) * 5;
-            card.style.transform = `perspective(600px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-2px)`;
-        });
-        card.addEventListener('mouseleave', () => {
-            card.style.transform = 'perspective(600px) rotateX(0deg) rotateY(0deg) translateY(0px)';
         });
     });
 }

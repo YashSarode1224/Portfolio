@@ -3,9 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>
+        (function() {
+            var savedTheme = localStorage.getItem('yash_portfolio_theme');
+            if (savedTheme === 'sketch') {
+                document.documentElement.setAttribute('data-theme', 'sketch');
+            }
+        })();
+    </script>
     
     <!-- SECURITY HEADERS -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: https://via.placeholder.com https://avatars.githubusercontent.com; connect-src 'self' https://leetcode-api-faisalshohag.vercel.app https://alfa-leetcode-api.onrender.com https://leetcode-stats-api.herokuapp.com https://api.github.com;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: https://via.placeholder.com https://avatars.githubusercontent.com; connect-src 'self' https://leetcode-api-faisalshohag.vercel.app https://alfa-leetcode-api.onrender.com https://leetcode-stats-api.herokuapp.com https://api.github.com;">
 
     <!-- FAVICON -->
     <link rel="icon" href="favicon.png">
@@ -21,15 +29,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Patrick+Hand&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=2.6">
-    <script>
-        (function() {
-            var savedTheme = localStorage.getItem('yash_portfolio_theme');
-            if (savedTheme === 'sketch') {
-                document.documentElement.setAttribute('data-theme', 'sketch');
-            }
-        })();
-    </script>
+    <link rel="stylesheet" href="style.css?v=2.8">
 </head>
 <body>
 
@@ -101,7 +101,6 @@
                     <a href="#contact" class="brutalist-only">Let's Connect</a>
 
                     <!-- Sketch notebook nav links -->
-                    <a href="#about" class="sketch-only">about</a>
                     <a href="#skills" class="sketch-only">skills</a>
                     <a href="projects.html" class="sketch-only">projects</a>
                     <a href="#contact" class="sketch-only">contact</a>
@@ -109,77 +108,6 @@
                 </div>
             </div>
         </nav>
-
-        <!-- SKETCH MODE ONLY: Notebook Blue Ink Hero (Exact Match to User's Uploaded Image) -->
-        <section class="notebook-hero-section sketch-only" id="sketch-hero">
-            <div class="notebook-hero-left">
-                <!-- Yellow Highlighter Tape -->
-                <div class="highlighter-tape">
-                    2nd-year CSE • VIT Vellore
-                </div>
-
-                <!-- Big Hand-drawn Title -->
-                <h1 class="notebook-hero-title">
-                    <span class="greeting-text">hi, i'm</span><br>
-                    <span class="name-text">Yash.</span>
-                </h1>
-
-                <!-- Subtitle with arrow annotations -->
-                <p class="notebook-hero-subtitle">
-                    I build things for the web, grind DSA, and sketch ideas before I code them. This whole page is drawn in blue pen. Try scribbling
-                </p>
-
-                <div class="notebook-hero-actions">
-                    <span class="annot-arrow-down" aria-hidden="true">it ↘</span>
-                    <div class="notebook-btn-group">
-                        <a href="projects.html" class="notebook-btn-solid">see my work →</a>
-                        <a href="#contact" class="notebook-btn-outline">let's talk</a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="notebook-hero-right">
-                <div class="stage">
-                    <div id="bubble" class="sk"></div>
-                    <svg id="boy" viewBox="0 0 400 490" fill="none" stroke="#1f3fbf" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="Pen sketch of a boy with curly hair, glasses and headphones">
-                        <g id="body">
-                          <path d="M30 490 C30 410 76 356 150 340 L250 340 C324 356 370 410 370 490 Z" fill="#fbf8f0"/>
-                          <path d="M122 352 C112 404 108 446 108 490"/><path d="M278 352 C288 404 292 446 292 490"/>
-                          <ellipse cx="200" cy="340" rx="74" ry="25" fill="#fbf8f0"/>
-                          <path d="M186 352 L184 402"/><path d="M214 352 L216 402"/><circle cx="184" cy="408" r="5" fill="#1f3fbf"/><circle cx="216" cy="408" r="5" fill="#1f3fbf"/>
-                          <path d="M70 396 C54 440 74 478 118 474" fill="#fbf8f0"/><path d="M330 396 C346 440 326 478 282 474" fill="#fbf8f0"/>
-                          <g stroke-width="2.5" opacity=".75"><path d="M62 430l16 -18M64 450l22 -24M90 458l16 -14"/><path d="M338 430l-16 -18M336 450l-22 -24M310 458l-16 -14"/><path d="M150 372l-12 18M258 372l12 18"/></g>
-                          <rect x="128" y="402" width="144" height="92" rx="9" fill="#fbf8f0" transform="rotate(-3 200 448)"/>
-                          <g transform="rotate(-3 200 448)"><rect x="138" y="412" width="124" height="72" rx="4" stroke-width="2.5"/><path d="M168 436 L152 448 L168 460 M232 436 L248 448 L232 460 M210 432 L190 464" stroke-width="3.5"/></g>
-                          <circle cx="116" cy="462" r="20" fill="#fbf8f0"/><circle cx="284" cy="462" r="20" fill="#fbf8f0"/>
-                        </g>
-                        <g id="head" style="transform-origin:200px 320px;transform-box:view-box">
-                          <g fill="#fbf8f0">
-                            <circle cx="132" cy="150" r="26"/><circle cx="160" cy="112" r="28"/><circle cx="200" cy="98" r="30"/><circle cx="242" cy="110" r="28"/><circle cx="272" cy="146" r="26"/><circle cx="122" cy="190" r="22"/><circle cx="282" cy="190" r="22"/><circle cx="182" cy="120" r="22"/><circle cx="224" cy="124" r="22"/>
-                          </g>
-                          <ellipse cx="200" cy="205" rx="84" ry="88" fill="#fbf8f0"/>
-                          <g fill="#fbf8f0"><circle cx="156" cy="140" r="19"/><circle cx="196" cy="132" r="20"/><circle cx="238" cy="140" r="19"/><circle cx="130" cy="160" r="15"/><circle cx="268" cy="160" r="15"/></g>
-                          <g stroke-width="2.5"><path d="M150 138c8 -4 14 -2 18 4M190 128c8 -5 15 -3 20 4M230 138c8 -4 14 -2 18 4"/></g>
-                          <path d="M116 190 C108 66 292 66 284 190" stroke-width="7"/>
-                          <g fill="#fbf8f0"><ellipse cx="112" cy="204" rx="21" ry="34"/><ellipse cx="288" cy="204" rx="21" ry="34"/></g>
-                          <g stroke-width="2.5"><path d="M100 190v28M106 186v34M112 184v38M286 190v28M292 186v34M298 184v38" opacity=".7"/></g>
-                          <circle cx="165" cy="214" r="31" fill="rgba(255,255,255,.4)"/><circle cx="235" cy="214" r="31" fill="rgba(255,255,255,.4)"/>
-                          <path d="M195 212 Q200 205 205 212"/><path d="M134 210 L116 204M266 210 L284 204" stroke-width="3"/>
-                          <g id="eyeL"><circle cx="165" cy="214" r="12" fill="#fff" stroke-width="2.5"/><g class="pup"><circle cx="165" cy="214" r="6.5" fill="#1f3fbf"/><circle cx="167.5" cy="211.5" r="2" fill="#fff" stroke="none"/></g></g>
-                          <g id="eyeR"><circle cx="235" cy="214" r="12" fill="#fff" stroke-width="2.5"/><g class="pup"><circle cx="235" cy="214" r="6.5" fill="#1f3fbf"/><circle cx="237.5" cy="211.5" r="2" fill="#fff" stroke="none"/></g></g>
-                          <path d="M138 170 Q165 156 190 170M210 170 Q235 156 262 170" stroke-width="4"/>
-                          <path d="M200 226 Q209 238 198 240" stroke-width="3"/>
-                          <path id="mouth" d="M172 256 Q200 282 228 256"/>
-                          <g stroke-width="2.5" opacity=".8"><path d="M132 246l9 -6M138 254l9 -6M144 262l9 -6M268 246l-9 -6M262 254l-9 -6M256 262l-9 -6"/></g>
-                        </g>
-                      </svg>
-                      <div class="note-a" style="right:-8%;top:0%;transform:rotate(5deg)">that's me!
-                        <svg width="64" height="46" viewBox="0 0 70 50" style="display:block;margin:2px 0 0 -24px;overflow:visible" fill="none" stroke="#1f3fbf" stroke-width="3" stroke-linecap="round"><path d="M64 4 C40 4 20 18 14 42 M14 42 l-3 -12 M14 42 l11 -7"/></svg></div>
-                      <div class="note-a" style="left:-10%;bottom:12%;transform:rotate(-6deg)">psst… click<br>my face
-                        <svg width="64" height="38" viewBox="0 0 70 40" style="display:block;margin:0 0 0 46px;overflow:visible" fill="none" stroke="#1f3fbf" stroke-width="3" stroke-linecap="round"><path d="M4 6 C30 6 52 14 66 34 M66 34 l-12 -2 M66 34 l-2 -12"/></svg></div>
-                </div>
-            </div>
-        </section>
 
                 <!-- About -->
         <section class="about-container" id="about">
@@ -190,7 +118,7 @@
             </div>
 
             <div class="about-text">
-                <h2>About <span class="gradient-text">Me</span></h2>
+                <h2 class="brutalist-only">About <span class="gradient-text">Me</span></h2>
                 <p><strong>Name:</strong> Yash Nitin Sarode</p>
                 <p>
                     I love building things. Tech isn’t just a career, it’s fun. Most of my work is in web-adjacent and software projects, where I experiment, break things, and figure out how to turn ideas into reality.
@@ -204,6 +132,52 @@
             </div>
 
             <div class="about-sidebar">
+                <!-- In Sketch Mode: Interactive Boy Character -->
+                <div class="about-character-wrap sketch-only">
+                    <div class="stage">
+                        <div id="bubble" class="sk"></div>
+                        <svg id="boy" viewBox="0 0 400 490" fill="none" stroke="#1f3fbf" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="Pen sketch of a boy with curly hair, glasses and headphones">
+                            <g id="body">
+                              <path d="M30 490 C30 410 76 356 150 340 L250 340 C324 356 370 410 370 490 Z" fill="#fbf8f0"/>
+                              <path d="M122 352 C112 404 108 446 108 490"/><path d="M278 352 C288 404 292 446 292 490"/>
+                              <ellipse cx="200" cy="340" rx="74" ry="25" fill="#fbf8f0"/>
+                              <path d="M186 352 L184 402"/><path d="M214 352 L216 402"/><circle cx="184" cy="408" r="5" fill="#1f3fbf"/><circle cx="216" cy="408" r="5" fill="#1f3fbf"/>
+                              <path d="M70 396 C54 440 74 478 118 474" fill="#fbf8f0"/><path d="M330 396 C346 440 326 478 282 474" fill="#fbf8f0"/>
+                              <g stroke-width="2.5" opacity=".75"><path d="M62 430l16 -18M64 450l22 -24M90 458l16 -14"/><path d="M338 430l-16 -18M336 450l-22 -24M310 458l-16 -14"/><path d="M150 372l-12 18M258 372l12 18"/></g>
+                              <rect x="128" y="402" width="144" height="92" rx="9" fill="#fbf8f0" transform="rotate(-3 200 448)"/>
+                              <g transform="rotate(-3 200 448)"><rect x="138" y="412" width="124" height="72" rx="4" stroke-width="2.5"/><path d="M168 436 L152 448 L168 460 M232 436 L248 448 L232 460 M210 432 L190 464" stroke-width="3.5"/></g>
+                              <circle cx="116" cy="462" r="20" fill="#fbf8f0"/><circle cx="284" cy="462" r="20" fill="#fbf8f0"/>
+                            </g>
+                            <g id="head" style="transform-origin:200px 320px;transform-box:view-box">
+                              <g fill="#fbf8f0">
+                                <circle cx="132" cy="150" r="26"/><circle cx="160" cy="112" r="28"/><circle cx="200" cy="98" r="30"/><circle cx="242" cy="110" r="28"/><circle cx="272" cy="146" r="26"/><circle cx="122" cy="190" r="22"/><circle cx="282" cy="190" r="22"/><circle cx="182" cy="120" r="22"/><circle cx="224" cy="124" r="22"/>
+                              </g>
+                              <ellipse cx="200" cy="205" rx="84" ry="88" fill="#fbf8f0"/>
+                              <g fill="#fbf8f0"><circle cx="156" cy="140" r="19"/><circle cx="196" cy="132" r="20"/><circle cx="238" cy="140" r="19"/><circle cx="130" cy="160" r="15"/><circle cx="268" cy="160" r="15"/></g>
+                              <g stroke-width="2.5"><path d="M150 138c8 -4 14 -2 18 4M190 128c8 -5 15 -3 20 4M230 138c8 -4 14 -2 18 4"/></g>
+                              <path d="M116 190 C108 66 292 66 284 190" stroke-width="7"/>
+                              <g fill="#fbf8f0"><ellipse cx="112" cy="204" rx="21" ry="34"/><ellipse cx="288" cy="204" rx="21" ry="34"/></g>
+                              <g stroke-width="2.5"><path d="M100 190v28M106 186v34M112 184v38M286 190v28M292 186v34M298 184v38" opacity=".7"/></g>
+                              <circle cx="165" cy="214" r="31" fill="rgba(255,255,255,.4)"/><circle cx="235" cy="214" r="31" fill="rgba(255,255,255,.4)"/>
+                              <path d="M195 212 Q200 205 205 212"/><path d="M134 210 L116 204M266 210 L284 204" stroke-width="3"/>
+                              <g id="eyeL"><circle cx="165" cy="214" r="12" fill="#fff" stroke-width="2.5"/><g class="pup"><circle cx="165" cy="214" r="6.5" fill="#1f3fbf"/><circle cx="167.5" cy="211.5" r="2" fill="#fff" stroke-none"/></g></g>
+                              <g id="eyeR"><circle cx="235" cy="214" r="12" fill="#fff" stroke-width="2.5"/><g class="pup"><circle cx="235" cy="214" r="6.5" fill="#1f3fbf"/><circle cx="237.5" cy="211.5" r="2" fill="#fff" stroke-none"/></g></g>
+                              <path d="M138 170 Q165 156 190 170M210 170 Q235 156 262 170" stroke-width="4"/>
+                              <path d="M200 226 Q209 238 198 240" stroke-width="3"/>
+                              <path id="mouth" d="M172 256 Q200 282 228 256"/>
+                              <g stroke-width="2.5" opacity=".8"><path d="M132 246l9 -6M138 254l9 -6M144 262l9 -6M268 246l-9 -6M262 254l-9 -6M256 262l-9 -6"/></g>
+                            </g>
+                        </svg>
+                        <div class="note-a" style="right:-8%;top:0%;transform:rotate(5deg)">that's me!
+                            <svg width="64" height="46" viewBox="0 0 70 50" style="display:block;margin:2px 0 0 -24px;overflow:visible" fill="none" stroke="#1f3fbf" stroke-width="3" stroke-linecap="round"><path d="M64 4 C40 4 20 18 14 42 M14 42 l-3 -12 M14 42 l11 -7"/></svg>
+                        </div>
+                        <div class="note-a" style="left:-10%;bottom:12%;transform:rotate(-6deg)">psst… click<br>my face
+                            <svg width="64" height="38" viewBox="0 0 70 40" style="display:block;margin:0 0 0 46px;overflow:visible" fill="none" stroke="#1f3fbf" stroke-width="3" stroke-linecap="round"><path d="M4 6 C30 6 52 14 66 34 M66 34 l-12 -2 M66 34 l-2 -12"/></svg>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Education Card -->
                 <div class="info-card tilt-card" id="education-card">
                     <h3>Education</h3>
                     <div class="school-name">Vellore Institute of Technology,Vellore</div>
@@ -352,6 +326,6 @@
 
     </main>
     
-    <script src="script.js?v=2.6"></script>
+    <script src="script.js?v=2.8"></script>
 </body>
 </html>
