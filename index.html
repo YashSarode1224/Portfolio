@@ -32,6 +32,21 @@
 
     <div id="canvas-container"></div>
 
+    <!-- SKETCH MODE ONLY: Full-Page Interactive Blue Ink Doodle Canvas ("CURSOR IS INK") -->
+    <canvas id="inkCanvas" class="ink-canvas sketch-only" aria-hidden="true"></canvas>
+
+    <!-- SKETCH MODE ONLY: Floating Doodle & Erase Control Bar in Bottom Right -->
+    <div class="floating-doodle-bar sketch-only" id="floatingDoodleBar" role="toolbar" aria-label="Doodle Controls">
+        <button class="doodle-tool-btn active" id="doodlePenBtn" type="button" title="Doodle Pen: Drag mouse or finger to draw blue ink on paper">
+            <span class="tool-icon">✏️</span>
+            <span class="tool-label">doodle</span>
+        </button>
+        <button class="doodle-tool-btn" id="doodleEraseBtn" type="button" title="Erase blue ink scribbles">
+            <span class="tool-icon">⌫</span>
+            <span class="tool-label">erase</span>
+        </button>
+    </div>
+
     <!-- Terminal -->
     <div class="terminal-wrapper">
         <button id="terminal-toggle" class="terminal-btn">
@@ -59,7 +74,13 @@
 
     <main>
         <nav>
-            <div class="logo">Portfolio</div>
+            <div class="logo">
+                <span class="brutalist-only">Portfolio</span>
+                <span class="logo-sketch sketch-only">
+                    yash
+                    <svg class="sketch-underline" viewBox="0 0 50 12" fill="none" aria-hidden="true"><path d="M2 9 C15 3, 30 11, 48 6" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>
+                </span>
+            </div>
             <div class="nav-right">
                 <div class="social-links">
                     <button class="theme-toggle-btn" id="theme-toggle-btn" type="button" title="Switch Theme (Brutalist ↔ Hand-Drawn Sketch)">
@@ -72,6 +93,99 @@
                 </div>
             </div>
         </nav>
+
+        <!-- SKETCH MODE ONLY: Notebook Blue Ink Hero (Exact Match to User's Uploaded Image) -->
+        <section class="notebook-hero-section sketch-only" id="sketch-hero">
+            <div class="notebook-hero-left">
+                <!-- Yellow Highlighter Tape -->
+                <div class="highlighter-tape">
+                    2nd-year CSE • VIT Vellore
+                </div>
+
+                <!-- Big Hand-drawn Title -->
+                <h1 class="notebook-hero-title">
+                    <span class="greeting-text">hi, i'm</span><br>
+                    <span class="name-text">Yash.</span>
+                </h1>
+
+                <!-- Subtitle with arrow annotations -->
+                <p class="notebook-hero-subtitle">
+                    I build things for the web, grind DSA, and sketch ideas before I code them. This whole page is drawn in blue pen. Try scribbling <span class="annot-opsst">opsst... click my face</span>
+                </p>
+
+                <div class="notebook-hero-actions">
+                    <span class="annot-arrow-down" aria-hidden="true">it ↘</span>
+                    <div class="notebook-btn-group">
+                        <a href="projects.html" class="notebook-btn-solid">see my work →</a>
+                        <a href="#contact" class="notebook-btn-outline">let's talk</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="notebook-hero-right">
+                <div class="notebook-avatar-wrap">
+                    <span class="annot-arrow-me" aria-hidden="true">that's me! ↙</span>
+                    
+                    <!-- Hand-Drawn Blue Ink Character Illustration -->
+                    <div class="notebook-character" id="notebook-character" role="button" tabindex="0" title="Click my face to interact!">
+                        <svg class="character-svg" viewBox="0 0 280 320" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <!-- Hair / Headband Curls -->
+                            <path class="ink-stroke" d="M90 100 C80 80, 85 55, 105 45 C120 38, 140 40, 150 50 C165 38, 185 40, 195 55 C210 70, 205 90, 195 105" stroke="var(--ink)" stroke-width="3" stroke-linecap="round"/>
+                            <path class="ink-stroke" d="M100 68 C100 52, 115 50, 125 60 C135 50, 150 50, 155 65 C165 52, 180 55, 185 70" stroke="var(--ink)" stroke-width="2.6" stroke-linecap="round"/>
+                            
+                            <!-- Headphones -->
+                            <path class="ink-stroke" d="M92 110 C86 75, 198 75, 196 110" stroke="var(--ink)" stroke-width="3.5" stroke-linecap="round"/>
+                            <rect class="ink-stroke" x="80" y="105" width="16" height="34" rx="7" stroke="var(--ink)" stroke-width="3" fill="#ffffff"/>
+                            <rect class="ink-stroke" x="190" y="105" width="16" height="34" rx="7" stroke="var(--ink)" stroke-width="3" fill="#ffffff"/>
+                            
+                            <!-- Face Contour -->
+                            <path class="ink-stroke" d="M96 112 C96 170, 190 170, 190 112" stroke="var(--ink)" stroke-width="3" stroke-linecap="round" fill="#ffffff"/>
+                            
+                            <!-- Eyeglasses -->
+                            <circle class="ink-stroke" cx="122" cy="125" r="16" stroke="var(--ink)" stroke-width="2.8"/>
+                            <circle class="ink-stroke" cx="164" cy="125" r="16" stroke="var(--ink)" stroke-width="2.8"/>
+                            <path class="ink-stroke" d="M138 125 C143 122, 147 122, 148 125" stroke="var(--ink)" stroke-width="2.8"/>
+                            
+                            <!-- Eyes -->
+                            <g id="character-eyes">
+                                <circle class="ink-eye" cx="122" cy="125" r="4.5" fill="var(--ink)"/>
+                                <circle class="ink-eye" cx="164" cy="125" r="4.5" fill="var(--ink)"/>
+                            </g>
+                            
+                            <!-- Smile & Blush -->
+                            <path id="character-mouth" class="ink-stroke" d="M134 145 Q143 154 152 145" stroke="var(--ink)" stroke-width="2.6" stroke-linecap="round"/>
+                            <path class="ink-stroke" d="M106 138 L114 144 M108 144 L116 150" stroke="var(--ink)" stroke-width="2" stroke-linecap="round" opacity="0.65"/>
+                            <path class="ink-stroke" d="M178 138 L170 144 M176 144 L168 150" stroke="var(--ink)" stroke-width="2" stroke-linecap="round" opacity="0.65"/>
+                            
+                            <!-- Neck & Collar -->
+                            <path class="ink-stroke" d="M132 166 L132 185 M154 166 L154 185" stroke="var(--ink)" stroke-width="3" stroke-linecap="round"/>
+                            <path class="ink-stroke" d="M125 185 C135 192, 150 192, 160 185" stroke="var(--ink)" stroke-width="2.6"/>
+                            
+                            <!-- Hoodie & Shoulders -->
+                            <path class="ink-stroke" d="M96 230 C80 200, 110 185, 130 185 C150 185, 180 200, 196 230" stroke="var(--ink)" stroke-width="3" fill="#ffffff"/>
+                            <path class="ink-stroke" d="M80 260 C75 220, 95 195, 120 188" stroke="var(--ink)" stroke-width="3" stroke-linecap="round"/>
+                            <path class="ink-stroke" d="M212 260 C217 220, 197 195, 172 188" stroke="var(--ink)" stroke-width="3" stroke-linecap="round"/>
+                            
+                            <!-- Overalls straps -->
+                            <path class="ink-stroke" d="M112 188 L112 245 M178 188 L178 245" stroke="var(--ink)" stroke-width="2.8"/>
+                            
+                            <!-- Arms & Hands holding tablet -->
+                            <path class="ink-stroke" d="M82 255 C90 270, 105 270, 120 260" stroke="var(--ink)" stroke-width="2.8"/>
+                            <path class="ink-stroke" d="M210 255 C202 270, 187 270, 172 260" stroke="var(--ink)" stroke-width="2.8"/>
+                            
+                            <!-- Tablet with code </> -->
+                            <rect class="ink-stroke" x="110" y="235" width="72" height="52" rx="8" stroke="var(--ink)" stroke-width="3" fill="#ffffff"/>
+                            <text x="146" y="268" text-anchor="middle" font-family="'Architects Daughter', cursive, sans-serif" font-size="20" font-weight="bold" fill="var(--ink)">&lt; / &gt;</text>
+                        </svg>
+
+                        <!-- Animated Speech Bubble -->
+                        <div class="notebook-speech-bubble" id="notebook-speech-bubble">
+                            <span id="speech-bubble-text">Hi! Try scribbling on my page with your mouse! ✏️</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
 
                 <!-- About -->
         <section class="about-container" id="about">
@@ -157,8 +271,8 @@
             </div>
         </section>
 
-<!-- Hero -->
-        <section class="hero">
+<!-- Hero (BRUTALIST ONLY) -->
+        <section class="hero brutalist-only">
             <h1>Building <br> <span class="gradient-text">Digital Reality</span></h1>
             <p class="subtitle">Full Stack Developer by day. Competitive gamer by night. Creating interactive experiences on the web.</p>
         </section>
@@ -208,111 +322,6 @@
                 <div class="stat-title">Coffee Intake</div>
                 <div class="stat-value">∞ Cups</div>
                 <div class="rank-badge">Fuel Source</div>
-            </div>
-        </section>
-
-        <!-- Featured Work Spotlight -->
-        <section class="featured-projects-section" id="featured-projects">
-            <div class="section-header">
-                <div>
-                    <h2>Featured <span class="gradient-text">Work</span></h2>
-                    <p class="subtitle" style="margin-top: 8px;">Interactive blueprints, student ecosystems, and 48-hour hackathon builds.</p>
-                </div>
-                <a href="projects.html" class="visit-btn" style="flex: 0 0 auto; white-space: nowrap;">View All Projects (3) →</a>
-            </div>
-
-            <div class="featured-projects-grid">
-                <!-- Collab Hub Card -->
-                <div class="project-card" style="transform: rotate(-0.5deg);">
-                    <div class="project-screen-window">
-                        <div class="project-screen-topbar">
-                            <div class="window-dots" aria-hidden="true">
-                                <span class="window-dot"></span>
-                                <span class="window-dot"></span>
-                                <span class="window-dot"></span>
-                            </div>
-                            <span class="screen-badge">48H Hackathon</span>
-                            <button class="view-mode-toggle" type="button" title="Toggle Blueprint Wireframe">
-                                <span class="toggle-icon">📐</span>
-                                <span class="toggle-text">Blueprint View</span>
-                            </button>
-                        </div>
-                        <div class="project-screen-viewport">
-                            <img src="main(vitcollabhub).png" alt="VIT Collab Hub Interface" class="project-screenshot-layer" loading="lazy">
-                            <div class="project-wireframe-layer" aria-hidden="true">
-                                <div class="wireframe-player">
-                                    <div class="wireframe-screen-box" title="Click to test wireframe player simulation">
-                                        <div class="wireframe-play-btn">▶</div>
-                                    </div>
-                                    <div class="wireframe-controls-bar">
-                                        <span>00:00</span>
-                                        <div class="wireframe-scrubber-track">
-                                            <div class="wireframe-scrubber-fill"></div>
-                                            <div class="wireframe-scrubber-thumb"></div>
-                                        </div>
-                                        <span>15k views</span>
-                                    </div>
-                                </div>
-                                <div class="wireframe-annotation">
-                                    <span class="sketch-arrow">↙</span>
-                                    <span>Firebase real-time taskboard & chat</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <h3>VIT Collab Hub</h3>
-                    <p>Student-exclusive collaboration ecosystem connecting VITians to form hackathon teams, manage taskboards, and chat in real-time.</p>
-                    <div class="skills-wrapper">
-                        <span class="skill-tag">HTML</span><span class="skill-tag">CSS</span><span class="skill-tag">JS</span><span class="skill-tag">Firebase</span>
-                    </div>
-                    <div class="btn-group">
-                        <a href="project-details.html?project=collab" class="visit-btn">Details & Demo ↗</a>
-                    </div>
-                </div>
-
-                <!-- Weather App Card -->
-                <div class="project-card" style="transform: rotate(0.5deg);">
-                    <div class="project-screen-window">
-                        <div class="project-screen-topbar">
-                            <div class="window-dots" aria-hidden="true">
-                                <span class="window-dot"></span>
-                                <span class="window-dot"></span>
-                                <span class="window-dot"></span>
-                            </div>
-                            <span class="screen-badge">Desktop Python</span>
-                            <button class="view-mode-toggle" type="button" title="Toggle Blueprint Wireframe">
-                                <span class="toggle-icon">📐</span>
-                                <span class="toggle-text">Blueprint View</span>
-                            </button>
-                        </div>
-                        <div class="project-screen-viewport">
-                            <img src="Weather(weather).png" alt="Weather App Python GUI" class="project-screenshot-layer" loading="lazy">
-                            <div class="project-wireframe-layer" aria-hidden="true">
-                                <div class="wireframe-player">
-                                    <div class="wireframe-wire-row" style="justify-content: space-between;">
-                                        <span style="font-weight: 700; font-size: 0.72rem;">📍 Pune, IN: 28°C</span>
-                                        <span>☀️</span>
-                                    </div>
-                                    <div class="wireframe-screen-box" style="min-height: 40px;" title="Click to test simulation">
-                                        <div class="wireframe-play-btn" style="width: 24px; height: 24px; font-size: 0.7rem;">▶</div>
-                                    </div>
-                                </div>
-                                <div class="wireframe-annotation">
-                                    <span class="sketch-arrow">↙</span>
-                                    <span>PyQt5 native desktop window</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <h3>Weather App</h3>
-                    <p>Desktop weather station built with Python and PyQt5. Queries real-time API data across cities with complete error handling.</p>
-                    <div class="skills-wrapper">
-                        <span class="skill-tag">Python</span><span class="skill-tag">PyQt5</span><span class="skill-tag">REST API</span>
-                    </div>
-                    <div class="btn-group">
-                        <a href="project-details.html?project=weather" class="visit-btn">Details & Demo ↗</a>
-                    </div>
-                </div>
             </div>
         </section>
 

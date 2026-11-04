@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Architects+Daughter&family=Archivo+Black&family=DM+Mono:wght@400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Architects+Daughter&family=Archivo+Black&family=Caveat:wght@600;700&family=DM+Mono:wght@400;500;700&display=swap');
 
 :root {
     --ink: #161616;
@@ -26,11 +26,11 @@
    Exact aesthetic from user's architectural sketchbook wireframe drawing
    ========================================================================== */
 [data-theme="sketch"] {
-    --ink: #0c4a8e; /* Classic Blue Ballpoint / Drafting Ink */
-    --paper: #ffffff;
-    --paper-warm: #f5f9ff; /* Subtle blueprint/drafting paper tint */
-    --yellow: #fffa75; /* Highlighter yellow accent */
-    --pink: #ffd2e5;   /* Highlighter pink */
+    --ink: #104bb8; /* Authentic Vibrant Blue Ballpoint / Fountain Pen Ink */
+    --paper: #fbf8ee; /* Ruled notebook paper warm ivory */
+    --paper-warm: #f6f1de; /* Slightly deeper paper tint */
+    --yellow: #fff37a; /* Highlighter yellow accent */
+    --pink: #ffb8d6;   /* Highlighter pink */
     --blue: #c4e4ff;   /* Soft drafting blue */
     --green: #d2f9a9;  /* Highlighter green */
     --orange: #ffe0b3; /* Highlighter orange */
@@ -54,14 +54,27 @@ body {
     transition: background-color 0.22s ease, color 0.22s ease;
 }
 
-/* Authentic Notebook Graph Paper Canvas in Sketch Mode (Blue Ink Drafting Grid) */
+/* Authentic Ruled College Notebook Paper Canvas in Sketch Mode (Page Back is Page) */
 [data-theme="sketch"] body {
-    background-color: #fcfdfe;
+    background-color: #fbf8ee;
     background-image: 
-        linear-gradient(rgba(12, 74, 142, 0.07) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(12, 74, 142, 0.07) 1px, transparent 1px);
-    background-size: 20px 20px;
+        /* Vertical Red/Pink Notebook Margin Line */
+        linear-gradient(90deg, transparent 72px, rgba(238, 92, 92, 0.42) 72px, rgba(238, 92, 92, 0.42) 74px, transparent 74px),
+        /* Horizontal Blue Ruling Lines spaced every 32px */
+        linear-gradient(rgba(45, 95, 185, 0.13) 1px, transparent 1px);
+    background-size: 100% 100%, 100% 32px;
+    background-position: 0 0, 0 8px;
     color: var(--ink);
+    /* Custom Blue Ink Pen Cursor: Cursor is Ink */
+    cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'><path d='M3 21l3.75-.75L19.2 7.8a2.12 2.12 0 0 0 0-3l-1-1a2.12 2.12 0 0 0-3 0L2.75 16.25 2 20l1 1z' fill='%23104bb8' stroke='%23ffffff' stroke-width='1.5'/><circle cx='3' cy='21' r='1.5' fill='%23104bb8'/></svg>") 3 21, auto;
+}
+
+@media (max-width: 768px) {
+    [data-theme="sketch"] body {
+        background-image: 
+            linear-gradient(90deg, transparent 32px, rgba(238, 92, 92, 0.42) 32px, rgba(238, 92, 92, 0.42) 34px, transparent 34px),
+            linear-gradient(rgba(45, 95, 185, 0.13) 1px, transparent 1px);
+    }
 }
 
 /* The Matrix canvas remains available to the script, but the visual language is deliberately flat. */
@@ -443,640 +456,14 @@ p.subtitle::before { content: '↓ '; color: var(--ink); font-weight: 700; }
 .contact-card h3 { margin-bottom: 8px; font-size: 1.45rem; text-transform: uppercase; }.contact-card p { font-size: .77rem; line-height: 1.5; word-break: break-all; }
 
 /* Projects and project detail */
-.projects-toolbar {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    align-items: center;
-    gap: 16px;
-    margin: 0 0 36px 0;
-    padding: 16px 20px;
-    background: var(--paper-warm);
-    border: var(--border);
-    box-shadow: 5px 5px 0 var(--ink);
-}
-
-.filter-group {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    align-items: center;
-}
-
-.filter-pill {
-    padding: 8px 14px;
-    border: var(--border);
-    background: var(--paper);
-    color: var(--ink);
-    font-family: inherit;
-    font-size: 0.78rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    cursor: pointer;
-    box-shadow: 3px 3px 0 var(--ink);
-    transition: transform 120ms ease, box-shadow 120ms ease, background 120ms ease;
-}
-
-.filter-pill:hover {
-    background: var(--yellow);
-    transform: translate(-1px, -1px);
-    box-shadow: 4px 4px 0 var(--ink);
-}
-
-.filter-pill.active {
-    background: var(--yellow);
-    transform: translate(2px, 2px);
-    box-shadow: 1px 1px 0 var(--ink);
-}
-
-.search-wrap {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 6px 12px;
-    border: var(--border);
-    background: var(--paper);
-    box-shadow: 3px 3px 0 var(--ink);
-}
-
-.search-icon {
-    font-size: 0.9rem;
-    opacity: 0.8;
-}
-
-#projectSearchInput {
-    border: none;
-    outline: none;
-    background: transparent;
-    font-family: inherit;
-    font-size: 0.82rem;
-    color: var(--ink);
-    width: clamp(140px, 22vw, 240px);
-}
-
-.count-badge {
-    font-size: 0.7rem;
-    font-weight: 700;
-    padding: 3px 8px;
-    background: var(--green);
-    border: 1.5px solid var(--ink);
-    white-space: nowrap;
-}
-
-.projects-grid { 
-    display: grid; 
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); 
-    gap: 34px; 
-    align-items: stretch; 
-}
-
-.project-card { 
-    display: flex;
-    flex-direction: column;
-    min-height: 480px; 
-    gap: 16px; 
-    padding: 24px; 
-    background: var(--paper); 
-    border: var(--border);
-    box-shadow: var(--shadow);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.project-card:nth-child(odd) { 
-    background: var(--paper-warm); 
-    transform: rotate(-0.5deg); 
-}
-
-.project-card:nth-child(even) { 
-    background: #f0f7ff; 
-    transform: rotate(0.5deg); 
-}
-
-.project-card:hover {
-    transform: translate(-3px, -3px) rotate(0deg);
-    box-shadow: 9px 9px 0 var(--ink);
-}
-
-/* Interactive Project Screen Window (Inspired by wireframe sketch) */
-.project-screen-window {
-    border: var(--border);
-    background: var(--paper);
-    box-shadow: 4px 4px 0 var(--ink);
-    margin-bottom: 6px;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-}
-
-.project-screen-topbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 7px 12px;
-    background: var(--paper-warm);
-    border-bottom: var(--border);
-    font-size: 0.72rem;
-}
-
-.window-dots {
-    display: flex;
-    gap: 5px;
-}
-
-.window-dot {
-    width: 9px;
-    height: 9px;
-    border-radius: 50%;
-    border: 1.2px solid var(--ink);
-    background: var(--yellow);
-    display: inline-block;
-}
-
-.window-dot:nth-child(1) { background: #ff7675; }
-.window-dot:nth-child(2) { background: #ffeaa7; }
-.window-dot:nth-child(3) { background: #55efc4; }
-
-.screen-badge {
-    font-weight: 700;
-    text-transform: uppercase;
-    font-size: 0.68rem;
-    padding: 2px 7px;
-    border: 1px solid var(--ink);
-    background: var(--paper);
-    letter-spacing: 0.04em;
-}
-
-.view-mode-toggle {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    padding: 3px 9px;
-    border: 1.5px solid var(--ink);
-    background: var(--yellow);
-    color: var(--ink);
-    font-family: inherit;
-    font-size: 0.68rem;
-    font-weight: 700;
-    cursor: pointer;
-    box-shadow: 2px 2px 0 var(--ink);
-    transition: transform 100ms ease, background 100ms ease;
-}
-
-.view-mode-toggle:hover {
-    background: var(--pink);
-    transform: translate(1px, 1px);
-    box-shadow: 1px 1px 0 var(--ink);
-}
-
-.project-screen-viewport {
-    position: relative;
-    width: 100%;
-    aspect-ratio: 16 / 9;
-    min-height: 190px;
-    background: #ffffff;
-    overflow: hidden;
-}
-
-.project-screenshot-layer {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-    transition: opacity 0.25s ease, filter 0.25s ease;
-}
-
-/* Hand-Drawn Blueprint Wireframe View (Exact match to user's sketch) */
-.project-wireframe-layer {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    background-color: #fafbfc;
-    background-image: 
-        linear-gradient(rgba(12, 74, 142, 0.08) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(12, 74, 142, 0.08) 1px, transparent 1px);
-    background-size: 14px 14px;
-    padding: 12px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    transition: opacity 0.25s ease;
-}
-
-.wireframe-wire-row {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-}
-
-/* The iconic hand-drawn crossed-box image placeholder from user sketch */
-.wireframe-x-box {
-    position: relative;
-    border: 1.8px solid var(--ink);
-    background: #ffffff;
-    border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.wireframe-x-box::before,
-.wireframe-x-box::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(to top right, transparent calc(50% - 1px), var(--ink) calc(50% - 1px), var(--ink) calc(50% + 1px), transparent calc(50% + 1px));
-    pointer-events: none;
-    opacity: 0.55;
-}
-
-.wireframe-x-box::after {
-    background: linear-gradient(to bottom right, transparent calc(50% - 1px), var(--ink) calc(50% - 1px), var(--ink) calc(50% + 1px), transparent calc(50% + 1px));
-}
-
-/* Hand-drawn Video/App player frame from user sketch */
-.wireframe-player {
-    border: 2px solid var(--ink);
-    border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
-    background: #ffffff;
-    padding: 8px;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    box-shadow: 2px 2px 0 var(--ink);
-    position: relative;
-}
-
-.wireframe-screen-box {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 60px;
-    background: var(--paper-warm);
-    border: 1.5px dashed var(--ink);
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background 0.15s ease;
-}
-
-.wireframe-screen-box:hover {
-    background: var(--yellow);
-}
-
-.wireframe-play-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    border: 2px solid var(--ink);
-    background: #ffffff;
-    color: var(--ink);
-    font-size: 0.9rem;
-    box-shadow: 2px 2px 0 var(--ink);
-    cursor: pointer;
-    transition: transform 0.15s ease;
-}
-
-.wireframe-screen-box:hover .wireframe-play-btn {
-    transform: scale(1.15);
-    background: var(--yellow);
-}
-
-/* Hand-drawn scrubber from user sketch (00 ━━━●━━━━ 15k) */
-.wireframe-controls-bar {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 0.65rem;
-    font-weight: 700;
-}
-
-.wireframe-scrubber-track {
-    flex: 1;
-    height: 5px;
-    background: #e3ebf7;
-    border: 1px solid var(--ink);
-    position: relative;
-    border-radius: 2px;
-}
-
-.wireframe-scrubber-fill {
-    height: 100%;
-    width: 45%;
-    background: var(--ink);
-}
-
-.wireframe-scrubber-thumb {
-    position: absolute;
-    top: 50%;
-    left: 45%;
-    transform: translate(-50%, -50%);
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background: var(--yellow);
-    border: 1.5px solid var(--ink);
-}
-
-.wireframe-annotation {
-    font-size: 0.72rem;
-    font-weight: 700;
-    color: var(--ink);
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    margin-top: 2px;
-}
-
-.wireframe-annotation span.sketch-arrow {
-    font-size: 0.95rem;
-    display: inline-block;
-}
-
-/* Default / Toggle display states */
-.project-card:not(.show-wireframe) .project-wireframe-layer {
-    opacity: 0;
-    pointer-events: none;
-}
-
-.project-card.show-wireframe .project-screenshot-layer {
-    opacity: 0;
-    pointer-events: none;
-}
-
-.project-card.show-wireframe .project-wireframe-layer {
-    opacity: 1;
-    pointer-events: auto;
-}
-
-/* In Sketch Mode, Wireframe View is the heroic primary view! */
-[data-theme="sketch"] .project-card:not(.force-screenshot) .project-screenshot-layer {
-    opacity: 0;
-    pointer-events: none;
-}
-[data-theme="sketch"] .project-card:not(.force-screenshot) .project-wireframe-layer {
-    opacity: 1;
-    pointer-events: auto;
-}
-[data-theme="sketch"] .project-card.force-screenshot .project-screenshot-layer {
-    opacity: 1;
-    pointer-events: auto;
-}
-[data-theme="sketch"] .project-card.force-screenshot .project-wireframe-layer {
-    opacity: 0;
-    pointer-events: none;
-}
-
-.project-card h3 { 
-    font-size: clamp(1.4rem, 2.4vw, 1.9rem); 
-    line-height: 1.1; 
-    text-transform: uppercase; 
-    margin-top: 4px;
-}
-
-.project-card p { 
-    font-size: 0.86rem; 
-    line-height: 1.65; 
-}
-
-.project-card p:empty, 
-.project-card .skills-wrapper:empty { 
-    display: none; 
-}
-
-/* Bulleted Engineering Highlights */
-.project-highlights {
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    margin: 4px 0 8px;
-    padding: 0;
-}
-
-.project-highlight-item {
-    font-size: 0.77rem;
-    line-height: 1.45;
-    display: flex;
-    align-items: flex-start;
-    gap: 6px;
-    color: var(--muted);
-}
-
-.project-highlight-item .bullet-check {
-    color: var(--ink);
-    font-weight: 700;
-}
-
-.btn-group { 
-    display: flex; 
-    width: 100%; 
-    flex-wrap: wrap; 
-    gap: 10px; 
-    margin-top: auto; 
-    padding-top: 10px;
-}
-
-.visit-btn { 
-    display: inline-flex; 
-    align-items: center;
-    justify-content: center;
-    min-width: 110px; 
-    flex: 1; 
-    padding: 11px 15px; 
-    border: var(--border); 
-    background: var(--ink); 
-    box-shadow: 4px 4px 0 var(--paper); 
-    color: var(--paper); 
-    font-family: inherit;
-    font-size: 0.76rem; 
-    font-weight: 700; 
-    text-align: center; 
-    text-decoration: none; 
-    text-transform: uppercase; 
-    cursor: pointer;
-    transition: transform 150ms ease, box-shadow 150ms ease, background 150ms ease; 
-}
-
-.visit-btn:hover, 
-.visit-btn:focus-visible { 
-    background: var(--pink); 
-    color: var(--ink); 
-    transform: translate(3px, 3px); 
-    box-shadow: 1px 1px 0 var(--ink); 
-    outline: none; 
-}
-
-.visit-btn.blueprint-btn {
-    background: var(--paper-warm);
-    color: var(--ink);
-    border: var(--border);
-    box-shadow: 3px 3px 0 var(--ink);
-}
-
-.visit-btn.blueprint-btn:hover {
-    background: var(--yellow);
-    transform: translate(2px, 2px);
-    box-shadow: 1px 1px 0 var(--ink);
-}
-
-/* ==========================================================================
-   INTERACTIVE ARCHITECTURE BLUEPRINT MODAL
-   ========================================================================== */
-.blueprint-modal {
-    position: fixed;
-    inset: 0;
-    z-index: 999999;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(10, 20, 35, 0.65);
-    backdrop-filter: blur(4px);
-    padding: 20px;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.2s ease;
-}
-
-.blueprint-modal.active {
-    opacity: 1;
-    pointer-events: auto;
-}
-
-.blueprint-modal-content {
-    background: var(--paper);
-    border: 3.5px solid var(--ink);
-    box-shadow: 10px 10px 0 var(--ink);
-    width: 100%;
-    max-width: 740px;
-    max-height: 88vh;
-    overflow-y: auto;
-    padding: 28px;
-    position: relative;
-    transform: translateY(20px);
-    transition: transform 0.2s cubic-bezier(0.18, 0.89, 0.32, 1.28);
-}
-
-.blueprint-modal.active .blueprint-modal-content {
-    transform: translateY(0);
-}
-
-.blueprint-modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    border-bottom: var(--border);
-    padding-bottom: 16px;
-    margin-bottom: 20px;
-}
-
-.blueprint-modal-header h2 {
-    font-size: clamp(1.4rem, 2.5vw, 1.9rem);
-    text-transform: uppercase;
-}
-
-.blueprint-modal-close {
-    background: var(--yellow);
-    border: var(--border);
-    font-size: 1.1rem;
-    font-weight: 700;
-    width: 36px;
-    height: 36px;
-    display: grid;
-    place-items: center;
-    cursor: pointer;
-    box-shadow: 3px 3px 0 var(--ink);
-    transition: transform 0.1s ease, background 0.1s ease;
-}
-
-.blueprint-modal-close:hover {
-    background: #ff7675;
-    color: #ffffff;
-    transform: translate(2px, 2px);
-    box-shadow: 1px 1px 0 var(--ink);
-}
-
-.blueprint-flow-box {
-    background: var(--paper-warm);
-    border: 2px solid var(--ink);
-    padding: 16px;
-    margin: 16px 0;
-    box-shadow: 4px 4px 0 var(--ink);
-}
-
-.blueprint-flow-title {
-    font-weight: 700;
-    font-size: 0.82rem;
-    text-transform: uppercase;
-    margin-bottom: 12px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-
-.blueprint-steps-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-    gap: 10px;
-}
-
-.blueprint-step-node {
-    background: var(--paper);
-    border: 1.8px solid var(--ink);
-    padding: 10px 8px;
-    text-align: center;
-    font-size: 0.75rem;
-    font-weight: 700;
-    box-shadow: 2px 2px 0 var(--ink);
-}
-
-.blueprint-step-node span {
-    display: block;
-    font-size: 0.65rem;
-    font-weight: 500;
-    color: var(--muted);
-    margin-top: 4px;
-}
-
-.blueprint-desc-block {
-    margin: 18px 0;
-    line-height: 1.65;
-    font-size: 0.9rem;
-}
-
-.blueprint-hurdles-box {
-    border-left: 4px solid var(--ink);
-    background: #fffdf0;
-    padding: 12px 16px;
-    margin: 16px 0;
-    font-size: 0.83rem;
-    line-height: 1.6;
-}
-
-/* Featured Projects Section on index.html */
-.featured-projects-section {
-    margin: clamp(50px, 7vw, 90px) 0;
-}
-
-.featured-projects-section .section-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    margin-bottom: 30px;
-    flex-wrap: wrap;
-    gap: 16px;
-}
-
-.featured-projects-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: 32px;
-}
+.projects-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 30px; align-items: stretch; }
+.project-card { min-height: 340px; gap: 20px; padding: 26px; background: var(--paper); }
+.project-card:nth-child(odd) { background: var(--paper-warm); transform: rotate(-.6deg); }.project-card:nth-child(even) { background: var(--blue); transform: rotate(.6deg); }
+.project-card h3 { font-size: clamp(1.6rem, 3vw, 2.3rem); line-height: 1; text-transform: uppercase; }
+.project-card p { font-size: .88rem; line-height: 1.75; }.project-card p:empty, .project-card .skills-wrapper:empty { display: none; }
+.btn-group { display: flex; width: 100%; flex-wrap: wrap; gap: 12px; margin-top: auto; }
+.visit-btn { display: inline-block; min-width: 110px; flex: 1; padding: 12px 16px; border: var(--border); background: var(--ink); box-shadow: 4px 4px 0 var(--paper); color: var(--paper); font-size: .78rem; font-weight: 700; text-align: center; text-decoration: none; text-transform: uppercase; transition: transform 150ms ease, box-shadow 150ms ease, background 150ms ease; }
+.visit-btn:hover, .visit-btn:focus-visible { background: var(--pink); color: var(--ink); transform: translate(4px, 4px); box-shadow: none; outline: none; }
 
 .project-details-container { display: grid; grid-template-columns: minmax(0, 1.8fr) minmax(280px, 1fr); gap: clamp(30px, 5vw, 64px); align-items: start; margin: 40px 0 60px; }
 .slider-container { position: relative; display: flex; width: 100%; min-height: 300px; aspect-ratio: 16 / 9; align-items: center; justify-content: center; overflow: hidden; border: var(--border); background: var(--yellow); box-shadow: var(--shadow); }
@@ -2373,12 +1760,7 @@ body.violent-glitch-active {
 [data-theme="sketch"] .graph-hud-bar,
 [data-theme="sketch"] .graph-node-card,
 [data-theme="sketch"] .workflow-close-btn,
-[data-theme="sketch"] .terminal-window,
-[data-theme="sketch"] .project-screen-window,
-[data-theme="sketch"] .projects-toolbar,
-[data-theme="sketch"] .filter-pill,
-[data-theme="sketch"] .search-wrap,
-[data-theme="sketch"] .blueprint-modal-content {
+[data-theme="sketch"] .terminal-window {
     border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px !important;
     border: 2.2px solid var(--ink) !important;
     background: #ffffff;
@@ -2411,8 +1793,7 @@ body.violent-glitch-active {
 [data-theme="sketch"] .fun-fact::after,
 [data-theme="sketch"] .logo::after,
 [data-theme="sketch"] .theme-toggle-btn::after,
-[data-theme="sketch"] .visit-btn::after,
-[data-theme="sketch"] .filter-pill.active::after {
+[data-theme="sketch"] .visit-btn::after {
     content: '';
     position: absolute;
     inset: 0;
@@ -2463,10 +1844,7 @@ body.violent-glitch-active {
 [data-theme="sketch"] .graph-card-badge,
 [data-theme="sketch"] .workflow-category-pill,
 [data-theme="sketch"] .workflow-step-type-pill,
-[data-theme="sketch"] .year-tag,
-[data-theme="sketch"] .screen-badge,
-[data-theme="sketch"] .count-badge,
-[data-theme="sketch"] .feature-pill {
+[data-theme="sketch"] .year-tag {
     border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px !important;
     border: 1.5px solid var(--ink) !important;
     box-shadow: none !important;
@@ -2516,49 +1894,349 @@ body.violent-glitch-active {
     color: var(--ink);
 }
 
-/* 9. Authentic Blue Ink Wireframe Mockup Elements from User Sketch */
-[data-theme="sketch"] .wireframe-x-box {
-    border: 2px dashed var(--ink) !important;
-    background: #f6faff !important;
-}
-[data-theme="sketch"] .wireframe-player {
-    border: 2.2px solid var(--ink) !important;
-    background: #ffffff !important;
-}
-[data-theme="sketch"] .wireframe-scrubber-fill {
-    background: var(--ink) !important;
-}
-[data-theme="sketch"] .wireframe-annotation {
-    color: var(--ink) !important;
-    font-family: 'Architects Daughter', cursive, sans-serif !important;
+/* ==========================================================================
+   STRICT SEPARATION: BRUTALIST (ORIGINAL) vs SKETCH MODE
+   ========================================================================== */
+
+/* By default (Brutalist Mode): HIDE all sketch-only elements completely */
+:root:not([data-theme="sketch"]) .sketch-only {
+    display: none !important;
 }
 
-/* 10. Slider in Sketch Mode */
-[data-theme="sketch"] .slider-container {
-    border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px !important;
-    border: 2.5px solid var(--ink) !important;
-    background: #ffffff !important;
+/* In Sketch Mode: HIDE brutalist-only elements and SHOW sketch elements */
+[data-theme="sketch"] .brutalist-only {
+    display: none !important;
+}
+
+[data-theme="sketch"] .sketch-only {
+    display: block;
+}
+[data-theme="sketch"] .notebook-hero-section.sketch-only {
+    display: grid !important;
+}
+[data-theme="sketch"] .floating-doodle-bar.sketch-only {
+    display: flex !important;
+}
+[data-theme="sketch"] .logo-sketch.sketch-only {
+    display: inline-flex !important;
+}
+
+/* Pen Cursor when in Sketch Mode */
+[data-theme="sketch"] body.pen-cursor-active,
+[data-theme="sketch"] body.pen-cursor-active * {
+    cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'><path d='M3 21l3.75-.75L19.2 7.8a2.12 2.12 0 0 0 0-3l-1-1a2.12 2.12 0 0 0-3 0L2.75 16.25 2 20l1 1z' fill='%23104bb8' stroke='%23ffffff' stroke-width='1.5'/><circle cx='3' cy='21' r='1.5' fill='%23104bb8'/></svg>") 3 21, crosshair !important;
+}
+
+[data-theme="sketch"] body.pen-cursor-active a,
+[data-theme="sketch"] body.pen-cursor-active button,
+[data-theme="sketch"] body.pen-cursor-active input,
+[data-theme="sketch"] body.pen-cursor-active .notebook-character {
+    cursor: pointer !important;
+}
+
+/* Full-Page Interactive Ink Canvas ("CURSOR IS INK") */
+.ink-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 9998;
+}
+
+/* Floating Doodle & Erase Toolbar (Exact bottom-right layout from screenshot) */
+.floating-doodle-bar {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 10001;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    pointer-events: auto;
+}
+
+.doodle-tool-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px;
+    border: 2px solid var(--ink);
+    background: #ffffff;
+    color: var(--ink);
+    font-family: 'Architects Daughter', 'Caveat', cursive, sans-serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+    cursor: pointer;
+    box-shadow: 2.5px 2.5px 0 var(--ink);
+    transition: transform 0.1s ease, background 0.1s ease, box-shadow 0.1s ease;
+}
+
+.doodle-tool-btn:hover {
+    transform: translate(-1px, -1px);
+    box-shadow: 3.5px 3.5px 0 var(--ink);
+    background: var(--yellow);
+}
+
+.doodle-tool-btn.active {
+    background: #fffa75;
+    border-color: var(--ink);
+    transform: translate(1px, 1px);
+    box-shadow: 1px 1px 0 var(--ink);
+}
+
+/* Notebook Sketch Hero Section (Exact match to User Screenshot) */
+.notebook-hero-section {
+    display: grid;
+    grid-template-columns: minmax(320px, 1.28fr) minmax(280px, 0.92fr);
+    gap: clamp(24px, 4vw, 56px);
+    align-items: center;
+    margin: 10px 0 clamp(40px, 6vw, 70px);
+    position: relative;
+    padding-top: 10px;
+}
+
+.highlighter-tape {
+    display: inline-block;
+    background: #fffa75;
+    color: var(--ink);
+    padding: 3px 12px;
+    font-family: 'Caveat', 'Architects Daughter', cursive, sans-serif;
+    font-size: clamp(1.15rem, 2vw, 1.4rem);
+    font-weight: 700;
+    border-radius: 2px 7px 3px 6px;
+    transform: rotate(-1deg);
+    margin-bottom: 12px;
+    box-shadow: 2px 2px 0 rgba(16, 75, 184, 0.15);
+}
+
+.notebook-hero-title {
+    font-family: 'Caveat', 'Architects Daughter', cursive, sans-serif;
+    line-height: 0.92;
+    margin-bottom: 18px;
+}
+
+.notebook-hero-title .greeting-text {
+    font-size: clamp(3rem, 6vw, 4.6rem);
+    font-weight: 700;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+}
+
+.notebook-hero-title .name-text {
+    font-size: clamp(4.8rem, 10vw, 8.2rem);
+    font-weight: 700;
+    color: var(--ink);
+    display: inline-block;
+    transform: rotate(-1.5deg);
+    letter-spacing: -0.01em;
+}
+
+.notebook-hero-subtitle {
+    font-family: 'Architects Daughter', 'Caveat', cursive, sans-serif;
+    font-size: clamp(0.95rem, 1.5vw, 1.15rem);
+    line-height: 1.6;
+    color: var(--ink);
+    max-width: 580px;
+    margin-bottom: 24px;
+}
+
+.notebook-hero-subtitle .annot-opsst {
+    color: var(--muted);
+    font-style: italic;
+}
+
+.notebook-hero-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    position: relative;
+}
+
+.annot-arrow-down {
+    font-family: 'Caveat', cursive;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--ink);
+    transform: rotate(-6deg);
+    display: inline-block;
+    user-select: none;
+}
+
+.notebook-btn-group {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+
+.notebook-btn-solid {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 11px 24px;
+    background: var(--ink);
+    color: #ffffff !important;
+    font-family: 'Caveat', 'Architects Daughter', cursive;
+    font-size: 1.3rem;
+    font-weight: 700;
+    text-decoration: none;
+    border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+    border: 2px solid var(--ink);
+    box-shadow: 3px 3px 0 rgba(16, 75, 184, 0.25);
+    transition: transform 0.12s ease, background 0.12s ease;
+}
+
+.notebook-btn-solid:hover {
+    transform: translate(2px, 2px);
+    box-shadow: 1px 1px 0 rgba(16, 75, 184, 0.25);
+}
+
+.notebook-btn-outline {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 11px 22px;
+    background: #ffffff;
+    color: var(--ink) !important;
+    font-family: 'Caveat', 'Architects Daughter', cursive;
+    font-size: 1.3rem;
+    font-weight: 700;
+    text-decoration: none;
+    border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+    border: 2px solid var(--ink);
+    box-shadow: 3px 3px 0 var(--ink);
+    transition: transform 0.12s ease, background 0.12s ease;
+}
+
+.notebook-btn-outline:hover {
+    background: #fffa75;
+    transform: translate(2px, 2px);
+    box-shadow: 1px 1px 0 var(--ink);
+}
+
+/* Character Avatar Wrapper */
+.notebook-avatar-wrap {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.annot-arrow-me {
+    font-family: 'Caveat', cursive;
+    font-size: 1.55rem;
+    font-weight: 700;
+    color: var(--ink);
+    transform: rotate(8deg);
+    align-self: flex-end;
+    margin-right: 32px;
+    margin-bottom: -10px;
+    user-select: none;
+}
+
+.notebook-character {
+    position: relative;
+    width: clamp(240px, 28vw, 320px);
+    cursor: pointer;
+    transition: transform 0.2s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+    user-select: none;
+}
+
+.notebook-character:hover {
+    transform: scale(1.05) rotate(-1.5deg);
+}
+
+.notebook-character:active {
+    transform: scale(0.97) rotate(1deg);
+}
+
+.character-svg {
+    width: 100%;
+    height: auto;
+    display: block;
+    filter: drop-shadow(2px 3px 0 rgba(16, 75, 184, 0.12));
+}
+
+.notebook-speech-bubble {
+    position: absolute;
+    top: -46px;
+    left: 50%;
+    transform: translateX(-50%) scale(0.85);
+    background: #fffa75;
+    border: 2px solid var(--ink);
+    border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+    padding: 7px 15px;
+    font-family: 'Caveat', 'Architects Daughter', cursive;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--ink);
+    box-shadow: 3px 3px 0 var(--ink);
+    opacity: 0;
+    pointer-events: none;
+    white-space: nowrap;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    z-index: 10;
+}
+
+.notebook-speech-bubble.active {
+    opacity: 1;
+    transform: translateX(-50%) scale(1);
+    pointer-events: auto;
+}
+
+.notebook-speech-bubble::after {
+    content: '';
+    position: absolute;
+    bottom: -7px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 7px solid transparent;
+    border-right: 7px solid transparent;
+    border-top: 7px solid var(--ink);
+}
+
+/* Logo Sketch Underline */
+.logo-sketch {
+    font-family: 'Caveat', cursive !important;
+    font-size: 2.3rem !important;
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 0.9;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.sketch-underline {
+    width: 46px;
+    height: 10px;
+    display: block;
+    margin-top: -2px;
+}
+
+[data-theme="sketch"] .logo {
+    background: transparent !important;
+    border: none !important;
     box-shadow: none !important;
+    padding: 0 !important;
 }
 
-[data-theme="sketch"] .slider-btn {
-    border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px !important;
-    border: 2px solid var(--ink) !important;
-    background: #fffa75 !important;
-    color: var(--ink) !important;
-    box-shadow: 2px 2px 0 var(--ink) !important;
+[data-theme="sketch"] nav a {
+    font-family: 'Architects Daughter', 'Caveat', cursive !important;
+    font-size: 1.1rem;
+    color: var(--ink);
 }
 
-[data-theme="sketch"] .slider-dots {
-    border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px !important;
-    border: 1.8px solid var(--ink) !important;
-    background: #ffffff !important;
-}
-
-[data-theme="sketch"] .dot {
-    border: 1.5px solid var(--ink) !important;
-}
-
-[data-theme="sketch"] .dot.active {
-    background: var(--ink) !important;
+@media (max-width: 860px) {
+    .notebook-hero-section {
+        grid-template-columns: 1fr;
+        gap: 36px;
+        text-align: left;
+    }
+    .notebook-avatar-wrap {
+        align-items: center;
+    }
 }

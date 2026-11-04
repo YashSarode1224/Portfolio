@@ -2150,15 +2150,6 @@ const projectData = {
             { src: "Weather(weather).png", title: "Main Interface", desc: "Clean UI showing temperature and conditions." },
             { src: "error(weather).png", title: "Error handling", desc: "Shows error when city is not found,similarly every possible error is handled" }
         ]
-    },
-    "v1": {
-        title: "Portfolio V1",
-        tech: ["HTML", "CSS", "JS"],
-        fullDesc: "My first portfolio website built with pure semantic HTML and CSS. Zero build tools or complex frameworks, focusing purely on responsive fundamentals, clean typography, and accessibility.",
-        links: { live: "index.html", repo: "https://github.com/YashSarode1224" },
-        images: [
-            { src: "main(vitcollabhub).png", title: "Evolution to Modern Web", desc: "How the design language progressed from simple HTML to rich interactive Neo-Brutalist & Hand-Drawn Sketch wireframe systems." }
-        ]
     }
 };
 
@@ -2179,212 +2170,223 @@ document.addEventListener('DOMContentLoaded', () => {
     initTerminal();
     initThemeSwitcher();
     initDraggableStickers();
-    initProjectsEnhancements();
+    initInkDoodler();
+    initCharacterAvatar();
 });
 
-// --- Interactive Projects Enhancement (Filters, Search, Blueprint Wireframes & Architecture Modal) ---
-function initProjectsEnhancements() {
-    // 1. Wireframe / Screenshot View Toggle on Project Cards
-    document.querySelectorAll('.view-mode-toggle').forEach(btn => {
-        btn.addEventListener('click', (e) => {
+// ==========================================================================
+// 13. FULL-PAGE INTERACTIVE BLUE INK DOODLE CANVAS ("CURSOR IS INK")
+// ==========================================================================
+function initInkDoodler() {
+    const canvas = document.getElementById('inkCanvas');
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    let isDrawing = false;
+    let doodleEnabled = true;
+    let activeStroke = [];
+    let allStrokes = [];
+
+    function resizeCanvas() {
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+        
+        canvas.width = width;
+        canvas.height = height;
+
+        redrawAllStrokes();
+    }
+
+    function redrawAllStrokes() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        allStrokes.forEach(stroke => {
+            if (stroke.length < 2) return;
+            drawStroke(stroke);
+        });
+    }
+
+    function drawStroke(points) {
+        if (points.length < 2) return;
+        ctx.strokeStyle = '#104bb8'; // Authentic blue ballpoint ink
+        ctx.lineWidth = 3.2;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        ctx.beginPath();
+        ctx.moveTo(points[0].x, points[0].y);
+
+        for (let i = 1; i < points.length; i++) {
+            const p1 = points[i - 1];
+            const p2 = points[i];
+            const midX = (p1.x + p2.x) / 2;
+            const midY = (p1.y + p2.y) / 2;
+            ctx.quadraticCurveTo(p1.x, p1.y, midX, midY);
+        }
+        ctx.lineTo(points[points.length - 1].x, points[points.length - 1].y);
+        ctx.stroke();
+    }
+
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    // Initial playful doodle line (top-left curl from user's screenshot)
+    function drawWelcomeDoodle() {
+        const isSketch = document.documentElement.getAttribute('data-theme') === 'sketch';
+        if (!isSketch || allStrokes.length > 0) return;
+
+        const welcomePath = [
+            { x: 34, y: 125 },
+            { x: 65, y: 145 },
+            { x: 125, y: 185 },
+            { x: 185, y: 220 },
+            { x: 235, y: 248 }
+        ];
+        allStrokes.push(welcomePath);
+        drawStroke(welcomePath);
+    }
+    window.triggerWelcomeDoodle = drawWelcomeDoodle;
+    setTimeout(drawWelcomeDoodle, 400);
+
+    // Pointer events for ultra-smooth cross-device ink drawing
+    function startDrawing(e) {
+        const isSketch = document.documentElement.getAttribute('data-theme') === 'sketch';
+        if (!isSketch || !doodleEnabled) return;
+        
+        // Prevent drawing on interactive UI elements so buttons, links, inputs work perfectly
+        const target = e.target;
+        if (target.closest('a, button, input, textarea, select, .terminal-window, .blueprint-modal, #notebook-character')) {
+            return;
+        }
+
+        isDrawing = true;
+        const x = e.clientX;
+        const y = e.clientY;
+        activeStroke = [{ x, y }];
+    }
+
+    function continueDrawing(e) {
+        if (!isDrawing) return;
+        const x = e.clientX;
+        const y = e.clientY;
+        activeStroke.push({ x, y });
+
+        // Draw incremental segment
+        if (activeStroke.length >= 2) {
+            ctx.strokeStyle = '#104bb8';
+            ctx.lineWidth = 3.2;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            const len = activeStroke.length;
+            const p1 = activeStroke[len - 2];
+            const p2 = activeStroke[len - 1];
+            ctx.beginPath();
+            ctx.moveTo(p1.x, p1.y);
+            ctx.lineTo(p2.x, p2.y);
+            ctx.stroke();
+        }
+    }
+
+    function endDrawing() {
+        if (!isDrawing) return;
+        isDrawing = false;
+        if (activeStroke.length > 1) {
+            allStrokes.push([...activeStroke]);
+        }
+        activeStroke = [];
+        redrawAllStrokes(); // Smoothes with quadratic curves on stroke finish!
+    }
+
+    window.addEventListener('pointerdown', startDrawing);
+    window.addEventListener('pointermove', continueDrawing);
+    window.addEventListener('pointerup', endDrawing);
+    window.addEventListener('pointercancel', endDrawing);
+
+    // Floating Doodle Toolbar
+    const penBtn = document.getElementById('doodlePenBtn');
+    const eraseBtn = document.getElementById('doodleEraseBtn');
+
+    if (penBtn) {
+        const isSketch = document.documentElement.getAttribute('data-theme') === 'sketch';
+        if (isSketch) document.body.classList.add('pen-cursor-active');
+
+        penBtn.addEventListener('click', (e) => {
             e.preventDefault();
             e.stopPropagation();
-            const card = btn.closest('.project-card');
-            if (!card) return;
-
-            const isSketchTheme = document.documentElement.getAttribute('data-theme') === 'sketch';
-            const toggleText = btn.querySelector('.toggle-text');
-            const toggleIcon = btn.querySelector('.toggle-icon');
-
-            if (isSketchTheme) {
-                // In sketch mode, default is wireframe. Toggling forces screenshot.
-                const isForcingScreenshot = card.classList.toggle('force-screenshot');
-                if (toggleText) toggleText.textContent = isForcingScreenshot ? 'Blueprint View' : 'Screenshot View';
-                if (toggleIcon) toggleIcon.textContent = isForcingScreenshot ? '📐' : '🖼️';
-            } else {
-                // In brutalist mode, default is screenshot. Toggling shows wireframe.
-                const isShowingWireframe = card.classList.toggle('show-wireframe');
-                if (toggleText) toggleText.textContent = isShowingWireframe ? 'Screenshot View' : 'Blueprint View';
-                if (toggleIcon) toggleIcon.textContent = isShowingWireframe ? '🖼️' : '📐';
-            }
+            doodleEnabled = !doodleEnabled;
+            penBtn.classList.toggle('active', doodleEnabled);
+            document.body.classList.toggle('pen-cursor-active', doodleEnabled);
         });
-    });
+    }
 
-    // 2. Playful interactive wireframe simulation
-    document.querySelectorAll('.wireframe-screen-box, .wireframe-play-btn').forEach(box => {
-        box.addEventListener('click', (e) => {
+    if (eraseBtn) {
+        eraseBtn.addEventListener('click', (e) => {
             e.preventDefault();
             e.stopPropagation();
-            const card = box.closest('.project-card');
-            const thumb = card ? card.querySelector('.wireframe-scrubber-thumb') : null;
-            const fill = card ? card.querySelector('.wireframe-scrubber-fill') : null;
-            if (thumb && fill) {
-                thumb.style.transition = 'left 0.8s ease';
-                fill.style.transition = 'width 0.8s ease';
-                thumb.style.left = '85%';
-                fill.style.width = '85%';
-                setTimeout(() => {
-                    thumb.style.left = '45%';
-                    fill.style.width = '45%';
-                }, 1200);
-            }
+            allStrokes = [];
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            eraseBtn.style.transform = 'scale(0.9)';
+            setTimeout(() => eraseBtn.style.transform = '', 150);
         });
+    }
+}
+
+// ==========================================================================
+// 14. INTERACTIVE HAND-DRAWN AVATAR CHARACTER ("CLICK MY FACE")
+// ==========================================================================
+function initCharacterAvatar() {
+    const char = document.getElementById('notebook-character');
+    const bubble = document.getElementById('notebook-speech-bubble');
+    const bubbleText = document.getElementById('speech-bubble-text');
+    if (!char) return;
+
+    const quotes = [
+        "Hi! Try scribbling on my page with your mouse! ✏️",
+        "I build things for the web & grind DSA! ⚡",
+        "2nd-year CSE student @ VIT Vellore 🎓",
+        "Don't worry, the erase button cleans up the ink! 😉",
+        "opsst... you found the interactive face! ✨",
+        "Catch me playing Valorant or watching anime! 🎮"
+    ];
+    let quoteIndex = 0;
+    let bubbleTimeout = null;
+
+    char.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        // Rotate quotes
+        quoteIndex = (quoteIndex + 1) % quotes.length;
+        if (bubbleText) bubbleText.textContent = quotes[quoteIndex];
+
+        // Animate speech bubble
+        if (bubble) {
+            bubble.classList.add('active');
+            clearTimeout(bubbleTimeout);
+            bubbleTimeout = setTimeout(() => {
+                bubble.classList.remove('active');
+            }, 3200);
+        }
+
+        // Playful eye wink animation
+        const eyes = document.getElementById('character-eyes');
+        const mouth = document.getElementById('character-mouth');
+        if (eyes) {
+            eyes.innerHTML = '<path d="M116 125 Q122 120 128 125" stroke="var(--ink)" stroke-width="3" stroke-linecap="round"/><circle cx="164" cy="125" r="4.5" fill="var(--ink)"/>';
+            setTimeout(() => {
+                eyes.innerHTML = '<circle class="ink-eye" cx="122" cy="125" r="4.5" fill="var(--ink)"/><circle class="ink-eye" cx="164" cy="125" r="4.5" fill="var(--ink)"/>';
+            }, 800);
+        }
+        if (mouth) {
+            mouth.setAttribute('d', 'M130 143 Q143 158 156 143');
+            setTimeout(() => {
+                mouth.setAttribute('d', 'M134 145 Q143 154 152 145');
+            }, 800);
+        }
     });
 
-    // 3. Category Filter Pills on projects.html
-    const filterPills = document.querySelectorAll('.filter-pill');
-    const searchInput = document.getElementById('projectSearchInput');
-    const countBadge = document.getElementById('projectCountBadge');
-    const projectCards = document.querySelectorAll('.projects-grid .project-card');
-
-    function updateProjectFiltering() {
-        const activePill = document.querySelector('.filter-pill.active');
-        const activeCategory = activePill ? activePill.getAttribute('data-filter') : 'all';
-        const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
-
-        let visibleCount = 0;
-        projectCards.forEach(card => {
-            const cardCategory = (card.getAttribute('data-category') || '').toLowerCase();
-            const cardKeywords = (card.getAttribute('data-keywords') || '').toLowerCase();
-            const cardText = card.textContent.toLowerCase();
-
-            const matchesCategory = (activeCategory === 'all') || cardCategory.includes(activeCategory);
-            const matchesQuery = !query || cardText.includes(query) || cardKeywords.includes(query);
-
-            if (matchesCategory && matchesQuery) {
-                card.style.display = '';
-                visibleCount++;
-            } else {
-                card.style.display = 'none';
-            }
-        });
-
-        if (countBadge) {
-            countBadge.textContent = `${visibleCount} shown`;
-        }
-    }
-
-    if (filterPills.length > 0) {
-        filterPills.forEach(pill => {
-            pill.addEventListener('click', () => {
-                filterPills.forEach(p => {
-                    p.classList.remove('active');
-                    p.setAttribute('aria-selected', 'false');
-                });
-                pill.classList.add('active');
-                pill.setAttribute('aria-selected', 'true');
-                updateProjectFiltering();
-            });
-        });
-    }
-
-    if (searchInput) {
-        searchInput.addEventListener('input', updateProjectFiltering);
-    }
-
-    // 4. Architecture Blueprint Modal
-    const blueprintData = {
-        "collab": {
-            title: "VIT Collab Hub • System Architecture",
-            badge: "48H Hackathon Architecture",
-            steps: [
-                { name: "Student Browser", desc: "HTML5 / ES6 Client" },
-                { name: "Firebase Auth", desc: "VIT Email Verification" },
-                { name: "Cloud Firestore", desc: "Real-Time NoSQL Listeners" },
-                { name: "Interactive UI", desc: "Kanban Taskboard & DMs" }
-            ],
-            overview: "Engineered in a high-intensity 48-hour hackathon, VIT Collab Hub connects university peers into project teams. Leveraged Firebase modular SDK for zero-latency messaging, task status board changes, and public project discovery.",
-            hurdles: "Handling multi-user state synchronization and securing Firestore collection rules under a tight hackathon deadline. Solved by scoping permissions to verified team IDs and organizing decoupled sub-collections.",
-            deepDiveLink: "project-details.html?project=collab"
-        },
-        "weather": {
-            title: "Weather App • Desktop GUI Architecture",
-            badge: "Python / PyQt5 Architecture",
-            steps: [
-                { name: "PyQt5 Event Loop", desc: "Native Window Rendering" },
-                { name: "City Input Controller", desc: "Debounced Query Handler" },
-                { name: "REST API Request", desc: "OpenWeather Endpoint (HTTPS)" },
-                { name: "JSON Normalizer", desc: "Defensive Exception Handling" }
-            ],
-            overview: "A lightweight cross-platform desktop application built with Python 3 and PyQt5. Designed with strict error recovery for network drops, malformed city spellings, and rate limits.",
-            hurdles: "Preventing GUI freezes during remote HTTP socket calls. Solved with non-blocking event loops, status bar indicators, and graceful error modals.",
-            deepDiveLink: "project-details.html?project=weather"
-        },
-        "v1": {
-            title: "Portfolio V1 • Foundation Architecture",
-            badge: "Semantic Vanilla Web",
-            steps: [
-                { name: "Semantic HTML5", desc: "Accessible Document Tree" },
-                { name: "CSS3 Flex & Grid", desc: "Responsive Breakpoints" },
-                { name: "Zero Dependencies", desc: "Pure Native Execution" },
-                { name: "Static Hosting", desc: "Sub-Second Global TTFB" }
-            ],
-            overview: "The original foundation that started Yash's software engineering journey. Built completely from scratch without frameworks to master the core principles of the web platform.",
-            hurdles: "Crafting fluid responsive layouts that behave consistently across mobile and desktop viewports without modern utility libraries. Provided an invaluable foundation for complex UI architecture.",
-            deepDiveLink: "index.html"
-        }
-    };
-
-    const modal = document.getElementById('blueprintModal');
-    const modalTitle = document.getElementById('blueprintModalTitle');
-    const modalBadge = document.getElementById('blueprintModalBadge');
-    const modalStepsGrid = document.getElementById('blueprintStepsGrid');
-    const modalOverview = document.getElementById('blueprintOverviewText');
-    const modalHurdles = document.getElementById('blueprintHurdlesText');
-    const modalDeepDive = document.getElementById('blueprintDeepDiveLink');
-    const modalClose = document.getElementById('blueprintModalClose');
-
-    function openBlueprintModal(projId) {
-        const data = blueprintData[projId];
-        if (!data || !modal) return;
-
-        if (modalTitle) modalTitle.textContent = data.title;
-        if (modalBadge) modalBadge.textContent = data.badge;
-        if (modalOverview) modalOverview.textContent = data.overview;
-        if (modalHurdles) modalHurdles.textContent = data.hurdles;
-        if (modalDeepDive) modalDeepDive.href = data.deepDiveLink;
-
-        if (modalStepsGrid) {
-            modalStepsGrid.innerHTML = data.steps.map((st, idx) => `
-                <div class="blueprint-step-node">
-                    <div style="font-size: 0.65rem; color: var(--yellow); background: var(--ink); padding: 1px 5px; display: inline-block; margin-bottom: 4px;">0${idx + 1}</div>
-                    <div>${st.name}</div>
-                    <span>${st.desc}</span>
-                </div>
-            `).join('');
-        }
-
-        modal.classList.add('active');
-        document.body.style.overflow = 'hidden';
-    }
-
-    function closeBlueprintModal() {
-        if (!modal) return;
-        modal.classList.remove('active');
-        document.body.style.overflow = '';
-    }
-
-    document.querySelectorAll('.blueprint-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
+    char.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault();
-            const projId = btn.getAttribute('data-project');
-            openBlueprintModal(projId);
-        });
-    });
-
-    if (modalClose) {
-        modalClose.addEventListener('click', closeBlueprintModal);
-    }
-
-    if (modal) {
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) closeBlueprintModal();
-        });
-    }
-
-    window.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && modal && modal.classList.contains('active')) {
-            closeBlueprintModal();
+            char.click();
         }
     });
 }
@@ -3174,16 +3176,8 @@ function initTerminal() {
             
             case 'projects':
             case 'project': 
-                if (arg === 'collab') {
-                    addLine("Redirecting to VIT Collab Hub deep-dive...");
-                    setTimeout(() => window.location.assign("project-details.html?project=collab"), 800);
-                } else if (arg === 'weather') {
-                    addLine("Redirecting to Weather App deep-dive...");
-                    setTimeout(() => window.location.assign("project-details.html?project=weather"), 800);
-                } else {
-                    addLine("Redirecting to all projects (collab, weather, v1)...");
-                    setTimeout(() => window.location.assign("projects.html"), 900);
-                }
+                addLine("redirecting to projects...");
+                setTimeout(() => window.location.assign("projects.html"), 1000);
                 break;
             case 'social':
                 addLine("GitHub: github.com/YashSarode1224");
@@ -3219,9 +3213,14 @@ function applyPortfolioTheme(theme) {
     if (isSketch) {
         document.documentElement.setAttribute('data-theme', 'sketch');
         localStorage.setItem('yash_portfolio_theme', 'sketch');
+        document.body.classList.add('pen-cursor-active');
+        if (typeof window.triggerWelcomeDoodle === 'function') {
+            window.triggerWelcomeDoodle();
+        }
     } else {
         document.documentElement.removeAttribute('data-theme');
         localStorage.setItem('yash_portfolio_theme', 'brutalist');
+        document.body.classList.remove('pen-cursor-active');
     }
 
     document.querySelectorAll('.theme-toggle-label').forEach(el => {
