@@ -191,7 +191,7 @@ p.subtitle::before { content: '↓ '; color: var(--ink); font-weight: 700; }
 .show { opacity: 1; transform: translateY(0) rotate(0); }
 
 /* Shared hard-edged surfaces */
-.stat-card, .project-card, .info-card, .contact-card {
+.stat-card, .info-card, .contact-card {
     position: relative;
     display: flex;
     flex-direction: column;
@@ -201,7 +201,7 @@ p.subtitle::before { content: '↓ '; color: var(--ink); font-weight: 700; }
     color: var(--ink);
     transition: transform 150ms ease, box-shadow 150ms ease;
 }
-.stat-card:hover, .project-card:hover, .info-card:hover, .contact-card:hover { transform: translate(5px, 5px) rotate(0deg); box-shadow: 2px 2px 0 var(--ink); }
+.stat-card:hover, .info-card:hover, .contact-card:hover { transform: translate(5px, 5px) rotate(0deg); box-shadow: 2px 2px 0 var(--ink); }
 .stat-card::before, .project-card::before, .info-card::before, .contact-card::before { content: none; }
 
 .stats-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 26px; margin: 42px 0 92px; }
@@ -457,8 +457,29 @@ p.subtitle::before { content: '↓ '; color: var(--ink); font-weight: 700; }
 
 /* Projects and project detail */
 .projects-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 30px; align-items: stretch; }
-.project-card { min-height: 340px; gap: 20px; padding: 26px; background: var(--paper); }
-.project-card:nth-child(odd) { background: var(--paper-warm); transform: rotate(-.6deg); }.project-card:nth-child(even) { background: var(--blue); transform: rotate(.6deg); }
+.project-card { 
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    border: var(--border);
+    border-radius: 0;
+    box-shadow: var(--shadow);
+    color: var(--ink);
+    min-height: 340px; 
+    gap: 20px; 
+    padding: 26px; 
+    background: var(--paper); 
+    transform: none !important;
+    transition: none !important;
+    animation: none !important;
+}
+.project-card:hover {
+    transform: none !important;
+    box-shadow: var(--shadow) !important;
+    transition: none !important;
+}
+.project-card:nth-child(odd) { background: var(--paper-warm); transform: none !important; }
+.project-card:nth-child(even) { background: var(--blue); transform: none !important; }
 .project-card h3 { font-size: clamp(1.6rem, 3vw, 2.3rem); line-height: 1; text-transform: uppercase; }
 .project-card p { font-size: .88rem; line-height: 1.75; }.project-card p:empty, .project-card .skills-wrapper:empty { display: none; }
 .btn-group { display: flex; width: 100%; flex-wrap: wrap; gap: 12px; margin-top: auto; }
@@ -1813,13 +1834,25 @@ body.violent-glitch-active {
 }
 
 [data-theme="sketch"] .stat-card:hover::after,
-[data-theme="sketch"] .project-card:hover::after,
 [data-theme="sketch"] .contact-card:hover::after,
 [data-theme="sketch"] .info-card:hover::after,
 [data-theme="sketch"] .theme-toggle-btn:hover::after,
 [data-theme="sketch"] .logo:hover::after,
 [data-theme="sketch"] .visit-btn:hover::after {
     transform: translate(3px, 3px);
+}
+
+[data-theme="sketch"] .project-card,
+[data-theme="sketch"] .project-card:hover {
+    transform: none !important;
+    transition: none !important;
+    animation: none !important;
+}
+
+[data-theme="sketch"] .project-card::after,
+[data-theme="sketch"] .project-card:hover::after {
+    transform: translate(6px, 6px) !important;
+    transition: none !important;
 }
 
 /* 5. Hand-Drawn Smiley Avatar (Sticker 'Y') */

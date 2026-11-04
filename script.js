@@ -2507,7 +2507,7 @@ function initSlider() {
 }
 
 function initInteractions() {
-    const sections = document.querySelectorAll('section, .stat-card, .project-card, .info-card, .contact-card');
+    const sections = document.querySelectorAll('section, .stat-card, .info-card, .contact-card');
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) entry.target.classList.add('show');
@@ -2518,7 +2518,7 @@ function initInteractions() {
         observer.observe(sec);
     });
 
-    const cards = document.querySelectorAll('.stat-card, .project-card, .info-card, .contact-card');
+    const cards = document.querySelectorAll('.stat-card, .info-card, .contact-card');
     cards.forEach(card => {
         card.addEventListener('mousemove', (e) => {
             const rect = card.getBoundingClientRect();
