@@ -2844,14 +2844,14 @@ TITLE:  Copy Ninja / Sixth Hokage
         switch(cmd) {
             case 'help':
                 addLine("Available commands:", "term-dim");
-                addLine("  about     Who am I?");
-                addLine("  skills    My tech stack");
-                addLine("  projects  View my work");
-                addLine("  snake     Play retro snake");
-                addLine("  anime     Anime character display");
-                addLine("  social    Connect with me");
-                addLine("  clear     Clear terminal");
-                addLine("  sudo      [RESTRICTED]");
+                addLine("  about    :- Who am I?");
+                addLine("  skills   :- My tech stack");
+                addLine("  projects :- View my work");
+                addLine("  snake    :- Play retro snake");
+                addLine("  anime    :- Anime character display");
+                addLine("  social   :- Connect with me");
+                addLine("  clear    :- Clear terminal");
+                addLine("  sudo     :- [RESTRICTED]");
                 break;
             case 'snake':
                 startSnakeGame();
