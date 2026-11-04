@@ -17,8 +17,11 @@
             crossorigin="anonymous" 
             referrerpolicy="no-referrer"></script>
             
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Patrick+Hand&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=2.4">
+    <link rel="stylesheet" href="style.css?v=2.5">
     <script>
         (function() {
             var savedTheme = localStorage.getItem('yash_portfolio_theme');
@@ -31,6 +34,11 @@
 <body>
 
     <div id="canvas-container"></div>
+
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+        <filter id="wob"><feTurbulence type="fractalNoise" baseFrequency="0.025" numOctaves="2" seed="4" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="4"/></filter>
+        <filter id="wob2"><feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves="2" seed="9" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="3.2"/></filter>
+    </svg>
 
     <!-- SKETCH MODE ONLY: Full-Page Interactive Blue Ink Doodle Canvas ("CURSOR IS INK") -->
     <canvas id="inkCanvas" class="ink-canvas sketch-only" aria-hidden="true"></canvas>
@@ -131,67 +139,44 @@
             </div>
 
             <div class="notebook-hero-right">
-                <div class="notebook-avatar-wrap">
-                    <span class="annot-arrow-me" aria-hidden="true">that's me! ↙</span>
-                    <span class="annot-arrow-face" aria-hidden="true">psst... click my face ↗</span>
-                    
-                    <!-- Hand-Drawn Blue Ink Character Illustration -->
-                    <div class="notebook-character" id="notebook-character" role="button" tabindex="0" title="Click my face to interact!">
-                        <svg class="character-svg" viewBox="0 0 280 320" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <!-- Hair / Headband Curls -->
-                            <path class="ink-stroke" d="M90 100 C80 80, 85 55, 105 45 C120 38, 140 40, 150 50 C165 38, 185 40, 195 55 C210 70, 205 90, 195 105" stroke="var(--ink)" stroke-width="3" stroke-linecap="round"/>
-                            <path class="ink-stroke" d="M100 68 C100 52, 115 50, 125 60 C135 50, 150 50, 155 65 C165 52, 180 55, 185 70" stroke="var(--ink)" stroke-width="2.6" stroke-linecap="round"/>
-                            
-                            <!-- Headphones -->
-                            <path class="ink-stroke" d="M92 110 C86 75, 198 75, 196 110" stroke="var(--ink)" stroke-width="3.5" stroke-linecap="round"/>
-                            <rect class="ink-stroke" x="80" y="105" width="16" height="34" rx="7" stroke="var(--ink)" stroke-width="3" fill="#ffffff"/>
-                            <rect class="ink-stroke" x="190" y="105" width="16" height="34" rx="7" stroke="var(--ink)" stroke-width="3" fill="#ffffff"/>
-                            
-                            <!-- Face Contour -->
-                            <path class="ink-stroke" d="M96 112 C96 170, 190 170, 190 112" stroke="var(--ink)" stroke-width="3" stroke-linecap="round" fill="#ffffff"/>
-                            
-                            <!-- Eyeglasses -->
-                            <circle class="ink-stroke" cx="122" cy="125" r="16" stroke="var(--ink)" stroke-width="2.8"/>
-                            <circle class="ink-stroke" cx="164" cy="125" r="16" stroke="var(--ink)" stroke-width="2.8"/>
-                            <path class="ink-stroke" d="M138 125 C143 122, 147 122, 148 125" stroke="var(--ink)" stroke-width="2.8"/>
-                            
-                            <!-- Eyes -->
-                            <g id="character-eyes">
-                                <circle class="ink-eye" cx="122" cy="125" r="4.5" fill="var(--ink)"/>
-                                <circle class="ink-eye" cx="164" cy="125" r="4.5" fill="var(--ink)"/>
-                            </g>
-                            
-                            <!-- Smile & Blush -->
-                            <path id="character-mouth" class="ink-stroke" d="M134 145 Q143 154 152 145" stroke="var(--ink)" stroke-width="2.6" stroke-linecap="round"/>
-                            <path class="ink-stroke" d="M106 138 L114 144 M108 144 L116 150" stroke="var(--ink)" stroke-width="2" stroke-linecap="round" opacity="0.65"/>
-                            <path class="ink-stroke" d="M178 138 L170 144 M176 144 L168 150" stroke="var(--ink)" stroke-width="2" stroke-linecap="round" opacity="0.65"/>
-                            
-                            <!-- Neck & Collar -->
-                            <path class="ink-stroke" d="M132 166 L132 185 M154 166 L154 185" stroke="var(--ink)" stroke-width="3" stroke-linecap="round"/>
-                            <path class="ink-stroke" d="M125 185 C135 192, 150 192, 160 185" stroke="var(--ink)" stroke-width="2.6"/>
-                            
-                            <!-- Hoodie & Shoulders -->
-                            <path class="ink-stroke" d="M96 230 C80 200, 110 185, 130 185 C150 185, 180 200, 196 230" stroke="var(--ink)" stroke-width="3" fill="#ffffff"/>
-                            <path class="ink-stroke" d="M80 260 C75 220, 95 195, 120 188" stroke="var(--ink)" stroke-width="3" stroke-linecap="round"/>
-                            <path class="ink-stroke" d="M212 260 C217 220, 197 195, 172 188" stroke="var(--ink)" stroke-width="3" stroke-linecap="round"/>
-                            
-                            <!-- Overalls straps -->
-                            <path class="ink-stroke" d="M112 188 L112 245 M178 188 L178 245" stroke="var(--ink)" stroke-width="2.8"/>
-                            
-                            <!-- Arms & Hands holding tablet -->
-                            <path class="ink-stroke" d="M82 255 C90 270, 105 270, 120 260" stroke="var(--ink)" stroke-width="2.8"/>
-                            <path class="ink-stroke" d="M210 255 C202 270, 187 270, 172 260" stroke="var(--ink)" stroke-width="2.8"/>
-                            
-                            <!-- Tablet with code </> -->
-                            <rect class="ink-stroke" x="110" y="235" width="72" height="52" rx="8" stroke="var(--ink)" stroke-width="3" fill="#ffffff"/>
-                            <text x="146" y="268" text-anchor="middle" font-family="'Architects Daughter', cursive, sans-serif" font-size="20" font-weight="bold" fill="var(--ink)">&lt; / &gt;</text>
-                        </svg>
-
-                        <!-- Animated Speech Bubble -->
-                        <div class="notebook-speech-bubble" id="notebook-speech-bubble">
-                            <span id="speech-bubble-text">Hi! Try scribbling on my page with your mouse! ✏️</span>
-                        </div>
-                    </div>
+                <div class="stage">
+                    <div id="bubble" class="sk"></div>
+                    <svg id="boy" viewBox="0 0 400 490" fill="none" stroke="#1f3fbf" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="Pen sketch of a boy with curly hair, glasses and headphones">
+                        <g id="body">
+                          <path d="M30 490 C30 410 76 356 150 340 L250 340 C324 356 370 410 370 490 Z" fill="#fbf8f0"/>
+                          <path d="M122 352 C112 404 108 446 108 490"/><path d="M278 352 C288 404 292 446 292 490"/>
+                          <ellipse cx="200" cy="340" rx="74" ry="25" fill="#fbf8f0"/>
+                          <path d="M186 352 L184 402"/><path d="M214 352 L216 402"/><circle cx="184" cy="408" r="5" fill="#1f3fbf"/><circle cx="216" cy="408" r="5" fill="#1f3fbf"/>
+                          <path d="M70 396 C54 440 74 478 118 474" fill="#fbf8f0"/><path d="M330 396 C346 440 326 478 282 474" fill="#fbf8f0"/>
+                          <g stroke-width="2.5" opacity=".75"><path d="M62 430l16 -18M64 450l22 -24M90 458l16 -14"/><path d="M338 430l-16 -18M336 450l-22 -24M310 458l-16 -14"/><path d="M150 372l-12 18M258 372l12 18"/></g>
+                          <rect x="128" y="402" width="144" height="92" rx="9" fill="#fbf8f0" transform="rotate(-3 200 448)"/>
+                          <g transform="rotate(-3 200 448)"><rect x="138" y="412" width="124" height="72" rx="4" stroke-width="2.5"/><path d="M168 436 L152 448 L168 460 M232 436 L248 448 L232 460 M210 432 L190 464" stroke-width="3.5"/></g>
+                          <circle cx="116" cy="462" r="20" fill="#fbf8f0"/><circle cx="284" cy="462" r="20" fill="#fbf8f0"/>
+                        </g>
+                        <g id="head" style="transform-origin:200px 320px;transform-box:view-box">
+                          <g fill="#fbf8f0">
+                            <circle cx="132" cy="150" r="26"/><circle cx="160" cy="112" r="28"/><circle cx="200" cy="98" r="30"/><circle cx="242" cy="110" r="28"/><circle cx="272" cy="146" r="26"/><circle cx="122" cy="190" r="22"/><circle cx="282" cy="190" r="22"/><circle cx="182" cy="120" r="22"/><circle cx="224" cy="124" r="22"/>
+                          </g>
+                          <ellipse cx="200" cy="205" rx="84" ry="88" fill="#fbf8f0"/>
+                          <g fill="#fbf8f0"><circle cx="156" cy="140" r="19"/><circle cx="196" cy="132" r="20"/><circle cx="238" cy="140" r="19"/><circle cx="130" cy="160" r="15"/><circle cx="268" cy="160" r="15"/></g>
+                          <g stroke-width="2.5"><path d="M150 138c8 -4 14 -2 18 4M190 128c8 -5 15 -3 20 4M230 138c8 -4 14 -2 18 4"/></g>
+                          <path d="M116 190 C108 66 292 66 284 190" stroke-width="7"/>
+                          <g fill="#fbf8f0"><ellipse cx="112" cy="204" rx="21" ry="34"/><ellipse cx="288" cy="204" rx="21" ry="34"/></g>
+                          <g stroke-width="2.5"><path d="M100 190v28M106 186v34M112 184v38M286 190v28M292 186v34M298 184v38" opacity=".7"/></g>
+                          <circle cx="165" cy="214" r="31" fill="rgba(255,255,255,.4)"/><circle cx="235" cy="214" r="31" fill="rgba(255,255,255,.4)"/>
+                          <path d="M195 212 Q200 205 205 212"/><path d="M134 210 L116 204M266 210 L284 204" stroke-width="3"/>
+                          <g id="eyeL"><circle cx="165" cy="214" r="12" fill="#fff" stroke-width="2.5"/><g class="pup"><circle cx="165" cy="214" r="6.5" fill="#1f3fbf"/><circle cx="167.5" cy="211.5" r="2" fill="#fff" stroke="none"/></g></g>
+                          <g id="eyeR"><circle cx="235" cy="214" r="12" fill="#fff" stroke-width="2.5"/><g class="pup"><circle cx="235" cy="214" r="6.5" fill="#1f3fbf"/><circle cx="237.5" cy="211.5" r="2" fill="#fff" stroke="none"/></g></g>
+                          <path d="M138 170 Q165 156 190 170M210 170 Q235 156 262 170" stroke-width="4"/>
+                          <path d="M200 226 Q209 238 198 240" stroke-width="3"/>
+                          <path id="mouth" d="M172 256 Q200 282 228 256"/>
+                          <g stroke-width="2.5" opacity=".8"><path d="M132 246l9 -6M138 254l9 -6M144 262l9 -6M268 246l-9 -6M262 254l-9 -6M256 262l-9 -6"/></g>
+                        </g>
+                      </svg>
+                      <div class="note-a" style="right:-6%;top:2%;transform:rotate(5deg)">that's me!
+                        <svg width="70" height="50" viewBox="0 0 70 50" style="display:block;margin:2px 0 0 -30px;overflow:visible" fill="none" stroke="#1f3fbf" stroke-width="3" stroke-linecap="round"><path d="M64 4 C40 4 20 18 14 42 M14 42 l-3 -12 M14 42 l11 -7"/></svg></div>
+                      <div class="note-a" style="left:-8%;bottom:14%;transform:rotate(-6deg)">psst… click<br>my face
+                        <svg width="70" height="40" viewBox="0 0 70 40" style="display:block;margin:0 0 0 56px;overflow:visible" fill="none" stroke="#1f3fbf" stroke-width="3" stroke-linecap="round"><path d="M4 6 C30 6 52 14 66 34 M66 34 l-12 -2 M66 34 l-2 -12"/></svg></div>
                 </div>
             </div>
         </section>
@@ -367,6 +352,6 @@
 
     </main>
     
-    <script src="script.js?v=2.4"></script>
+    <script src="script.js?v=2.5"></script>
 </body>
 </html>

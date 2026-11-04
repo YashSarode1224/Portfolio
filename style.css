@@ -2157,42 +2157,6 @@ body.violent-glitch-active {
     align-items: center;
 }
 
-.annot-arrow-me {
-    font-family: 'Caveat', cursive;
-    font-size: 1.55rem;
-    font-weight: 700;
-    color: var(--ink);
-    transform: rotate(8deg);
-    align-self: flex-end;
-    margin-right: 32px;
-    margin-bottom: -10px;
-    user-select: none;
-}
-
-.annot-arrow-face {
-    font-family: 'Caveat', cursive;
-    font-size: 1.35rem;
-    font-weight: 700;
-    color: var(--ink);
-    position: absolute;
-    left: -20px;
-    bottom: 85px;
-    transform: rotate(-6deg);
-    user-select: none;
-    pointer-events: none;
-    white-space: nowrap;
-    opacity: 0.95;
-    z-index: 2;
-}
-
-@media (max-width: 900px) {
-    .annot-arrow-face {
-        left: 0;
-        bottom: 70px;
-        font-size: 1.15rem;
-    }
-}
-
 [data-theme="sketch"] .nav-say-hi-btn {
     border: 2px solid var(--ink) !important;
     border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px !important;
@@ -2206,67 +2170,82 @@ body.violent-glitch-active {
     transform: rotate(-1.5deg) scale(1.05);
 }
 
-.notebook-character {
+/* Exact Hand-Drawn Sketch Character & Stage */
+.stage {
     position: relative;
-    width: clamp(240px, 28vw, 320px);
-    cursor: pointer;
-    transition: transform 0.2s cubic-bezier(0.18, 0.89, 0.32, 1.28);
-    user-select: none;
+    justify-self: center;
+    width: 100%;
+    max-width: 470px;
 }
 
-.notebook-character:hover {
-    transform: scale(1.05) rotate(-1.5deg);
-}
-
-.notebook-character:active {
-    transform: scale(0.97) rotate(1deg);
-}
-
-.character-svg {
+.stage svg#boy {
     width: 100%;
     height: auto;
     display: block;
-    filter: drop-shadow(2px 3px 0 rgba(16, 75, 184, 0.12));
+    overflow: visible;
+    filter: url(#wob2);
+    cursor: pointer;
 }
 
-.notebook-speech-bubble {
+#bubble {
     position: absolute;
-    top: -46px;
-    left: 50%;
-    transform: translateX(-50%) scale(0.85);
-    background: #fffa75;
-    border: 2px solid var(--ink);
-    border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
-    padding: 7px 15px;
-    font-family: 'Caveat', 'Architects Daughter', cursive;
-    font-size: 1.1rem;
+    left: -6%;
+    top: 6%;
+    max-width: 210px;
+    padding: 12px 16px;
+    font-family: 'Caveat', cursive;
     font-weight: 700;
-    color: var(--ink);
-    box-shadow: 3px 3px 0 var(--ink);
+    font-size: 23px;
+    line-height: 1.1;
+    background: #fbf8f0;
+    border: 3px solid var(--ink);
+    border-radius: 255px 18px 225px 18px / 18px 225px 18px 255px;
+    filter: url(#wob);
     opacity: 0;
+    transform: scale(0.8) rotate(-4deg);
+    transform-origin: 100% 100%;
+    transition: 0.3s cubic-bezier(0.2, 1.4, 0.4, 1);
     pointer-events: none;
-    white-space: nowrap;
-    transition: opacity 0.2s ease, transform 0.2s ease;
-    z-index: 10;
+    z-index: 3;
+    color: var(--ink);
 }
 
-.notebook-speech-bubble.active {
+#bubble.show {
     opacity: 1;
-    transform: translateX(-50%) scale(1);
-    pointer-events: auto;
+    transform: scale(1) rotate(-3deg);
 }
 
-.notebook-speech-bubble::after {
-    content: '';
+.dr {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    animation: dr 1s cubic-bezier(0.5, 0, 0.2, 1) forwards;
+}
+
+@keyframes dr {
+    to {
+        stroke-dashoffset: 0;
+    }
+}
+
+.note-a {
     position: absolute;
-    bottom: -7px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 0;
-    height: 0;
-    border-left: 7px solid transparent;
-    border-right: 7px solid transparent;
-    border-top: 7px solid var(--ink);
+    font-family: 'Caveat', cursive;
+    font-weight: 700;
+    font-size: 23px;
+    line-height: 1.05;
+    pointer-events: none;
+    color: var(--ink);
+}
+
+@media (max-width: 900px) {
+    .stage {
+        max-width: 340px;
+        order: -1;
+        margin-top: 10px;
+    }
+    .note-a {
+        display: none;
+    }
 }
 
 /* Logo Sketch Underline */

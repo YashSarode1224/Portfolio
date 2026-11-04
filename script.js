@@ -2450,65 +2450,115 @@ function initInkDoodler() {
 }
 
 // ==========================================================================
-// 14. INTERACTIVE HAND-DRAWN AVATAR CHARACTER ("CLICK MY FACE")
+// 14. INTERACTIVE HAND-DRAWN AVATAR CHARACTER ("BOY IN BLUE INK")
 // ==========================================================================
 function initCharacterAvatar() {
-    const char = document.getElementById('notebook-character');
-    const bubble = document.getElementById('notebook-speech-bubble');
-    const bubbleText = document.getElementById('speech-bubble-text');
-    if (!char) return;
+    const boy = document.getElementById('boy');
+    if (!boy) return;
 
-    const quotes = [
-        "Hi! Try scribbling on my page with your mouse! ✏️",
-        "I build things for the web & grind DSA! ⚡",
-        "2nd-year CSE student @ VIT Vellore 🎓",
-        "Don't worry, the erase button cleans up the ink! 😉",
-        "opsst... you found the interactive face! ✨",
-        "Catch me playing Valorant or watching anime! 🎮"
+    const $$ = s => [...document.querySelectorAll(s)];
+    const $ = s => document.querySelector(s);
+    const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+
+    // 1. Initial draw-in of the strokes
+    $$('#boy path,#boy circle,#boy ellipse,#boy rect').forEach((el, i) => {
+        if (el.closest('.pup')) return;
+        el.setAttribute('pathLength', '1');
+        el.classList.add('dr');
+        el.style.animationDelay = (i * 22) + 'ms';
+    });
+
+    // 2. Boy reacts to cursor (head tilting, pupils following, blinking, talking)
+    const head = $('#head');
+    const pups = $$('#boy .pup');
+    const eyes = [$('#eyeL'), $('#eyeR')];
+    const mouth = $('#mouth');
+    const bubbleEl = $('#bubble');
+
+    let tx = 0, ty = 0, cx = 0, cy = 0, idle = 0, blink = 0, nb = 2.5;
+    let t0 = performance.now();
+    let open = false, bi = 0, bt;
+
+    const BOY_QUOTES = [
+        "hey! i live in this notebook ✎",
+        "psst… try the doodle button",
+        "he drinks way too much coffee",
+        "hire him. he's good. 👀",
+        "i'm drawn in blue pen, not pixels",
+        "hi! i'm Yash's pen-and-paper buddy ✎"
     ];
-    let quoteIndex = 0;
-    let bubbleTimeout = null;
 
-    char.addEventListener('click', (e) => {
-        e.preventDefault();
+    function showBubble(t) {
+        if (!bubbleEl) return;
+        bubbleEl.textContent = t;
+        bubbleEl.classList.add('show');
+        clearTimeout(bt);
+        bt = setTimeout(() => bubbleEl.classList.remove('show'), 3200);
+        open = true;
+        setTimeout(() => open = false, 1500);
+    }
+
+    boy.addEventListener('click', (e) => {
         e.stopPropagation();
-
-        // Rotate quotes
-        quoteIndex = (quoteIndex + 1) % quotes.length;
-        if (bubbleText) bubbleText.textContent = quotes[quoteIndex];
-
-        // Animate speech bubble
-        if (bubble) {
-            bubble.classList.add('active');
-            clearTimeout(bubbleTimeout);
-            bubbleTimeout = setTimeout(() => {
-                bubble.classList.remove('active');
-            }, 3200);
-        }
-
-        // Playful eye wink animation
-        const eyes = document.getElementById('character-eyes');
-        const mouth = document.getElementById('character-mouth');
-        if (eyes) {
-            eyes.innerHTML = '<path d="M116 125 Q122 120 128 125" stroke="var(--ink)" stroke-width="3" stroke-linecap="round"/><circle cx="164" cy="125" r="4.5" fill="var(--ink)"/>';
-            setTimeout(() => {
-                eyes.innerHTML = '<circle class="ink-eye" cx="122" cy="125" r="4.5" fill="var(--ink)"/><circle class="ink-eye" cx="164" cy="125" r="4.5" fill="var(--ink)"/>';
-            }, 800);
-        }
-        if (mouth) {
-            mouth.setAttribute('d', 'M130 143 Q143 158 156 143');
-            setTimeout(() => {
-                mouth.setAttribute('d', 'M134 145 Q143 154 152 145');
-            }, 800);
-        }
+        showBubble(BOY_QUOTES[bi++ % BOY_QUOTES.length]);
     });
 
-    char.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            char.click();
-        }
+    setTimeout(() => {
+        const isSketch = document.documentElement.getAttribute('data-theme') === 'sketch';
+        if (isSketch) showBubble("hi! i'm Yash's pen-and-paper buddy ✎");
+    }, 1800);
+
+    window.addEventListener('pointermove', e => {
+        const isSketch = document.documentElement.getAttribute('data-theme') === 'sketch';
+        if (!isSketch) return;
+        const r = boy.getBoundingClientRect();
+        tx = clamp((e.clientX - (r.left + r.width / 2)) / (window.innerWidth * 0.4), -1, 1);
+        ty = clamp((e.clientY - (r.top + r.height * 0.4)) / (window.innerHeight * 0.4), -1, 1);
+        idle = 0;
     });
+
+    function tick(now) {
+        const isSketch = document.documentElement.getAttribute('data-theme') === 'sketch';
+        if (isSketch && boy.offsetParent !== null) {
+            const dt = Math.min(0.05, (now - t0) / 1000);
+            t0 = now;
+            idle += dt;
+            const gx = idle > 6 ? 0 : tx;
+            const gy = idle > 6 ? 0.8 : ty;
+            cx += (gx - cx) * Math.min(1, dt * 7);
+            cy += (gy - cy) * Math.min(1, dt * 7);
+
+            if (head) {
+                head.style.transform = `translate(${cx * 10}px, ${cy * 6}px) rotate(${cx * 5}deg)`;
+            }
+            pups.forEach(p => {
+                p.style.transform = `translate(${cx * 5}px, ${cy * 4}px)`;
+            });
+
+            nb -= dt;
+            if (nb < 0) {
+                blink = 1;
+                nb = 2 + Math.random() * 3;
+            }
+            blink = Math.max(0, blink - dt * 7);
+            const s = 1 - Math.sin(blink * Math.PI) * 0.9;
+            eyes.forEach((g, i) => {
+                if (g) {
+                    g.style.transformOrigin = (i ? 235 : 165) + 'px 214px';
+                    g.style.transformBox = 'view-box';
+                    g.style.transform = `scaleY(${s})`;
+                }
+            });
+
+            if (mouth) {
+                mouth.setAttribute('d', open ? 'M172 252 Q200 296 228 252 Z' : 'M172 256 Q200 282 228 256');
+            }
+        } else {
+            t0 = now;
+        }
+        requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
 }
 
 function showSkeletonLoader() {
