@@ -21,8 +21,10 @@
     <link rel="stylesheet" href="style.css">
     <script>
         (function() {
-            var t = localStorage.getItem('yash_portfolio_paper_theme');
-            if (t) document.documentElement.setAttribute('data-theme', t);
+            var savedTheme = localStorage.getItem('yash_portfolio_theme');
+            if (savedTheme === 'sketch') {
+                document.documentElement.setAttribute('data-theme', 'sketch');
+            }
         })();
     </script>
 </head>
@@ -35,9 +37,9 @@
             <div class="logo">Portfolio</div>
             <div class="nav-right">
                 <div class="social-links">
-                    <button class="paper-theme-toggle" id="paper-theme-btn" type="button" title="Cycle Paper Theme (Classic / Dark Newsprint / Blueprint)">
-                        <span class="paper-theme-icon">📄</span>
-                        <span class="paper-theme-label">Paper: Classic</span>
+                    <button class="theme-toggle-btn" id="theme-toggle-btn" type="button" title="Switch Theme (Brutalist ↔ Hand-Drawn Sketch)">
+                        <span class="theme-toggle-icon">✏️</span>
+                        <span class="theme-toggle-label">Sketch Mode</span>
                     </button>
                     <a href="index.html">Home</a>
                     <a href="projects.html" style="color: var(--accent-color);">Projects</a>

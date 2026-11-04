@@ -2168,7 +2168,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     initInteractions();
     initTerminal();
-    initPaperTheme();
+    initThemeSwitcher();
 });
 
 function showSkeletonLoader() {
@@ -2924,7 +2924,7 @@ function initTerminal() {
                 addLine("  about    :- Who am I?");
                 addLine("  skills   :- My tech stack");
                 addLine("  projects :- View my work");
-                addLine("  theme    :- Cycle paper theme (Classic / Newsprint / Blueprint)");
+                addLine("  theme    :- Toggle theme (Brutalist ↔ Hand-Drawn Sketch)");
                 addLine("  snake    :- Play retro snake");
                 addLine("  anime    :- Anime character display");
                 addLine("  social   :- Connect with me");
@@ -2932,14 +2932,10 @@ function initTerminal() {
                 addLine("  sudo     :- [RESTRICTED]");
                 break;
             case 'theme': {
-                let targetTheme = null;
-                if (arg === 'classic' || arg === 'light' || arg === 'paper') targetTheme = 'classic';
-                else if (arg === 'dark' || arg === 'newsprint' || arg === 'night') targetTheme = 'dark-newsprint';
-                else if (arg === 'blue' || arg === 'blueprint' || arg === 'draft') targetTheme = 'blueprint';
-
-                const applied = targetTheme ? applyPaperTheme(targetTheme) : cyclePaperTheme();
-                const info = PAPER_THEMES_INFO[applied] || { label: applied };
-                addLine(`Switched paper theme to: ${info.label}`);
+                const applied = togglePortfolioTheme();
+                addLine(applied === 'sketch' 
+                    ? "Switched theme to: Hand-Drawn Sketch Wireframe ✏️" 
+                    : "Switched theme to: Classic Neo-Brutalist 🎨");
                 break;
             }
             case 'snake':
@@ -2986,57 +2982,54 @@ function initTerminal() {
 }
 
 // ==========================================
-// ARCHITECTURAL PAPER THEME ENGINE
+// THEME ENGINE: BRUTALIST ↔ HAND-DRAWN SKETCH WIREFRAME
 // ==========================================
-const PAPER_THEMES = ['classic', 'dark-newsprint', 'blueprint'];
-const PAPER_THEMES_INFO = {
-    'classic': { label: 'Paper: Classic', icon: '📄' },
-    'dark-newsprint': { label: 'Paper: Dark Newsprint', icon: '📰' },
-    'blueprint': { label: 'Paper: Blueprint', icon: '📐' }
-};
-
-function getActivePaperTheme() {
-    return localStorage.getItem('yash_portfolio_paper_theme') || 'classic';
+function getActivePortfolioTheme() {
+    return localStorage.getItem('yash_portfolio_theme') || 'brutalist';
 }
 
-function applyPaperTheme(theme) {
-    if (!PAPER_THEMES.includes(theme)) theme = 'classic';
-    document.documentElement.setAttribute('data-theme', theme);
-    localStorage.setItem('yash_portfolio_paper_theme', theme);
+function applyPortfolioTheme(theme) {
+    const isSketch = theme === 'sketch';
+    if (isSketch) {
+        document.documentElement.setAttribute('data-theme', 'sketch');
+        localStorage.setItem('yash_portfolio_theme', 'sketch');
+    } else {
+        document.documentElement.removeAttribute('data-theme');
+        localStorage.setItem('yash_portfolio_theme', 'brutalist');
+    }
 
-    const info = PAPER_THEMES_INFO[theme] || PAPER_THEMES_INFO.classic;
-    document.querySelectorAll('.paper-theme-label').forEach(el => {
-        el.textContent = info.label;
+    document.querySelectorAll('.theme-toggle-label').forEach(el => {
+        el.textContent = isSketch ? 'Brutalist Mode' : 'Sketch Mode';
     });
-    document.querySelectorAll('.paper-theme-icon').forEach(el => {
-        el.textContent = info.icon;
+    document.querySelectorAll('.theme-toggle-icon').forEach(el => {
+        el.textContent = isSketch ? '🎨' : '✏️';
     });
-    return theme;
+
+    return isSketch ? 'sketch' : 'brutalist';
 }
 
-function cyclePaperTheme() {
-    const current = getActivePaperTheme();
-    const nextIdx = (PAPER_THEMES.indexOf(current) + 1) % PAPER_THEMES.length;
-    const nextTheme = PAPER_THEMES[nextIdx];
-    return applyPaperTheme(nextTheme);
+function togglePortfolioTheme() {
+    const current = getActivePortfolioTheme();
+    const nextTheme = current === 'sketch' ? 'brutalist' : 'sketch';
+    return applyPortfolioTheme(nextTheme);
 }
 
-function initPaperTheme() {
+function initThemeSwitcher() {
     // 1. Sync button labels with currently active theme
-    applyPaperTheme(getActivePaperTheme());
+    applyPortfolioTheme(getActivePortfolioTheme());
 
-    // 2. Attach click handlers to any paper theme buttons
-    document.querySelectorAll('.paper-theme-toggle').forEach(btn => {
+    // 2. Attach click handlers to theme toggle buttons
+    document.querySelectorAll('.theme-toggle-btn').forEach(btn => {
         btn.addEventListener('click', () => {
-            cyclePaperTheme();
+            togglePortfolioTheme();
         });
     });
 }
 
 // Expose globally for terminal & external calls
-window.cyclePaperTheme = cyclePaperTheme;
-window.applyPaperTheme = applyPaperTheme;
-window.initPaperTheme = initPaperTheme;
+window.togglePortfolioTheme = togglePortfolioTheme;
+window.applyPortfolioTheme = applyPortfolioTheme;
+window.initThemeSwitcher = initThemeSwitcher;
 
 
 

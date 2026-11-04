@@ -1,12 +1,6 @@
-@import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=DM+Mono:wght@400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Architects+Daughter&family=Archivo+Black&family=DM+Mono:wght@400;500;700&display=swap');
 
-/* ==========================================================================
-   ARCHITECTURAL PAPER THEMES (CLASSIC / DARK NEWSPRINT / BLUEPRINT)
-   ========================================================================== */
-
-/* 1. Classic Dot-Grid Paper (Default) */
-:root,
-[data-theme="classic"] {
+:root {
     --ink: #161616;
     --paper: #fffdf5;
     --paper-warm: #fff4cf;
@@ -16,9 +10,6 @@
     --green: #baf27e;
     --orange: #ff9b54;
     --muted: #5e5a51;
-    --bg-dot: var(--ink);
-    --border: 3px solid var(--ink);
-    --shadow: 7px 7px 0 var(--ink);
     /* Compatibility aliases for the existing inline styles and script-generated markup. */
     --accent-color: var(--pink);
     --accent-secondary: var(--orange);
@@ -26,50 +17,26 @@
     --text-muted: var(--muted);
     --glass-border: var(--ink);
     --glass-bg: var(--paper);
-}
-
-/* 2. Dark Newsprint Paper (Night Mode) */
-[data-theme="dark-newsprint"] {
-    --ink: #f5f3ec;
-    --paper: #121316;
-    --paper-warm: #1b1d22;
-    --yellow: #ffd60a;
-    --pink: #ff65a3;
-    --blue: #38bdf8;
-    --green: #a3e635;
-    --orange: #fb923c;
-    --muted: #9ca3af;
-    --bg-dot: rgba(245, 243, 236, 0.16);
     --border: 3px solid var(--ink);
     --shadow: 7px 7px 0 var(--ink);
-    --accent-color: var(--pink);
-    --accent-secondary: var(--orange);
-    --text-main: var(--ink);
-    --text-muted: var(--muted);
-    --glass-border: var(--ink);
-    --glass-bg: var(--paper);
 }
 
-/* 3. Blueprint Paper (Technical Architectural Grid) */
-[data-theme="blueprint"] {
-    --ink: #f0f6fc;
-    --paper: #0b2545;
-    --paper-warm: #133a68;
-    --yellow: #ffd166;
-    --pink: #f472b6;
-    --blue: #00f0ff;
-    --green: #6ee7b7;
-    --orange: #fca311;
-    --muted: #94a3b8;
-    --bg-dot: rgba(0, 240, 255, 0.18);
-    --border: 3px solid var(--ink);
-    --shadow: 7px 7px 0 var(--ink);
-    --accent-color: var(--blue);
-    --accent-secondary: var(--yellow);
-    --text-main: var(--ink);
-    --text-muted: var(--muted);
-    --glass-border: var(--ink);
-    --glass-bg: var(--paper);
+/* ==========================================================================
+   HAND-DRAWN SKETCH / WIREFRAME THEME (SECOND THEME)
+   Exact aesthetic from user's architectural sketchbook wireframe drawing
+   ========================================================================== */
+[data-theme="sketch"] {
+    --ink: #121212;
+    --paper: #ffffff;
+    --paper-warm: #fcfbf7;
+    --yellow: #fffa75; /* highlighter yellow */
+    --pink: #ffd2e5;   /* highlighter pink */
+    --blue: #bfeaff;   /* highlighter blue */
+    --green: #d2f9a9;  /* highlighter green */
+    --orange: #ffe0b3; /* highlighter orange */
+    --muted: #4e4c47;
+    --border: 2.2px solid #121212;
+    --shadow: none;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -79,7 +46,7 @@ body {
     min-width: 320px;
     overflow-x: hidden;
     background-color: var(--paper);
-    background-image: radial-gradient(var(--bg-dot, var(--ink)) 0.75px, transparent 0.75px);
+    background-image: radial-gradient(var(--ink) 0.75px, transparent 0.75px);
     background-size: 18px 18px;
     color: var(--ink);
     font-family: 'DM Mono', monospace;
@@ -87,10 +54,12 @@ body {
     transition: background-color 0.22s ease, color 0.22s ease;
 }
 
-[data-theme="blueprint"] body {
+/* Authentic Notebook Graph Paper Canvas in Sketch Mode */
+[data-theme="sketch"] body {
+    background-color: #fbfbfa;
     background-image: 
-        linear-gradient(rgba(0, 240, 255, 0.08) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0, 240, 255, 0.08) 1px, transparent 1px);
+        linear-gradient(rgba(18, 18, 18, 0.055) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(18, 18, 18, 0.055) 1px, transparent 1px);
     background-size: 20px 20px;
 }
 
@@ -140,7 +109,7 @@ nav {
 }
 .social-links a:hover, .social-links a:focus-visible { background: var(--pink); border-color: var(--ink); transform: rotate(-2deg); outline: none; }
 
-.paper-theme-toggle {
+.theme-toggle-btn {
     display: inline-flex;
     align-items: center;
     gap: 7px;
@@ -159,23 +128,23 @@ nav {
     transition: transform 120ms ease, box-shadow 120ms ease, background 120ms ease;
 }
 
-.paper-theme-toggle:hover {
+.theme-toggle-btn:hover {
     background: var(--yellow);
     transform: translate(1px, 1px);
     box-shadow: 2px 2px 0 var(--ink);
 }
 
-.paper-theme-toggle:active {
+.theme-toggle-btn:active {
     transform: translate(3px, 3px);
     box-shadow: none;
 }
 
-.paper-theme-toggle .paper-theme-icon {
+.theme-toggle-btn .theme-toggle-icon {
     font-size: 0.95rem;
     line-height: 1;
 }
 
-.paper-theme-toggle .paper-theme-label {
+.theme-toggle-btn .theme-toggle-label {
     letter-spacing: 0.02em;
 }
 
@@ -862,7 +831,7 @@ body.violent-glitch-active {
     main { padding: 18px 18px 52px; }
     nav { align-items: flex-start; flex-direction: column; gap: 16px; margin-bottom: 44px; }
     .social-links { justify-content: flex-start; }.social-links a { padding: 6px 7px; font-size: .68rem; }
-    .paper-theme-toggle { padding: 5px 8px; font-size: 0.68rem; }
+    .theme-toggle-btn { padding: 5px 8px; font-size: 0.68rem; }
     .hero { min-height: auto; padding: 38px 0 55px; }.hero::after { top: 2%; right: 2%; opacity: .42; }
     
     .contact-grid { grid-template-columns: 1fr; }.contact-card { min-height: 190px; }
@@ -1708,4 +1677,212 @@ body.violent-glitch-active {
     .workflow-steps-timeline::before {
         left: 23px;
     }
+}
+
+/* ==========================================================================
+   HAND-DRAWN SKETCH WIREFRAME STYLING RULES (EXACT USER SPEC)
+   ========================================================================== */
+
+/* 1. Architectural Handwriting Typography */
+[data-theme="sketch"] h1,
+[data-theme="sketch"] h2,
+[data-theme="sketch"] h3,
+[data-theme="sketch"] .logo,
+[data-theme="sketch"] .stat-title,
+[data-theme="sketch"] .stat-value,
+[data-theme="sketch"] .theme-toggle-btn,
+[data-theme="sketch"] .visit-btn,
+[data-theme="sketch"] p.subtitle,
+[data-theme="sketch"] .fun-fact,
+[data-theme="sketch"] .social-links a,
+[data-theme="sketch"] .contact-card h3,
+[data-theme="sketch"] .workflow-skill-title,
+[data-theme="sketch"] .workflow-step-title,
+[data-theme="sketch"] .workflow-cluster-name,
+[data-theme="sketch"] .workflow-close-btn,
+[data-theme="sketch"] .workflow-fact-badge,
+[data-theme="sketch"] .graph-card-title,
+[data-theme="sketch"] .rank-badge,
+[data-theme="sketch"] .term-title,
+[data-theme="sketch"] .degree,
+[data-theme="sketch"] .school-name,
+[data-theme="sketch"] .year-tag {
+    font-family: 'Architects Daughter', cursive, sans-serif !important;
+    letter-spacing: 0.03em;
+}
+
+[data-theme="sketch"] h1 {
+    font-weight: 700;
+    line-height: 1.05;
+}
+
+/* 2. Logo & Highlighter Marker Effect */
+[data-theme="sketch"] .logo {
+    border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px !important;
+    background: #fffa75 !important;
+    border: 2.2px solid #161616 !important;
+    box-shadow: none !important;
+    position: relative;
+}
+
+[data-theme="sketch"] .gradient-text {
+    background: #fffa75 !important;
+    color: #161616 !important;
+    border: 2px solid #161616;
+    border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+    text-shadow: none !important;
+    transform: rotate(-1.5deg);
+    padding: 2px 10px;
+    box-shadow: 2px 2px 0 #161616;
+}
+
+[data-theme="sketch"] .hero::after {
+    border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px !important;
+    background: #fff8aa !important;
+    content: '✏️';
+    font-size: clamp(3rem, 7vw, 6rem);
+    box-shadow: none !important;
+    transform: rotate(8deg);
+    border: 2.5px solid #161616 !important;
+}
+
+/* 3. Wobbly Hand-Drawn Box Borders */
+[data-theme="sketch"] .stat-card,
+[data-theme="sketch"] .project-card,
+[data-theme="sketch"] .info-card,
+[data-theme="sketch"] .contact-card,
+[data-theme="sketch"] p.subtitle,
+[data-theme="sketch"] .fun-fact,
+[data-theme="sketch"] .skills-section,
+[data-theme="sketch"] .theme-toggle-btn,
+[data-theme="sketch"] .visit-btn,
+[data-theme="sketch"] .workflow-cluster-summary-card,
+[data-theme="sketch"] .workflow-fact-card,
+[data-theme="sketch"] .workflow-conn-card,
+[data-theme="sketch"] .workflow-step-body,
+[data-theme="sketch"] .graph-hud-bar,
+[data-theme="sketch"] .graph-node-card,
+[data-theme="sketch"] .workflow-close-btn,
+[data-theme="sketch"] .terminal-window {
+    border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px !important;
+    border: 2.2px solid #161616 !important;
+    background: #ffffff;
+    box-shadow: none !important;
+    position: relative;
+}
+
+/* Alternate wobble variations for organic hand-drawn irregularity */
+[data-theme="sketch"] .stat-card:nth-child(2),
+[data-theme="sketch"] .project-card:nth-child(2),
+[data-theme="sketch"] .contact-card:nth-child(2),
+[data-theme="sketch"] .info-card:nth-child(2) {
+    border-radius: 20px 255px 20px 255px / 255px 20px 255px 20px !important;
+}
+
+[data-theme="sketch"] .stat-card:nth-child(3),
+[data-theme="sketch"] .project-card:nth-child(3),
+[data-theme="sketch"] .contact-card:nth-child(3),
+[data-theme="sketch"] .info-card:nth-child(3) {
+    border-radius: 255px 25px 225px 25px / 25px 225px 25px 255px !important;
+}
+
+/* 4. Cross-Hatch Shading (Hand-Drawn Diagonal Shading from user sketch) */
+[data-theme="sketch"] .stat-card::after,
+[data-theme="sketch"] .project-card::after,
+[data-theme="sketch"] .info-card::after,
+[data-theme="sketch"] .contact-card::after,
+[data-theme="sketch"] p.subtitle::after,
+[data-theme="sketch"] .fun-fact::after,
+[data-theme="sketch"] .logo::after,
+[data-theme="sketch"] .theme-toggle-btn::after,
+[data-theme="sketch"] .visit-btn::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    transform: translate(6px, 6px);
+    z-index: -1;
+    border: 1.8px solid #161616;
+    border-radius: inherit;
+    background: repeating-linear-gradient(
+        -45deg,
+        #161616 0px,
+        #161616 1.5px,
+        transparent 1.5px,
+        transparent 5.5px
+    );
+    pointer-events: none;
+    transition: transform 0.15s ease;
+}
+
+[data-theme="sketch"] .stat-card:hover::after,
+[data-theme="sketch"] .project-card:hover::after,
+[data-theme="sketch"] .contact-card:hover::after,
+[data-theme="sketch"] .info-card:hover::after,
+[data-theme="sketch"] .theme-toggle-btn:hover::after,
+[data-theme="sketch"] .logo:hover::after,
+[data-theme="sketch"] .visit-btn:hover::after {
+    transform: translate(3px, 3px);
+}
+
+/* 5. Hand-Drawn Smiley Avatar (Sticker 'Y') */
+[data-theme="sketch"] .sticker-y {
+    border-radius: 48% 52% 49% 51% / 53% 47% 53% 47% !important;
+    background: #ffffff !important;
+    border: 2.5px solid #161616 !important;
+    box-shadow: 4px 4px 0 #161616 !important;
+}
+
+[data-theme="sketch"] .sticker-y .sticker-char {
+    font-family: 'Architects Daughter', cursive, sans-serif !important;
+    font-size: 4.2rem;
+}
+
+[data-theme="sketch"] .sticker-y .sticker-badge-tag {
+    font-family: 'Architects Daughter', cursive, sans-serif !important;
+    font-weight: 700;
+    border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+    background: #fffa75;
+}
+
+/* 6. Hand-Drawn Badges & Pills */
+[data-theme="sketch"] .skill-tag,
+[data-theme="sketch"] .rank-badge,
+[data-theme="sketch"] .workflow-mini-chip,
+[data-theme="sketch"] .graph-card-badge,
+[data-theme="sketch"] .workflow-category-pill,
+[data-theme="sketch"] .workflow-step-type-pill,
+[data-theme="sketch"] .year-tag {
+    border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px !important;
+    border: 1.5px solid #161616 !important;
+    box-shadow: none !important;
+    background: var(--paper-warm);
+}
+
+[data-theme="sketch"] .visit-btn {
+    background: #fffa75 !important;
+    color: #161616 !important;
+    font-weight: 700;
+}
+
+/* 7. Terminal Window in Sketch Mode */
+[data-theme="sketch"] .terminal-window {
+    border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px !important;
+    border: 2.5px solid #161616 !important;
+}
+
+[data-theme="sketch"] .terminal-header {
+    background: #fffa75 !important;
+    border-bottom: 2px solid #161616 !important;
+}
+
+[data-theme="sketch"] .terminal-body {
+    background: #111215;
+}
+
+/* 8. Sketch Theme Button Styling */
+[data-theme="sketch"] .theme-toggle-btn {
+    background: #fffa75;
+    font-family: 'Architects Daughter', cursive, sans-serif !important;
+    font-size: 0.84rem;
+    letter-spacing: 0.04em;
 }
