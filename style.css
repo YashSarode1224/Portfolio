@@ -289,7 +289,7 @@ p.subtitle::before { content: '↓ '; color: var(--ink); font-weight: 700; }
     position: relative;
     z-index: 25;
 }
-/* Tactile Draggable Stickers with Physics */
+/* Tactile Draggable Stickers with Dynamic Shape Morphing */
 .draggable-sticker {
     cursor: grab;
     user-select: none;
@@ -297,8 +297,8 @@ p.subtitle::before { content: '↓ '; color: var(--ink); font-weight: 700; }
     touch-action: none;
     position: relative;
     z-index: 100;
-    will-change: transform, box-shadow;
-    transition: box-shadow 0.18s ease, transform 0.12s ease;
+    will-change: transform, box-shadow, border-radius, clip-path;
+    transition: box-shadow 0.18s ease, transform 0.12s ease, border-radius 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), clip-path 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .draggable-sticker:hover {
@@ -314,17 +314,27 @@ p.subtitle::before { content: '↓ '; color: var(--ink); font-weight: 700; }
     cursor: grabbing !important;
     z-index: 99999 !important;
     box-shadow: 12px 14px 0 var(--ink) !important;
-    transition: none !important;
+    transition: box-shadow 0.15s ease, border-radius 0.18s ease, clip-path 0.18s ease !important;
 }
 
 .draggable-sticker.is-squished {
     box-shadow: 4px 4px 0 var(--ink) !important;
 }
 
-/* Tactile Elastic Collision Response on Impacted Blocks */
+/* Tactile Responsive Edge & Corner Morphing on Impacted Blocks */
+.info-card,
+.fun-fact,
+.stat-card,
+.project-card,
+.contact-card,
+.about-text,
+.skills-section {
+    transition: transform 0.15s ease-out, box-shadow 0.15s ease, border-radius 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
 .block-bumped {
     box-shadow: 8px 8px 0 var(--pink) !important;
-    transition: transform 0.08s ease-out, box-shadow 0.12s ease !important;
+    transition: border-radius 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.15s ease !important;
 }
 
 [data-theme="sketch"] .block-bumped {

@@ -2394,6 +2394,17 @@ function initDraggableStickers() {
         return result;
     }
 
+    // Helper to smoothly restore morphed block borders
+    function clearBlockMorph(block) {
+        if (!block) return;
+        block.classList.remove('block-bumped');
+        block.style.removeProperty('border-top-left-radius');
+        block.style.removeProperty('border-top-right-radius');
+        block.style.removeProperty('border-bottom-left-radius');
+        block.style.removeProperty('border-bottom-right-radius');
+        block.style.removeProperty('border-radius');
+    }
+
     stickers.forEach((sticker) => {
         let isDragging = false;
         let startPointerX = 0;
@@ -2499,8 +2510,8 @@ function initDraggableStickers() {
                 }
             }
 
-            let scaleX = 1.06;
-            let scaleY = 1.06;
+            let scaleX = 1.04;
+            let scaleY = 1.04;
             let skewX = 0;
             let skewY = 0;
             let rotAdj = 0;
@@ -2512,87 +2523,99 @@ function initDraggableStickers() {
                 const { sideX, sideY, minX, minY, isCorner } = hitInfo;
 
                 if (isCorner) {
-                    // Corner Hit: diagonal squash and corner recoil
-                    scaleX = 0.86;
-                    scaleY = 0.86;
+                    // CORNER HIT: "getting round or cutting into the shape"
+                    // The corner cuts in with a stylish 24px chamfer AND rounds the other edges!
                     if (sideX === -1 && sideY === -1) {
-                        skewX = -5; skewY = -5; rotAdj = -5;
-                        hitBlock.style.transform = 'translate(10px, 8px) rotate(2.2deg)';
+                        // Sticker Top-Left of block -> Bottom-Right of sticker touches Top-Left of block
+                        sticker.style.setProperty('border-radius', '20px 20px 65px 20px', 'important');
+                        sticker.style.setProperty('clip-path', 'polygon(0 0, 100% 0, 100% calc(100% - 24px), calc(100% - 24px) 100%, 0 100%)');
+                        hitBlock.style.setProperty('border-top-left-radius', '36px', 'important');
+                        rotAdj = -3;
                     } else if (sideX === 1 && sideY === -1) {
-                        skewX = 5; skewY = -5; rotAdj = 5;
-                        hitBlock.style.transform = 'translate(-10px, 8px) rotate(-2.2deg)';
+                        // Sticker Top-Right of block -> Bottom-Left of sticker touches Top-Right of block
+                        sticker.style.setProperty('border-radius', '20px 20px 20px 65px', 'important');
+                        sticker.style.setProperty('clip-path', 'polygon(0 0, 100% 0, 100% 100%, 24px 100%, 0 calc(100% - 24px))');
+                        hitBlock.style.setProperty('border-top-right-radius', '36px', 'important');
+                        rotAdj = 3;
                     } else if (sideX === -1 && sideY === 1) {
-                        skewX = -5; skewY = 5; rotAdj = 5;
-                        hitBlock.style.transform = 'translate(10px, -8px) rotate(-2.2deg)';
+                        // Sticker Bottom-Left of block (like user's screenshot!) -> Top-Right of sticker touches Bottom-Left of block
+                        sticker.style.setProperty('border-radius', '20px 65px 20px 20px', 'important');
+                        sticker.style.setProperty('clip-path', 'polygon(0 0, calc(100% - 24px) 0, 100% 24px, 100% 100%, 0 100%)');
+                        hitBlock.style.setProperty('border-bottom-left-radius', '36px', 'important');
+                        rotAdj = 3;
                     } else {
-                        skewX = 5; skewY = 5; rotAdj = -5;
-                        hitBlock.style.transform = 'translate(-10px, -8px) rotate(2.2deg)';
+                        // Sticker Bottom-Right of block -> Top-Left of sticker touches Bottom-Right of block
+                        sticker.style.setProperty('border-radius', '65px 20px 20px 20px', 'important');
+                        sticker.style.setProperty('clip-path', 'polygon(24px 0, 100% 0, 100% 100%, 0 100%, 0 24px)');
+                        hitBlock.style.setProperty('border-bottom-right-radius', '36px', 'important');
+                        rotAdj = -3;
                     }
                 } else if (minX < minY) {
-                    // Side Edge Hit (Horizontal compression against card)
-                    scaleX = 0.82;
-                    scaleY = 1.18;
+                    // SIDE / EDGE HIT (Left or Right) -> Sticker rounds into dome/pill along the touching edge
+                    sticker.style.removeProperty('clip-path');
                     if (sideX === -1) {
-                        hitBlock.style.transform = 'translateX(12px) rotate(0.9deg)';
-                        rotAdj = deltaY > 0 ? 3 : -3;
+                        // Sticker to left of block -> sticker right side rounds deeply
+                        sticker.style.setProperty('border-radius', '16px 55px 55px 16px', 'important');
+                        hitBlock.style.setProperty('border-top-left-radius', '28px', 'important');
+                        hitBlock.style.setProperty('border-bottom-left-radius', '28px', 'important');
                     } else {
-                        hitBlock.style.transform = 'translateX(-12px) rotate(-0.9deg)';
-                        rotAdj = deltaY > 0 ? -3 : 3;
+                        // Sticker to right of block -> sticker left side rounds deeply
+                        sticker.style.setProperty('border-radius', '55px 16px 16px 55px', 'important');
+                        hitBlock.style.setProperty('border-top-right-radius', '28px', 'important');
+                        hitBlock.style.setProperty('border-bottom-right-radius', '28px', 'important');
                     }
                 } else {
-                    // Top / Bottom Edge Hit (Vertical compression against card)
-                    scaleX = 1.18;
-                    scaleY = 0.82;
+                    // TOP / BOTTOM EDGE HIT
+                    sticker.style.removeProperty('clip-path');
                     if (sideY === -1) {
-                        hitBlock.style.transform = 'translateY(10px)';
+                        // Sticker above block -> sticker bottom rounds deeply
+                        sticker.style.setProperty('border-radius', '16px 16px 55px 55px', 'important');
+                        hitBlock.style.setProperty('border-top-left-radius', '28px', 'important');
+                        hitBlock.style.setProperty('border-top-right-radius', '28px', 'important');
                     } else {
-                        hitBlock.style.transform = 'translateY(-10px)';
+                        // Sticker below block -> sticker top rounds deeply
+                        sticker.style.setProperty('border-radius', '55px 55px 16px 16px', 'important');
+                        hitBlock.style.setProperty('border-bottom-left-radius', '28px', 'important');
+                        hitBlock.style.setProperty('border-bottom-right-radius', '28px', 'important');
                     }
                 }
 
                 if (currentBumpedBlock && currentBumpedBlock !== hitBlock) {
-                    currentBumpedBlock.classList.remove('block-bumped');
-                    currentBumpedBlock.style.transition = 'transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1)';
-                    currentBumpedBlock.style.transform = '';
+                    clearBlockMorph(currentBumpedBlock);
                 }
 
                 hitBlock.classList.add('block-bumped');
-                hitBlock.style.transition = 'transform 0.08s ease-out';
                 currentBumpedBlock = hitBlock;
                 playTactileBump(1);
 
             } else if (hitScreenX !== 0 || hitScreenY !== 0) {
-                // COLLISION WITH SCREEN WALL OR CORNER
+                // COLLISION WITH SCREEN WALL OR CORNER -> Sticker gets round along the boundary
                 isColliding = true;
+                sticker.style.removeProperty('clip-path');
                 if (isScreenCorner) {
-                    scaleX = 0.84;
-                    scaleY = 0.84;
-                    if (hitScreenX === -1 && hitScreenY === -1) { skewX = 6; skewY = 6; rotAdj = -4; }
-                    else if (hitScreenX === 1 && hitScreenY === -1) { skewX = -6; skewY = 6; rotAdj = 4; }
-                    else if (hitScreenX === -1 && hitScreenY === 1) { skewX = 6; skewY = -6; rotAdj = 4; }
-                    else { skewX = -6; skewY = -6; rotAdj = -4; }
-                } else if (hitScreenX !== 0) {
-                    scaleX = 0.80;
-                    scaleY = 1.16;
+                    sticker.style.setProperty('border-radius', '50%', 'important');
+                } else if (hitScreenX === -1) {
+                    sticker.style.setProperty('border-radius', '0px 55px 55px 0px', 'important');
+                } else if (hitScreenX === 1) {
+                    sticker.style.setProperty('border-radius', '55px 0px 0px 55px', 'important');
+                } else if (hitScreenY === -1) {
+                    sticker.style.setProperty('border-radius', '0px 0px 55px 55px', 'important');
                 } else {
-                    scaleX = 1.16;
-                    scaleY = 0.80;
+                    sticker.style.setProperty('border-radius', '55px 55px 0px 0px', 'important');
                 }
 
                 if (currentBumpedBlock) {
-                    currentBumpedBlock.classList.remove('block-bumped');
-                    currentBumpedBlock.style.transition = 'transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1)';
-                    currentBumpedBlock.style.transform = '';
+                    clearBlockMorph(currentBumpedBlock);
                     currentBumpedBlock = null;
                 }
                 playTactileBump(0.8);
 
             } else {
-                // NO COLLISION (FREE AIR)
+                // NO COLLISION (FREE AIR) -> Restore normal square shape!
+                sticker.style.removeProperty('border-radius');
+                sticker.style.removeProperty('clip-path');
                 if (currentBumpedBlock) {
-                    currentBumpedBlock.classList.remove('block-bumped');
-                    currentBumpedBlock.style.transition = 'transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1)';
-                    currentBumpedBlock.style.transform = '';
+                    clearBlockMorph(currentBumpedBlock);
                     currentBumpedBlock = null;
                 }
             }
@@ -2613,11 +2636,16 @@ function initDraggableStickers() {
             sticker.classList.remove('is-dragging');
             sticker.classList.remove('is-squished');
 
-            if (currentBumpedBlock) {
-                currentBumpedBlock.classList.remove('block-bumped');
-                currentBumpedBlock.style.transition = 'transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1)';
-                currentBumpedBlock.style.transform = '';
-                currentBumpedBlock = null;
+            if (!isColliding) {
+                // In free air: restore clean square
+                sticker.style.removeProperty('border-radius');
+                sticker.style.removeProperty('clip-path');
+                if (currentBumpedBlock) {
+                    clearBlockMorph(currentBumpedBlock);
+                    currentBumpedBlock = null;
+                }
+            } else {
+                // Docked over a card or corner: keep the rounded / cut-in shape intact!
             }
 
             window.removeEventListener('pointermove', onMove);
@@ -2632,7 +2660,7 @@ function initDraggableStickers() {
             }
 
             // Natural settling spring bounce
-            sticker.style.transition = 'transform 0.38s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease';
+            sticker.style.transition = 'transform 0.38s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease, border-radius 0.25s ease, clip-path 0.25s ease';
             sticker.style.transform = `translate3d(${currentTranslateX}px, ${currentTranslateY}px, 0) rotate(${baseRotation}deg) scale(1)`;
             // Permanently retain high z-index on drop so it stays on top of any block!
             sticker.style.setProperty('z-index', highestStickerZ + 5, 'important');
@@ -2669,10 +2697,11 @@ function initDraggableStickers() {
         // Double-click to snap back to original position
         sticker.addEventListener('dblclick', () => {
             if (currentBumpedBlock) {
-                currentBumpedBlock.classList.remove('block-bumped');
-                currentBumpedBlock.style.transform = '';
+                clearBlockMorph(currentBumpedBlock);
                 currentBumpedBlock = null;
             }
+            sticker.style.removeProperty('border-radius');
+            sticker.style.removeProperty('clip-path');
             currentTranslateX = 0;
             currentTranslateY = 0;
             currentRotation = baseRotation;
@@ -2682,7 +2711,7 @@ function initDraggableStickers() {
             if (parentWrapper) {
                 parentWrapper.style.removeProperty('z-index');
             }
-            sticker.style.transition = 'transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1)';
+            sticker.style.transition = 'transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1), border-radius 0.3s ease, clip-path 0.3s ease';
             sticker.style.transform = `translate3d(0px, 0px, 0) rotate(${baseRotation}deg)`;
             setTimeout(() => {
                 sticker.style.transition = 'box-shadow 0.18s ease, transform 0.12s ease';
