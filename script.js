@@ -2337,73 +2337,11 @@ function initInteractions() {
 
 
 // ==========================================
-// TACTILE DRAGGABLE STICKER PHYSICS & COLLISION RESPONSIVE EDGES
+// TACTILE DRAGGABLE STICKER PHYSICS (ABOUT SECTION)
 // ==========================================
 function initDraggableStickers() {
     const stickers = document.querySelectorAll('.draggable-sticker');
     if (!stickers.length) return;
-
-    let highestStickerZ = 2000;
-    let bumpAudioCtx = null;
-    let lastBumpSoundTime = 0;
-
-    // Lightweight native Web Audio synth for tactile haptic impact
-    function playTactileBump(intensity = 1) {
-        try {
-            if (!bumpAudioCtx) {
-                const AudioCtx = window.AudioContext || window.webkitAudioContext;
-                if (AudioCtx) bumpAudioCtx = new AudioCtx();
-            }
-            if (!bumpAudioCtx) return;
-            if (bumpAudioCtx.state === 'suspended') {
-                bumpAudioCtx.resume();
-            }
-            const now = performance.now();
-            if (now - lastBumpSoundTime < 160) return;
-            lastBumpSoundTime = now;
-
-            const osc = bumpAudioCtx.createOscillator();
-            const gain = bumpAudioCtx.createGain();
-            osc.type = 'triangle';
-            const startFreq = 160 + Math.random() * 30;
-            osc.frequency.setValueAtTime(startFreq, bumpAudioCtx.currentTime);
-            osc.frequency.exponentialRampToValueAtTime(35, bumpAudioCtx.currentTime + 0.07);
-
-            const vol = 0.07 * Math.min(1.5, Math.max(0.4, intensity));
-            gain.gain.setValueAtTime(vol, bumpAudioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.001, bumpAudioCtx.currentTime + 0.07);
-
-            osc.connect(gain);
-            gain.connect(bumpAudioCtx.destination);
-            osc.start();
-            osc.stop(bumpAudioCtx.currentTime + 0.08);
-        } catch (_) {}
-    }
-
-    // Identify interactive obstacle blocks on page
-    function getObstacles(currentSticker) {
-        const list = document.querySelectorAll(
-            '#education-card, .info-card, .fun-fact:not(.is-dragging), .about-text h2, .skills-section, .stat-card, .project-card, .contact-card'
-        );
-        const result = [];
-        list.forEach((el) => {
-            if (el !== currentSticker && !currentSticker.contains(el) && !el.contains(currentSticker)) {
-                result.push(el);
-            }
-        });
-        return result;
-    }
-
-    // Helper to smoothly restore morphed block borders
-    function clearBlockMorph(block) {
-        if (!block) return;
-        block.classList.remove('block-bumped');
-        block.style.removeProperty('border-top-left-radius');
-        block.style.removeProperty('border-top-right-radius');
-        block.style.removeProperty('border-bottom-left-radius');
-        block.style.removeProperty('border-bottom-right-radius');
-        block.style.removeProperty('border-radius');
-    }
 
     stickers.forEach((sticker) => {
         let isDragging = false;
@@ -2414,243 +2352,51 @@ function initDraggableStickers() {
         const baseRotation = sticker.classList.contains('sticker-y') ? -7 : 0;
         let currentRotation = baseRotation;
         let hasMoved = false;
-        let currentBumpedBlock = null;
 
-        const parentWrapper = sticker.closest('.about-image, .about-text');
-        const container = sticker.closest('.about-container');
-
-        function startDrag(e) {
-            // Primary mouse button or touch only
+        sticker.addEventListener('pointerdown', (e) => {
+            // Only primary mouse button or touch
             if (e.button !== undefined && e.button !== 0) return;
-            e.preventDefault();
             isDragging = true;
             hasMoved = false;
             startPointerX = e.clientX;
             startPointerY = e.clientY;
-
-            highestStickerZ += 10;
-            sticker.style.setProperty('z-index', highestStickerZ + 5, 'important');
             sticker.classList.add('is-dragging');
-            sticker.classList.add('has-moved');
+            try {
+                sticker.setPointerCapture(e.pointerId);
+            } catch (err) {}
+        });
 
-            if (parentWrapper) {
-                parentWrapper.style.setProperty('z-index', highestStickerZ, 'important');
-            }
-            if (container) {
-                container.style.setProperty('z-index', '500', 'important');
-            }
+        sticker.addEventListener('pointermove', (e) => {
+            if (isDragging) {
+                const deltaX = e.clientX - startPointerX;
+                const deltaY = e.clientY - startPointerY;
+                if (Math.hypot(deltaX, deltaY) > 3) hasMoved = true;
 
-            window.addEventListener('pointermove', onMove, { passive: false });
-            window.addEventListener('pointerup', endDrag);
-            window.addEventListener('pointercancel', endDrag);
-        }
+                // Subtle dynamic swing angle based on horizontal drag delta
+                const tilt = Math.max(-14, Math.min(14, deltaX * 0.1));
+                currentRotation = baseRotation + tilt;
 
-        function onMove(e) {
-            if (!isDragging) return;
-            e.preventDefault();
-            const deltaX = e.clientX - startPointerX;
-            const deltaY = e.clientY - startPointerY;
-            if (Math.hypot(deltaX, deltaY) > 2) hasMoved = true;
+                const posX = currentTranslateX + deltaX;
+                const posY = currentTranslateY + deltaY;
 
-            const tilt = Math.max(-15, Math.min(15, deltaX * 0.08));
-            currentRotation = baseRotation + tilt;
-
-            const posX = currentTranslateX + deltaX;
-            const posY = currentTranslateY + deltaY;
-
-            // --- RESPONSIVE EDGE & CORNER COLLISION ENGINE ---
-            const vw = window.innerWidth;
-            const vh = window.innerHeight;
-            const sRect = sticker.getBoundingClientRect();
-
-            // 1. Check Viewport Screen Boundaries & Corners
-            let hitScreenX = 0;
-            let hitScreenY = 0;
-            const screenPad = 12;
-
-            if (sRect.left <= screenPad) hitScreenX = -1;
-            else if (sRect.right >= vw - screenPad) hitScreenX = 1;
-
-            if (sRect.top <= screenPad) hitScreenY = -1;
-            else if (sRect.bottom >= vh - screenPad) hitScreenY = 1;
-
-            const isScreenCorner = hitScreenX !== 0 && hitScreenY !== 0;
-
-            // 2. Check Candidate Obstacle Blocks & Their Corners
-            let hitBlock = null;
-            let hitInfo = null;
-            const obstacles = getObstacles(sticker);
-
-            for (let i = 0; i < obstacles.length; i++) {
-                const block = obstacles[i];
-                const bRect = block.getBoundingClientRect();
-
-                // Check intersection
-                if (
-                    sRect.right > bRect.left + 4 &&
-                    sRect.left < bRect.right - 4 &&
-                    sRect.bottom > bRect.top + 4 &&
-                    sRect.top < bRect.bottom - 4
-                ) {
-                    const overlapL = sRect.right - bRect.left;
-                    const overlapR = bRect.right - sRect.left;
-                    const overlapT = sRect.bottom - bRect.top;
-                    const overlapB = bRect.bottom - sRect.top;
-
-                    const minX = Math.min(overlapL, overlapR);
-                    const minY = Math.min(overlapT, overlapB);
-
-                    const sideX = overlapL < overlapR ? -1 : 1; // -1: left edge, 1: right edge
-                    const sideY = overlapT < overlapB ? -1 : 1; // -1: top edge, 1: bottom edge
-                    const isCorner = (minX < 38 && minY < 38) || Math.abs(minX - minY) < 24;
-
-                    hitBlock = block;
-                    hitInfo = { sideX, sideY, minX, minY, isCorner };
-                    break;
-                }
-            }
-
-            let scaleX = 1.04;
-            let scaleY = 1.04;
-            let skewX = 0;
-            let skewY = 0;
-            let rotAdj = 0;
-            let isColliding = false;
-
-            if (hitBlock && hitInfo) {
-                // COLLISION WITH A BLOCK OR CARD
-                isColliding = true;
-                const { sideX, sideY, minX, minY, isCorner } = hitInfo;
-
-                if (isCorner) {
-                    // CORNER HIT: "getting round or cutting into the shape"
-                    // The corner cuts in with a stylish 24px chamfer AND rounds the other edges!
-                    if (sideX === -1 && sideY === -1) {
-                        // Sticker Top-Left of block -> Bottom-Right of sticker touches Top-Left of block
-                        sticker.style.setProperty('border-radius', '20px 20px 65px 20px', 'important');
-                        sticker.style.setProperty('clip-path', 'polygon(0 0, 100% 0, 100% calc(100% - 24px), calc(100% - 24px) 100%, 0 100%)');
-                        hitBlock.style.setProperty('border-top-left-radius', '36px', 'important');
-                        rotAdj = -3;
-                    } else if (sideX === 1 && sideY === -1) {
-                        // Sticker Top-Right of block -> Bottom-Left of sticker touches Top-Right of block
-                        sticker.style.setProperty('border-radius', '20px 20px 20px 65px', 'important');
-                        sticker.style.setProperty('clip-path', 'polygon(0 0, 100% 0, 100% 100%, 24px 100%, 0 calc(100% - 24px))');
-                        hitBlock.style.setProperty('border-top-right-radius', '36px', 'important');
-                        rotAdj = 3;
-                    } else if (sideX === -1 && sideY === 1) {
-                        // Sticker Bottom-Left of block (like user's screenshot!) -> Top-Right of sticker touches Bottom-Left of block
-                        sticker.style.setProperty('border-radius', '20px 65px 20px 20px', 'important');
-                        sticker.style.setProperty('clip-path', 'polygon(0 0, calc(100% - 24px) 0, 100% 24px, 100% 100%, 0 100%)');
-                        hitBlock.style.setProperty('border-bottom-left-radius', '36px', 'important');
-                        rotAdj = 3;
-                    } else {
-                        // Sticker Bottom-Right of block -> Top-Left of sticker touches Bottom-Right of block
-                        sticker.style.setProperty('border-radius', '65px 20px 20px 20px', 'important');
-                        sticker.style.setProperty('clip-path', 'polygon(24px 0, 100% 0, 100% 100%, 0 100%, 0 24px)');
-                        hitBlock.style.setProperty('border-bottom-right-radius', '36px', 'important');
-                        rotAdj = -3;
-                    }
-                } else if (minX < minY) {
-                    // SIDE / EDGE HIT (Left or Right) -> Sticker rounds into dome/pill along the touching edge
-                    sticker.style.removeProperty('clip-path');
-                    if (sideX === -1) {
-                        // Sticker to left of block -> sticker right side rounds deeply
-                        sticker.style.setProperty('border-radius', '16px 55px 55px 16px', 'important');
-                        hitBlock.style.setProperty('border-top-left-radius', '28px', 'important');
-                        hitBlock.style.setProperty('border-bottom-left-radius', '28px', 'important');
-                    } else {
-                        // Sticker to right of block -> sticker left side rounds deeply
-                        sticker.style.setProperty('border-radius', '55px 16px 16px 55px', 'important');
-                        hitBlock.style.setProperty('border-top-right-radius', '28px', 'important');
-                        hitBlock.style.setProperty('border-bottom-right-radius', '28px', 'important');
-                    }
-                } else {
-                    // TOP / BOTTOM EDGE HIT
-                    sticker.style.removeProperty('clip-path');
-                    if (sideY === -1) {
-                        // Sticker above block -> sticker bottom rounds deeply
-                        sticker.style.setProperty('border-radius', '16px 16px 55px 55px', 'important');
-                        hitBlock.style.setProperty('border-top-left-radius', '28px', 'important');
-                        hitBlock.style.setProperty('border-top-right-radius', '28px', 'important');
-                    } else {
-                        // Sticker below block -> sticker top rounds deeply
-                        sticker.style.setProperty('border-radius', '55px 55px 16px 16px', 'important');
-                        hitBlock.style.setProperty('border-bottom-left-radius', '28px', 'important');
-                        hitBlock.style.setProperty('border-bottom-right-radius', '28px', 'important');
-                    }
-                }
-
-                if (currentBumpedBlock && currentBumpedBlock !== hitBlock) {
-                    clearBlockMorph(currentBumpedBlock);
-                }
-
-                hitBlock.classList.add('block-bumped');
-                currentBumpedBlock = hitBlock;
-                playTactileBump(1);
-
-            } else if (hitScreenX !== 0 || hitScreenY !== 0) {
-                // COLLISION WITH SCREEN WALL OR CORNER -> Sticker gets round along the boundary
-                isColliding = true;
-                sticker.style.removeProperty('clip-path');
-                if (isScreenCorner) {
-                    sticker.style.setProperty('border-radius', '50%', 'important');
-                } else if (hitScreenX === -1) {
-                    sticker.style.setProperty('border-radius', '0px 55px 55px 0px', 'important');
-                } else if (hitScreenX === 1) {
-                    sticker.style.setProperty('border-radius', '55px 0px 0px 55px', 'important');
-                } else if (hitScreenY === -1) {
-                    sticker.style.setProperty('border-radius', '0px 0px 55px 55px', 'important');
-                } else {
-                    sticker.style.setProperty('border-radius', '55px 55px 0px 0px', 'important');
-                }
-
-                if (currentBumpedBlock) {
-                    clearBlockMorph(currentBumpedBlock);
-                    currentBumpedBlock = null;
-                }
-                playTactileBump(0.8);
-
+                sticker.style.transform = `translate3d(${posX}px, ${posY}px, 0) rotate(${currentRotation}deg) scale(1.05)`;
             } else {
-                // NO COLLISION (FREE AIR) -> Restore normal square shape!
-                sticker.style.removeProperty('border-radius');
-                sticker.style.removeProperty('clip-path');
-                if (currentBumpedBlock) {
-                    clearBlockMorph(currentBumpedBlock);
-                    currentBumpedBlock = null;
-                }
+                // Interactive 3D cursor tilt on hover
+                const rect = sticker.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                const tiltX = ((y - centerY) / centerY) * -6;
+                const tiltY = ((x - centerX) / centerX) * 6;
+                sticker.style.transform = `translate3d(${currentTranslateX}px, ${currentTranslateY}px, 0) perspective(400px) rotateX(${tiltX}deg) rotateY(${tiltY}deg) rotate(${baseRotation}deg)`;
             }
+        });
 
-            if (isColliding) {
-                sticker.classList.add('is-squished');
-            } else {
-                sticker.classList.remove('is-squished');
-            }
-
-            const finalRotation = currentRotation + rotAdj;
-            sticker.style.transform = `translate3d(${posX}px, ${posY}px, 0) rotate(${finalRotation}deg) skew(${skewX}deg, ${skewY}deg) scale(${scaleX}, ${scaleY})`;
-        }
-
-        function endDrag(e) {
+        const stopDrag = (e) => {
             if (!isDragging) return;
             isDragging = false;
             sticker.classList.remove('is-dragging');
-            sticker.classList.remove('is-squished');
-
-            if (!isColliding) {
-                // In free air: restore clean square
-                sticker.style.removeProperty('border-radius');
-                sticker.style.removeProperty('clip-path');
-                if (currentBumpedBlock) {
-                    clearBlockMorph(currentBumpedBlock);
-                    currentBumpedBlock = null;
-                }
-            } else {
-                // Docked over a card or corner: keep the rounded / cut-in shape intact!
-            }
-
-            window.removeEventListener('pointermove', onMove);
-            window.removeEventListener('pointerup', endDrag);
-            window.removeEventListener('pointercancel', endDrag);
 
             if (hasMoved) {
                 const deltaX = e.clientX - startPointerX;
@@ -2659,34 +2405,17 @@ function initDraggableStickers() {
                 currentTranslateY += deltaY;
             }
 
-            // Natural settling spring bounce
-            sticker.style.transition = 'transform 0.38s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease, border-radius 0.25s ease, clip-path 0.25s ease';
+            // Natural settling bounce
+            sticker.style.transition = 'transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease';
             sticker.style.transform = `translate3d(${currentTranslateX}px, ${currentTranslateY}px, 0) rotate(${baseRotation}deg) scale(1)`;
-            // Permanently retain high z-index on drop so it stays on top of any block!
-            sticker.style.setProperty('z-index', highestStickerZ + 5, 'important');
-            if (parentWrapper) {
-                parentWrapper.style.setProperty('z-index', highestStickerZ, 'important');
-            }
 
             setTimeout(() => {
                 sticker.style.transition = 'box-shadow 0.18s ease, transform 0.12s ease';
-            }, 380);
-        }
+            }, 350);
+        };
 
-        sticker.addEventListener('pointerdown', startDrag);
-
-        // Interactive 3D cursor tilt on hover when not actively dragging
-        sticker.addEventListener('pointermove', (e) => {
-            if (isDragging) return;
-            const rect = sticker.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-            const centerX = rect.width / 2;
-            const centerY = rect.height / 2;
-            const tiltX = ((y - centerY) / centerY) * -6;
-            const tiltY = ((x - centerX) / centerX) * 6;
-            sticker.style.transform = `translate3d(${currentTranslateX}px, ${currentTranslateY}px, 0) perspective(400px) rotateX(${tiltX}deg) rotateY(${tiltY}deg) rotate(${baseRotation}deg)`;
-        });
+        sticker.addEventListener('pointerup', stopDrag);
+        sticker.addEventListener('pointercancel', stopDrag);
 
         sticker.addEventListener('mouseleave', () => {
             if (!isDragging) {
@@ -2696,22 +2425,10 @@ function initDraggableStickers() {
 
         // Double-click to snap back to original position
         sticker.addEventListener('dblclick', () => {
-            if (currentBumpedBlock) {
-                clearBlockMorph(currentBumpedBlock);
-                currentBumpedBlock = null;
-            }
-            sticker.style.removeProperty('border-radius');
-            sticker.style.removeProperty('clip-path');
             currentTranslateX = 0;
             currentTranslateY = 0;
             currentRotation = baseRotation;
-            sticker.classList.remove('has-moved');
-            sticker.classList.remove('is-squished');
-            sticker.style.removeProperty('z-index');
-            if (parentWrapper) {
-                parentWrapper.style.removeProperty('z-index');
-            }
-            sticker.style.transition = 'transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1), border-radius 0.3s ease, clip-path 0.3s ease';
+            sticker.style.transition = 'transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1)';
             sticker.style.transform = `translate3d(0px, 0px, 0) rotate(${baseRotation}deg)`;
             setTimeout(() => {
                 sticker.style.transition = 'box-shadow 0.18s ease, transform 0.12s ease';
@@ -2719,11 +2436,10 @@ function initDraggableStickers() {
         });
     });
 
-    // 3D perspective hover for Education Card (respects bump recoil)
+    // 3D perspective hover for Education Card
     const tiltCards = document.querySelectorAll('.tilt-card');
     tiltCards.forEach(card => {
         card.addEventListener('mousemove', (e) => {
-            if (card.classList.contains('block-bumped')) return;
             const rect = card.getBoundingClientRect();
             const x = e.clientX - rect.left;
             const y = e.clientY - rect.top;
@@ -2734,7 +2450,6 @@ function initDraggableStickers() {
             card.style.transform = `perspective(600px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-2px)`;
         });
         card.addEventListener('mouseleave', () => {
-            if (card.classList.contains('block-bumped')) return;
             card.style.transform = 'perspective(600px) rotateX(0deg) rotateY(0deg) translateY(0px)';
         });
     });
