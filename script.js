@@ -2343,6 +2343,8 @@ function initDraggableStickers() {
     const stickers = document.querySelectorAll('.draggable-sticker');
     if (!stickers.length) return;
 
+    let highestStickerZ = 2000;
+
     stickers.forEach((sticker) => {
         let isDragging = false;
         let startPointerX = 0;
@@ -2353,6 +2355,9 @@ function initDraggableStickers() {
         let currentRotation = baseRotation;
         let hasMoved = false;
 
+        const parentWrapper = sticker.closest('.about-image, .about-text');
+        const container = sticker.closest('.about-container');
+
         function startDrag(e) {
             // Primary mouse button or touch only
             if (e.button !== undefined && e.button !== 0) return;
@@ -2361,7 +2366,18 @@ function initDraggableStickers() {
             hasMoved = false;
             startPointerX = e.clientX;
             startPointerY = e.clientY;
+
+            highestStickerZ += 10;
+            sticker.style.setProperty('z-index', highestStickerZ + 5, 'important');
             sticker.classList.add('is-dragging');
+            sticker.classList.add('has-moved');
+
+            if (parentWrapper) {
+                parentWrapper.style.setProperty('z-index', highestStickerZ, 'important');
+            }
+            if (container) {
+                container.style.setProperty('z-index', '500', 'important');
+            }
 
             window.addEventListener('pointermove', onMove, { passive: false });
             window.addEventListener('pointerup', endDrag);
@@ -2403,6 +2419,11 @@ function initDraggableStickers() {
             // Natural settling spring bounce
             sticker.style.transition = 'transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease';
             sticker.style.transform = `translate3d(${currentTranslateX}px, ${currentTranslateY}px, 0) rotate(${baseRotation}deg) scale(1)`;
+            // Permanently retain high z-index on drop so it stays on top of any block!
+            sticker.style.setProperty('z-index', highestStickerZ + 5, 'important');
+            if (parentWrapper) {
+                parentWrapper.style.setProperty('z-index', highestStickerZ, 'important');
+            }
 
             setTimeout(() => {
                 sticker.style.transition = 'box-shadow 0.18s ease, transform 0.12s ease';
@@ -2435,6 +2456,11 @@ function initDraggableStickers() {
             currentTranslateX = 0;
             currentTranslateY = 0;
             currentRotation = baseRotation;
+            sticker.classList.remove('has-moved');
+            sticker.style.removeProperty('z-index');
+            if (parentWrapper) {
+                parentWrapper.style.removeProperty('z-index');
+            }
             sticker.style.transition = 'transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1)';
             sticker.style.transform = `translate3d(0px, 0px, 0) rotate(${baseRotation}deg)`;
             setTimeout(() => {
