@@ -2150,6 +2150,15 @@ const projectData = {
             { src: "Weather(weather).png", title: "Main Interface", desc: "Clean UI showing temperature and conditions." },
             { src: "error(weather).png", title: "Error handling", desc: "Shows error when city is not found,similarly every possible error is handled" }
         ]
+    },
+    "v1": {
+        title: "Portfolio V1",
+        tech: ["HTML", "CSS", "JS"],
+        fullDesc: "My first portfolio website built with pure semantic HTML and CSS. Zero build tools or complex frameworks, focusing purely on responsive fundamentals, clean typography, and accessibility.",
+        links: { live: "index.html", repo: "https://github.com/YashSarode1224" },
+        images: [
+            { src: "main(vitcollabhub).png", title: "Evolution to Modern Web", desc: "How the design language progressed from simple HTML to rich interactive Neo-Brutalist & Hand-Drawn Sketch wireframe systems." }
+        ]
     }
 };
 
@@ -2170,7 +2179,215 @@ document.addEventListener('DOMContentLoaded', () => {
     initTerminal();
     initThemeSwitcher();
     initDraggableStickers();
+    initProjectsEnhancements();
 });
+
+// --- Interactive Projects Enhancement (Filters, Search, Blueprint Wireframes & Architecture Modal) ---
+function initProjectsEnhancements() {
+    // 1. Wireframe / Screenshot View Toggle on Project Cards
+    document.querySelectorAll('.view-mode-toggle').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            const card = btn.closest('.project-card');
+            if (!card) return;
+
+            const isSketchTheme = document.documentElement.getAttribute('data-theme') === 'sketch';
+            const toggleText = btn.querySelector('.toggle-text');
+            const toggleIcon = btn.querySelector('.toggle-icon');
+
+            if (isSketchTheme) {
+                // In sketch mode, default is wireframe. Toggling forces screenshot.
+                const isForcingScreenshot = card.classList.toggle('force-screenshot');
+                if (toggleText) toggleText.textContent = isForcingScreenshot ? 'Blueprint View' : 'Screenshot View';
+                if (toggleIcon) toggleIcon.textContent = isForcingScreenshot ? '📐' : '🖼️';
+            } else {
+                // In brutalist mode, default is screenshot. Toggling shows wireframe.
+                const isShowingWireframe = card.classList.toggle('show-wireframe');
+                if (toggleText) toggleText.textContent = isShowingWireframe ? 'Screenshot View' : 'Blueprint View';
+                if (toggleIcon) toggleIcon.textContent = isShowingWireframe ? '🖼️' : '📐';
+            }
+        });
+    });
+
+    // 2. Playful interactive wireframe simulation
+    document.querySelectorAll('.wireframe-screen-box, .wireframe-play-btn').forEach(box => {
+        box.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            const card = box.closest('.project-card');
+            const thumb = card ? card.querySelector('.wireframe-scrubber-thumb') : null;
+            const fill = card ? card.querySelector('.wireframe-scrubber-fill') : null;
+            if (thumb && fill) {
+                thumb.style.transition = 'left 0.8s ease';
+                fill.style.transition = 'width 0.8s ease';
+                thumb.style.left = '85%';
+                fill.style.width = '85%';
+                setTimeout(() => {
+                    thumb.style.left = '45%';
+                    fill.style.width = '45%';
+                }, 1200);
+            }
+        });
+    });
+
+    // 3. Category Filter Pills on projects.html
+    const filterPills = document.querySelectorAll('.filter-pill');
+    const searchInput = document.getElementById('projectSearchInput');
+    const countBadge = document.getElementById('projectCountBadge');
+    const projectCards = document.querySelectorAll('.projects-grid .project-card');
+
+    function updateProjectFiltering() {
+        const activePill = document.querySelector('.filter-pill.active');
+        const activeCategory = activePill ? activePill.getAttribute('data-filter') : 'all';
+        const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
+
+        let visibleCount = 0;
+        projectCards.forEach(card => {
+            const cardCategory = (card.getAttribute('data-category') || '').toLowerCase();
+            const cardKeywords = (card.getAttribute('data-keywords') || '').toLowerCase();
+            const cardText = card.textContent.toLowerCase();
+
+            const matchesCategory = (activeCategory === 'all') || cardCategory.includes(activeCategory);
+            const matchesQuery = !query || cardText.includes(query) || cardKeywords.includes(query);
+
+            if (matchesCategory && matchesQuery) {
+                card.style.display = '';
+                visibleCount++;
+            } else {
+                card.style.display = 'none';
+            }
+        });
+
+        if (countBadge) {
+            countBadge.textContent = `${visibleCount} shown`;
+        }
+    }
+
+    if (filterPills.length > 0) {
+        filterPills.forEach(pill => {
+            pill.addEventListener('click', () => {
+                filterPills.forEach(p => {
+                    p.classList.remove('active');
+                    p.setAttribute('aria-selected', 'false');
+                });
+                pill.classList.add('active');
+                pill.setAttribute('aria-selected', 'true');
+                updateProjectFiltering();
+            });
+        });
+    }
+
+    if (searchInput) {
+        searchInput.addEventListener('input', updateProjectFiltering);
+    }
+
+    // 4. Architecture Blueprint Modal
+    const blueprintData = {
+        "collab": {
+            title: "VIT Collab Hub • System Architecture",
+            badge: "48H Hackathon Architecture",
+            steps: [
+                { name: "Student Browser", desc: "HTML5 / ES6 Client" },
+                { name: "Firebase Auth", desc: "VIT Email Verification" },
+                { name: "Cloud Firestore", desc: "Real-Time NoSQL Listeners" },
+                { name: "Interactive UI", desc: "Kanban Taskboard & DMs" }
+            ],
+            overview: "Engineered in a high-intensity 48-hour hackathon, VIT Collab Hub connects university peers into project teams. Leveraged Firebase modular SDK for zero-latency messaging, task status board changes, and public project discovery.",
+            hurdles: "Handling multi-user state synchronization and securing Firestore collection rules under a tight hackathon deadline. Solved by scoping permissions to verified team IDs and organizing decoupled sub-collections.",
+            deepDiveLink: "project-details.html?project=collab"
+        },
+        "weather": {
+            title: "Weather App • Desktop GUI Architecture",
+            badge: "Python / PyQt5 Architecture",
+            steps: [
+                { name: "PyQt5 Event Loop", desc: "Native Window Rendering" },
+                { name: "City Input Controller", desc: "Debounced Query Handler" },
+                { name: "REST API Request", desc: "OpenWeather Endpoint (HTTPS)" },
+                { name: "JSON Normalizer", desc: "Defensive Exception Handling" }
+            ],
+            overview: "A lightweight cross-platform desktop application built with Python 3 and PyQt5. Designed with strict error recovery for network drops, malformed city spellings, and rate limits.",
+            hurdles: "Preventing GUI freezes during remote HTTP socket calls. Solved with non-blocking event loops, status bar indicators, and graceful error modals.",
+            deepDiveLink: "project-details.html?project=weather"
+        },
+        "v1": {
+            title: "Portfolio V1 • Foundation Architecture",
+            badge: "Semantic Vanilla Web",
+            steps: [
+                { name: "Semantic HTML5", desc: "Accessible Document Tree" },
+                { name: "CSS3 Flex & Grid", desc: "Responsive Breakpoints" },
+                { name: "Zero Dependencies", desc: "Pure Native Execution" },
+                { name: "Static Hosting", desc: "Sub-Second Global TTFB" }
+            ],
+            overview: "The original foundation that started Yash's software engineering journey. Built completely from scratch without frameworks to master the core principles of the web platform.",
+            hurdles: "Crafting fluid responsive layouts that behave consistently across mobile and desktop viewports without modern utility libraries. Provided an invaluable foundation for complex UI architecture.",
+            deepDiveLink: "index.html"
+        }
+    };
+
+    const modal = document.getElementById('blueprintModal');
+    const modalTitle = document.getElementById('blueprintModalTitle');
+    const modalBadge = document.getElementById('blueprintModalBadge');
+    const modalStepsGrid = document.getElementById('blueprintStepsGrid');
+    const modalOverview = document.getElementById('blueprintOverviewText');
+    const modalHurdles = document.getElementById('blueprintHurdlesText');
+    const modalDeepDive = document.getElementById('blueprintDeepDiveLink');
+    const modalClose = document.getElementById('blueprintModalClose');
+
+    function openBlueprintModal(projId) {
+        const data = blueprintData[projId];
+        if (!data || !modal) return;
+
+        if (modalTitle) modalTitle.textContent = data.title;
+        if (modalBadge) modalBadge.textContent = data.badge;
+        if (modalOverview) modalOverview.textContent = data.overview;
+        if (modalHurdles) modalHurdles.textContent = data.hurdles;
+        if (modalDeepDive) modalDeepDive.href = data.deepDiveLink;
+
+        if (modalStepsGrid) {
+            modalStepsGrid.innerHTML = data.steps.map((st, idx) => `
+                <div class="blueprint-step-node">
+                    <div style="font-size: 0.65rem; color: var(--yellow); background: var(--ink); padding: 1px 5px; display: inline-block; margin-bottom: 4px;">0${idx + 1}</div>
+                    <div>${st.name}</div>
+                    <span>${st.desc}</span>
+                </div>
+            `).join('');
+        }
+
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeBlueprintModal() {
+        if (!modal) return;
+        modal.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
+    document.querySelectorAll('.blueprint-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const projId = btn.getAttribute('data-project');
+            openBlueprintModal(projId);
+        });
+    });
+
+    if (modalClose) {
+        modalClose.addEventListener('click', closeBlueprintModal);
+    }
+
+    if (modal) {
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) closeBlueprintModal();
+        });
+    }
+
+    window.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && modal && modal.classList.contains('active')) {
+            closeBlueprintModal();
+        }
+    });
+}
 
 function showSkeletonLoader() {
     const titleEl = document.getElementById('project-title');
@@ -2957,8 +3174,16 @@ function initTerminal() {
             
             case 'projects':
             case 'project': 
-                addLine("redirecting to projects...");
-                setTimeout(() => window.location.assign("projects.html"), 1000);
+                if (arg === 'collab') {
+                    addLine("Redirecting to VIT Collab Hub deep-dive...");
+                    setTimeout(() => window.location.assign("project-details.html?project=collab"), 800);
+                } else if (arg === 'weather') {
+                    addLine("Redirecting to Weather App deep-dive...");
+                    setTimeout(() => window.location.assign("project-details.html?project=weather"), 800);
+                } else {
+                    addLine("Redirecting to all projects (collab, weather, v1)...");
+                    setTimeout(() => window.location.assign("projects.html"), 900);
+                }
                 break;
             case 'social':
                 addLine("GitHub: github.com/YashSarode1224");
