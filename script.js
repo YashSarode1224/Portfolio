@@ -2189,7 +2189,7 @@ function initInkDoodler() {
 
     const ctx = canvas.getContext('2d');
     let isDrawing = false;
-    let doodleEnabled = true;
+    let doodleEnabled = false; // Starts OFF by default per user request
     let activeStroke = [];
     let allStrokes = [];
     let cursorTrail = [];
@@ -2197,7 +2197,7 @@ function initInkDoodler() {
     let lastX = 0;
     let lastY = 0;
     let lastMoveTime = 0;
-    const TRAIL_DURATION = 2200; // 2.2s of blue ink trailing behind moving cursor
+    const TRAIL_DURATION = 650; // 650ms responsive fluid ink trail behind moving cursor
 
     function resizeCanvas() {
         const dpr = window.devicePixelRatio || 1;
@@ -2330,29 +2330,10 @@ function initInkDoodler() {
     window.addEventListener('scroll', requestRedraw, { passive: true });
     resizeCanvas();
 
-    // Initial playful doodle line (top-left curl from user's screenshot)
-    function drawWelcomeDoodle() {
-        const isSketch = document.documentElement.getAttribute('data-theme') === 'sketch';
-        if (!isSketch || allStrokes.length > 0) return;
-
-        const scrollY = window.scrollY || 0;
-        const welcomePath = [
-            { x: 34, y: 125 + scrollY },
-            { x: 65, y: 145 + scrollY },
-            { x: 125, y: 185 + scrollY },
-            { x: 185, y: 220 + scrollY },
-            { x: 235, y: 248 + scrollY }
-        ];
-        allStrokes.push(welcomePath);
-        requestRedraw();
-    }
-    window.triggerWelcomeDoodle = drawWelcomeDoodle;
-    setTimeout(drawWelcomeDoodle, 400);
-
     // Pointer events for cursor ink trail & freehand drawing
     function handlePointerMove(e) {
         const isSketch = document.documentElement.getAttribute('data-theme') === 'sketch';
-        if (!isSketch || !doodleEnabled) return;
+        if (!isSketch) return;
 
         const x = e.clientX;
         const y = e.clientY;
@@ -2366,9 +2347,9 @@ function initInkDoodler() {
         lastY = y;
         lastMoveTime = now;
 
-        const targetWidth = Math.max(2.0, Math.min(4.4, 3.8 - speed * 0.35));
+        const targetWidth = Math.max(1.8, Math.min(3.8, 3.4 - speed * 0.3));
 
-        // Append to cursor ink trail (leaves ink behind cursor as it moves!)
+        // Append to cursor ink trail (leaves snappy ink behind cursor as it moves!)
         cursorTrail.push({
             x,
             y,
@@ -2376,12 +2357,13 @@ function initInkDoodler() {
             width: targetWidth
         });
 
-        if (cursorTrail.length > 320) {
+        // Prune expired trail points older than TRAIL_DURATION (650ms)
+        while (cursorTrail.length && now - cursorTrail[0].time > TRAIL_DURATION) {
             cursorTrail.shift();
         }
 
-        // If mouse button is held, also record permanent doodle stroke
-        if (isDrawing) {
+        // If mouse button is held AND doodle is enabled, record permanent doodle stroke
+        if (isDrawing && doodleEnabled) {
             const scrollY = window.scrollY || 0;
             activeStroke.push({ x, y: y + scrollY });
         }
@@ -2395,7 +2377,7 @@ function initInkDoodler() {
 
         // Prevent drawing on interactive UI elements so buttons, links, inputs work perfectly
         const target = e.target;
-        if (target.closest('a, button, input, textarea, select, .terminal-window, #notebook-character, .theme-toggle-btn')) {
+        if (target.closest('a, button, input, textarea, select, .terminal-window, #boy, .stage, .theme-toggle-btn, .floating-doodle-bar')) {
             return;
         }
 
@@ -2432,7 +2414,6 @@ function initInkDoodler() {
             e.stopPropagation();
             doodleEnabled = !doodleEnabled;
             penBtn.classList.toggle('active', doodleEnabled);
-            document.body.classList.toggle('pen-cursor-active', doodleEnabled);
         });
     }
 
@@ -3384,9 +3365,6 @@ function applyPortfolioTheme(theme) {
         document.documentElement.setAttribute('data-theme', 'sketch');
         localStorage.setItem('yash_portfolio_theme', 'sketch');
         document.body.classList.add('pen-cursor-active');
-        if (typeof window.triggerWelcomeDoodle === 'function') {
-            window.triggerWelcomeDoodle();
-        }
     } else {
         document.documentElement.removeAttribute('data-theme');
         localStorage.setItem('yash_portfolio_theme', 'brutalist');
