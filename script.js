@@ -2728,132 +2728,102 @@ function initTerminal() {
     // ==========================================
     const animeCharacters = [
         {
-            ascii: `+-------------------------------------+
-|  BLUE LOCK // Yoichi Isagi  #11     |
-|  Weapon: Direct Shot                |
-+-------------------------------------+
-|                                     |
-|         ___________                 |
-|        /    |||    \\                |
-|       /  ___|||___  \\              |
-|      |  /         \\  |             |
-|      | |  []   []  | |             |
-|      |  \\    <    /  |             |
-|       \\  \\______/  /              |
-|        \\___|  |___/                |
-|            |##|                     |
-|           /|  |\\                   |
-|          / |  | \\                  |
-|         [11]  [11]                  |
-|                                     |
-+-------------------------------------+`
+            ascii:
+` BLUE LOCK
+ Yoichi Isagi  #11
+ -------------------------
+ Position :- Striker
+ Weapon   :- Direct Shot
+ Skill    :- Spatial Awareness
+ Ego      :- S-Tier
+ Status   :- Awakened
+ -------------------------
+ "I will be the one who
+  devours this chance."`
         },
         {
-            ascii: `+-------------------------------------+
-|  BLUE LOCK // Meguru Bachira  #8    |
-|  Weapon: Monster Dribble            |
-+-------------------------------------+
-|                                     |
-|        .~~~~~~~~~~~.                |
-|       / ~ ~ ~ ~ ~ ~ \\             |
-|      /  ___________  \\             |
-|     |  /           \\  |            |
-|     | |  *       *  | |            |
-|     |  \\    \\~/    /  |            |
-|      \\  \\_  vv  _/  /             |
-|       \\___|    |___/               |
-|           | ## |                    |
-|          /| 08 |\\                  |
-|         / |    | \\                 |
-|        o  |    |  o  <-- ball      |
-|                                     |
-+-------------------------------------+`
+            ascii:
+` BLUE LOCK
+ Meguru Bachira  #8
+ -------------------------
+ Position :- Midfielder
+ Weapon   :- Monster Dribble
+ Skill    :- Raw Instinct
+ Ego      :- Chaotic
+ Status   :- Monster Unleashed
+ -------------------------
+ "The monster inside me
+  is finally free."`
         },
         {
-            ascii: `+-------------------------------------+
-|  ONE PIECE // Monkey D. Luffy       |
-|  Role: Captain / Straw Hats         |
-+-------------------------------------+
-|                                     |
-|      .===============.              |
-|     / _  STRAW HAT  _ \\            |
-|    /_______.---._______ \\          |
-|           /     \\                   |
-|          |  O   O  |                |
-|          |    >    |                 |
-|          |  \\___/  |  GOMU         |
-|           \\_______/   GOMU NO      |
-|            |  X  |    GATLING!      |
-|           /| ### |\\                |
-|          / |     | \\               |
-|         /  |     |  \\              |
-|                                     |
-+-------------------------------------+`
+            ascii:
+` BLUE LOCK
+ Rin Itoshi  #10
+ -------------------------
+ Position :- Forward
+ Weapon   :- Left Foot Cannon
+ Skill    :- Predator Eye
+ Ego      :- SS-Tier
+ Status   :- Prodigy
+ -------------------------
+ "If you stand in my path,
+  I will devour you."`
         },
         {
-            ascii: `+-------------------------------------+
-|  ONE PIECE // Roronoa Zoro          |
-|  Style: Santoryu / Three Swords     |
-+-------------------------------------+
-|                                     |
-|    |         ___         |          |
-|    |        / _ \\        |         |
-|    |       | |_| |       |         |
-|    |       |  _  |       |         |
-|   [|]      | O O |      [|]        |
-|    |        \\ = /        |         |
-|    |     ____| |____     |         |
-|    |    /    | X |   \\   |         |
-|    |   /     |   |    \\  |         |
-|    |  / SWORD| # |SWORD\\ |        |
-|            MOUTH                    |
-|          THREE SWORD STYLE          |
-|                                     |
-+-------------------------------------+`
+            ascii:
+` ONE PIECE
+ Monkey D. Luffy
+ -------------------------
+ Crew     :- Straw Hat Pirates
+ Role     :- Captain
+ Fruit    :- Gomu Gomu no Mi
+ Bounty   :- 3,000,000,000
+ Dream    :- King of Pirates
+ -------------------------
+ "I'm gonna be the
+  King of the Pirates!"`
         },
         {
-            ascii: `+-------------------------------------+
-|  NARUTO // Naruto Uzumaki           |
-|  Title: Seventh Hokage              |
-+-------------------------------------+
-|                                     |
-|          \\  |||  /                  |
-|           \\ ||| /                   |
-|        ____\\|||/____                |
-|       |  [KONOHA]   |              |
-|       |  ___   ___  |              |
-|       | | O | | O | |              |
-|        \\|___|_|___|/               |
-|        / === _ === \\               |
-|       |   /     \\   |              |
-|        \\_|  ---  |_/               |
-|          |_______|                  |
-|           |  H  |                   |
-|          /| ### |\\  DATTEBAYO!     |
-|                                     |
-+-------------------------------------+`
+            ascii:
+` ONE PIECE
+ Roronoa Zoro
+ -------------------------
+ Crew     :- Straw Hat Pirates
+ Role     :- Swordsman
+ Style    :- Santoryu
+ Bounty   :- 1,111,000,000
+ Dream    :- World's Strongest
+ -------------------------
+ "Nothing happened."`
         },
         {
-            ascii: `+-------------------------------------+
-|  NARUTO // Kakashi Hatake           |
-|  Title: Copy Ninja / Sixth Hokage   |
-+-------------------------------------+
-|                                     |
-|           _/  /  /_                 |
-|          / / / / /                  |
-|         /_/_/_/_/                   |
-|        |  [LEAF]  |                |
-|        | \\      / |                |
-|        |  X    O  |  <- Sharingan  |
-|        |##########|                |
-|        |##########|  <- Mask       |
-|         \\########/                 |
-|          |   H  |                   |
-|         /|  ### |\\                 |
-|        / |      | \\                |
-|       THOUSAND YEARS OF DEATH       |
-|                                     |
-+-------------------------------------+`
+            ascii:
+` NARUTO
+ Naruto Uzumaki
+ -------------------------
+ Village  :- Konohagakure
+ Rank     :- Seventh Hokage
+ Jutsu    :- Rasengan / Shadow Clone
+ Tailed   :- Nine-Tails (Kurama)
+ Status   :- Legendary
+ -------------------------
+ "I never go back on
+  my word. Dattebayo!"`
+        },
+        {
+            ascii:
+` NARUTO
+ Kakashi Hatake
+ -------------------------
+ Village  :- Konohagakure
+ Rank     :- Sixth Hokage
+ Jutsu    :- Chidori / Sharingan
+ Nickname :- Copy Ninja
+ Status   :- Elite Jonin
+ -------------------------
+ "Those who break the rules
+  are scum. But those who
+  abandon friends are worse."`
         }
     ];
 
