@@ -2165,7 +2165,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     initInteractions();
     initTerminal();
-    });
+    initLiveDesk();
+});
 
 function showSkeletonLoader() {
     const titleEl = document.getElementById('project-title');
@@ -2963,6 +2964,217 @@ function initTerminal() {
         div.innerText = text;
         body.appendChild(div);
     }
+}
+
+// ==========================================
+// LIVE WORKSPACE: THE BOY ON HIS REAL DESK
+// ==========================================
+function initLiveDesk() {
+    const timePill = document.getElementById('desk-time-pill');
+    const statusText = document.getElementById('desk-status-text');
+    const coffeeBtn = document.getElementById('desk-coffee-btn');
+    const coffeeCountEl = document.getElementById('desk-coffee-count');
+    const statsCoffeeVal = document.getElementById('stats-coffee-val');
+    const viewport = document.getElementById('desk-viewport');
+
+    if (!timePill || !viewport) return;
+
+    const windowSky = document.getElementById('window-sky');
+    const skySun = document.getElementById('sky-sun');
+    const skyMoon = document.getElementById('sky-moon');
+    const lampCone = document.getElementById('lamp-light-cone');
+    const lampBulb = document.getElementById('lamp-bulb');
+    const wallBg = document.getElementById('wall-bg');
+
+    const boyCoding = document.getElementById('boy-coding');
+    const boySleeping = document.getElementById('boy-sleeping');
+
+    const animeMonitor = document.getElementById('monitor-anime');
+    const animeChannelTitle = document.getElementById('anime-channel-title');
+    const animeScenes = [
+        document.getElementById('anime-scene-bluelock'),
+        document.getElementById('anime-scene-onepiece'),
+        document.getElementById('anime-scene-naruto')
+    ];
+    const animeTitles = [
+        '▶ ANIME: BLUE LOCK (CH 1/3)',
+        '▶ ANIME: ONE PIECE (CH 2/3)',
+        '▶ ANIME: NARUTO (CH 3/3)'
+    ];
+    let currentAnimeIndex = 0;
+
+    let currentMode = 'auto'; // 'auto', 'day', 'night', '3am'
+    let lampManualToggle = null; // null = follow mode, boolean = manual override
+
+    // Persistent Coffee Count: increments with visits
+    let coffeeCount = parseInt(localStorage.getItem('yash_desk_coffee_count'), 10);
+    if (isNaN(coffeeCount) || coffeeCount < 140) {
+        coffeeCount = 142;
+    }
+    
+    // Check if new session visit
+    if (!sessionStorage.getItem('yash_session_visited')) {
+        sessionStorage.setItem('yash_session_visited', '1');
+        coffeeCount += 1;
+        localStorage.setItem('yash_desk_coffee_count', coffeeCount);
+    }
+
+    function syncCoffeeDisplay() {
+        if (coffeeCountEl) coffeeCountEl.innerText = coffeeCount;
+        if (statsCoffeeVal) statsCoffeeVal.innerText = `${coffeeCount} Cups`;
+    }
+    syncCoffeeDisplay();
+
+    function applyMode(mode) {
+        const is3am = mode === '3am';
+        const isNight = mode === 'night';
+        const isDay = mode === 'day';
+
+        if (isDay) {
+            if (windowSky) windowSky.setAttribute('fill', '#80d8ff');
+            if (skySun) skySun.style.display = 'block';
+            if (skyMoon) skyMoon.style.display = 'none';
+            if (wallBg) wallBg.setAttribute('fill', '#f7f2e4');
+
+            if (boyCoding) boyCoding.style.display = 'block';
+            if (boySleeping) boySleeping.style.display = 'none';
+
+            const lampOn = lampManualToggle !== null ? lampManualToggle : false;
+            if (lampCone) lampCone.style.display = lampOn ? 'block' : 'none';
+            if (lampBulb) lampBulb.setAttribute('fill', lampOn ? '#ffffff' : '#c2c2c2');
+
+            if (statusText) statusText.innerText = 'Day shift — Yash is wide awake, compiling code & designing interactive experiences.';
+        } else if (isNight) {
+            if (windowSky) windowSky.setAttribute('fill', '#0c1020');
+            if (skySun) skySun.style.display = 'none';
+            if (skyMoon) skyMoon.style.display = 'block';
+            if (wallBg) wallBg.setAttribute('fill', '#1c1f2b');
+
+            if (boyCoding) boyCoding.style.display = 'block';
+            if (boySleeping) boySleeping.style.display = 'none';
+
+            const lampOn = lampManualToggle !== null ? lampManualToggle : true;
+            if (lampCone) lampCone.style.display = lampOn ? 'block' : 'none';
+            if (lampBulb) lampBulb.setAttribute('fill', lampOn ? '#ffffff' : '#555555');
+
+            if (statusText) statusText.innerText = 'Night shift — Desk lamp glowing, anime playing on monitor, grinding code under the stars.';
+        } else if (is3am) {
+            if (windowSky) windowSky.setAttribute('fill', '#050711');
+            if (skySun) skySun.style.display = 'none';
+            if (skyMoon) skyMoon.style.display = 'block';
+            if (wallBg) wallBg.setAttribute('fill', '#12141c');
+
+            if (boyCoding) boyCoding.style.display = 'none';
+            if (boySleeping) boySleeping.style.display = 'block';
+
+            const lampOn = lampManualToggle !== null ? lampManualToggle : true;
+            if (lampCone) lampCone.style.display = lampOn ? 'block' : 'none';
+            if (lampBulb) lampBulb.setAttribute('fill', lampOn ? '#ffffff' : '#444444');
+
+            if (statusText) statusText.innerText = '3 AM — Knocked out cold on the keyboard. Anime still playing in the dark room. Zzz...';
+        }
+    }
+
+    function updateTime() {
+        const now = new Date();
+        const hours = now.getHours();
+        const mins = String(now.getMinutes()).padStart(2, '0');
+        const secs = String(now.getSeconds()).padStart(2, '0');
+        if (timePill) timePill.innerText = `${hours}:${mins}:${secs} LOCAL TIME`;
+
+        if (currentMode === 'auto') {
+            if (hours >= 2 && hours < 6) {
+                applyMode('3am');
+            } else if (hours >= 19 || hours < 2) {
+                applyMode('night');
+            } else {
+                applyMode('day');
+            }
+        }
+    }
+
+    // Mode Buttons
+    document.querySelectorAll('.desk-mode-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.desk-mode-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentMode = btn.getAttribute('data-mode');
+            lampManualToggle = null;
+            if (currentMode === 'auto') {
+                updateTime();
+            } else {
+                applyMode(currentMode);
+            }
+        });
+    });
+
+    // Click Lamp to toggle
+    const lampEl = document.getElementById('desk-lamp');
+    if (lampEl) {
+        lampEl.addEventListener('click', () => {
+            const isCurrentlyOn = lampCone && lampCone.style.display !== 'none';
+            lampManualToggle = !isCurrentlyOn;
+            if (lampCone) lampCone.style.display = lampManualToggle ? 'block' : 'none';
+            if (lampBulb) lampBulb.setAttribute('fill', lampManualToggle ? '#ffffff' : '#555555');
+        });
+    }
+
+    // Click Anime Monitor to cycle channels
+    if (animeMonitor) {
+        animeMonitor.addEventListener('click', () => {
+            if (animeScenes[currentAnimeIndex]) animeScenes[currentAnimeIndex].style.display = 'none';
+            currentAnimeIndex = (currentAnimeIndex + 1) % animeScenes.length;
+            if (animeScenes[currentAnimeIndex]) animeScenes[currentAnimeIndex].style.display = 'block';
+            if (animeChannelTitle) animeChannelTitle.textContent = animeTitles[currentAnimeIndex];
+        });
+    }
+
+    // Sip Coffee Handler
+    function sipCoffee() {
+        coffeeCount++;
+        localStorage.setItem('yash_desk_coffee_count', coffeeCount);
+        syncCoffeeDisplay();
+
+        const toast = document.createElement('div');
+        toast.className = 'sip-toast';
+        toast.innerText = '+1 Cup ☕';
+        viewport.appendChild(toast);
+        setTimeout(() => {
+            if (toast.parentNode) toast.parentNode.removeChild(toast);
+        }, 1100);
+    }
+
+    if (coffeeBtn) coffeeBtn.addEventListener('click', sipCoffee);
+    const coffeeMug = document.getElementById('desk-coffee-mug');
+    if (coffeeMug) coffeeMug.addEventListener('click', sipCoffee);
+
+    // Interactive Pokes on the Boy
+    if (boyCoding) {
+        boyCoding.addEventListener('click', () => {
+            const toast = document.createElement('div');
+            toast.className = 'sip-toast';
+            toast.style.right = '420px';
+            toast.style.bottom = '110px';
+            toast.innerText = '⚡ Typing at 120 WPM!';
+            viewport.appendChild(toast);
+            setTimeout(() => { if (toast.parentNode) toast.parentNode.removeChild(toast); }, 1100);
+        });
+    }
+
+    if (boySleeping) {
+        boySleeping.addEventListener('click', () => {
+            const toast = document.createElement('div');
+            toast.className = 'sip-toast';
+            toast.style.right = '420px';
+            toast.style.bottom = '110px';
+            toast.innerText = '😴 "5 more minutes... just one more PR..."';
+            viewport.appendChild(toast);
+            setTimeout(() => { if (toast.parentNode) toast.parentNode.removeChild(toast); }, 1300);
+        });
+    }
+
+    setInterval(updateTime, 1000);
+    updateTime();
 }
 
 
