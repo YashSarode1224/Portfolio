@@ -3080,7 +3080,7 @@ function initLiveDesk() {
         const hours = now.getHours();
         const mins = String(now.getMinutes()).padStart(2, '0');
         const secs = String(now.getSeconds()).padStart(2, '0');
-        if (timePill) timePill.innerText = `${hours}:${mins}:${secs} LOCAL TIME`;
+        if (timePill) timePill.innerText = `${hours}:${mins}:${secs} LOCAL`;
 
         if (currentMode === 'auto') {
             if (hours >= 2 && hours < 6) {
@@ -3153,8 +3153,10 @@ function initLiveDesk() {
         boyCoding.addEventListener('click', () => {
             const toast = document.createElement('div');
             toast.className = 'sip-toast';
-            toast.style.right = '420px';
-            toast.style.bottom = '110px';
+            toast.style.left = '50%';
+            toast.style.transform = 'translateX(-50%)';
+            toast.style.right = 'auto';
+            toast.style.bottom = '35px';
             toast.innerText = '⚡ Typing at 120 WPM!';
             viewport.appendChild(toast);
             setTimeout(() => { if (toast.parentNode) toast.parentNode.removeChild(toast); }, 1100);
@@ -3165,8 +3167,10 @@ function initLiveDesk() {
         boySleeping.addEventListener('click', () => {
             const toast = document.createElement('div');
             toast.className = 'sip-toast';
-            toast.style.right = '420px';
-            toast.style.bottom = '110px';
+            toast.style.left = '50%';
+            toast.style.transform = 'translateX(-50%)';
+            toast.style.right = 'auto';
+            toast.style.bottom = '35px';
             toast.innerText = '😴 "5 more minutes... just one more PR..."';
             viewport.appendChild(toast);
             setTimeout(() => { if (toast.parentNode) toast.parentNode.removeChild(toast); }, 1300);
