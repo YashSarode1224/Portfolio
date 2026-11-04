@@ -1795,7 +1795,7 @@ const container = document.getElementById('canvas-container');
                                             const tool = db.getSkill(tId);
                                             return tool ? `
                                                 <button class="workflow-tool-tag" type="button" data-skill-id="${tool.id}" title="Jump to ${tool.name}">
-                                                    🔗 ${tool.name}
+                                                    ${tool.name}
                                                 </button>
                                             ` : '';
                                         }).join('')}
