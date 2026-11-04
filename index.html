@@ -18,7 +18,7 @@
             referrerpolicy="no-referrer"></script>
             
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=2.2">
     <script>
         (function() {
             var savedTheme = localStorage.getItem('yash_portfolio_theme');
@@ -87,9 +87,17 @@
                         <span class="theme-toggle-icon">✏️</span>
                         <span class="theme-toggle-label">Sketch Mode</span>
                     </button>
-                    <a href="resume.pdf" rel="noopener noreferrer">Resume</a>
-                    <a href="projects.html">Projects</a>
-                    <a href="#contact">Let's Connect</a>
+                    <!-- Brutalist nav links -->
+                    <a href="resume.pdf" class="brutalist-only" rel="noopener noreferrer">Resume</a>
+                    <a href="projects.html" class="brutalist-only">Projects</a>
+                    <a href="#contact" class="brutalist-only">Let's Connect</a>
+
+                    <!-- Sketch notebook nav links -->
+                    <a href="#about" class="sketch-only">about</a>
+                    <a href="#skills" class="sketch-only">skills</a>
+                    <a href="projects.html" class="sketch-only">projects</a>
+                    <a href="#contact" class="sketch-only">contact</a>
+                    <a href="#contact" class="sketch-only nav-say-hi-btn">say hi ✏️</a>
                 </div>
             </div>
         </nav>
@@ -110,7 +118,7 @@
 
                 <!-- Subtitle with arrow annotations -->
                 <p class="notebook-hero-subtitle">
-                    I build things for the web, grind DSA, and sketch ideas before I code them. This whole page is drawn in blue pen. Try scribbling <span class="annot-opsst">opsst... click my face</span>
+                    I build things for the web, grind DSA, and sketch ideas before I code them. This whole page is drawn in blue pen. Try scribbling
                 </p>
 
                 <div class="notebook-hero-actions">
@@ -125,6 +133,7 @@
             <div class="notebook-hero-right">
                 <div class="notebook-avatar-wrap">
                     <span class="annot-arrow-me" aria-hidden="true">that's me! ↙</span>
+                    <span class="annot-arrow-face" aria-hidden="true">psst... click my face ↗</span>
                     
                     <!-- Hand-Drawn Blue Ink Character Illustration -->
                     <div class="notebook-character" id="notebook-character" role="button" tabindex="0" title="Click my face to interact!">
@@ -358,6 +367,6 @@
 
     </main>
     
-    <script src="script.js"></script>
+    <script src="script.js?v=2.2"></script>
 </body>
 </html>

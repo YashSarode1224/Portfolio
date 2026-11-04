@@ -18,7 +18,7 @@
             referrerpolicy="no-referrer"></script>
             
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=2.2">
     <script>
         (function() {
             var savedTheme = localStorage.getItem('yash_portfolio_theme');
@@ -34,16 +34,26 @@
 
     <main>
         <nav>
-            <div class="logo">Portfolio</div>
+            <div class="logo">
+                <span class="brutalist-only">Portfolio</span>
+                <span class="logo-sketch sketch-only">
+                    yash
+                    <svg class="sketch-underline" viewBox="0 0 50 12" fill="none" aria-hidden="true"><path d="M2 9 C15 3, 30 11, 48 6" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>
+                </span>
+            </div>
             <div class="nav-right">
                 <div class="social-links">
                     <button class="theme-toggle-btn" id="theme-toggle-btn" type="button" title="Switch Theme (Brutalist ↔ Hand-Drawn Sketch)">
                         <span class="theme-toggle-icon">✏️</span>
                         <span class="theme-toggle-label">Sketch Mode</span>
                     </button>
-                    <a href="index.html">Home</a>
-                    <a href="projects.html" style="color: var(--accent-color);">Projects</a>
-                    <a href="index.html#contact">Contact</a>
+                    <a href="index.html" class="brutalist-only">Home</a>
+                    <a href="projects.html" class="brutalist-only" style="color: var(--accent-color);">Projects</a>
+                    <a href="index.html#contact" class="brutalist-only">Contact</a>
+
+                    <a href="index.html" class="sketch-only">home</a>
+                    <a href="projects.html" class="sketch-only" style="text-decoration: underline;">projects</a>
+                    <a href="index.html#contact" class="sketch-only">contact</a>
                 </div>
             </div>
         </nav>
@@ -94,6 +104,6 @@
         </section>
     </main>
 
-    <script src="script.js"></script>
+    <script src="script.js?v=2.2"></script>
 </body>
 </html>
