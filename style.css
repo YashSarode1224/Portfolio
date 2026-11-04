@@ -391,16 +391,17 @@ p.subtitle::before { content: '↓ '; color: var(--ink); font-weight: 700; }
 
 .term-ascii {
     font-family: 'DM Mono', monospace;
-    font-size: 0.64rem;
+    font-size: 0.63rem;
     line-height: 1.25;
     color: var(--yellow);
-    background: rgba(255, 255, 255, 0.05);
-    padding: 8px;
+    background: rgba(255, 255, 255, 0.04);
+    padding: 8px 10px;
     border: 1.5px dashed var(--green);
     border-radius: 4px;
     margin: 6px 0;
-    overflow-x: auto;
+    overflow-x: hidden;
     white-space: pre;
+    max-width: 100%;
 }
 
 /* Violent Glitch Animation */

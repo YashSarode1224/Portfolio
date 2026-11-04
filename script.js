@@ -2483,7 +2483,7 @@ function initTerminal() {
     });
 
     // ==========================================
-    // 🐍 RETRO SNAKE GAME
+    // RETRO SNAKE GAME
     // ==========================================
     let isSnakeRunning = false;
     let snakeHighScore = 0;
@@ -2492,7 +2492,7 @@ function initTerminal() {
         if (isSnakeRunning) return;
         isSnakeRunning = true;
 
-        addLine("--- 🐍 RETRO SNAKE ---", "cmd-highlight");
+        addLine("--- RETRO SNAKE ---", "cmd-highlight");
         addLine("Controls: [Arrow Keys] or [W A S D] to Move. Press [Q] or [ESC] to Exit.", "term-dim");
 
         const canvas = document.createElement('canvas');
@@ -2586,7 +2586,7 @@ function initTerminal() {
                 ctx.fillStyle = '#ff3366';
                 ctx.font = 'bold 15px "DM Mono", monospace';
                 ctx.textAlign = 'center';
-                ctx.fillText('💀 GAME OVER', canvas.width / 2, canvas.height / 2 - 10);
+                ctx.fillText('GAME OVER', canvas.width / 2, canvas.height / 2 - 10);
                 ctx.fillStyle = '#faf7ee';
                 ctx.font = '11px "DM Mono", monospace';
                 ctx.fillText(`Final Score: ${score}`, canvas.width / 2, canvas.height / 2 + 10);
@@ -2606,7 +2606,7 @@ function initTerminal() {
             // Wall collision
             if (newHead.x < 0 || newHead.x >= cols || newHead.y < 0 || newHead.y >= rows) {
                 gameOver = true;
-                status.innerText = `💀 CRASHED! Final Score: ${score} | [ENTER] Play Again | [Q] Exit`;
+                status.innerText = `CRASHED! Final Score: ${score} | [ENTER] Play Again | [Q] Exit`;
                 draw();
                 clearInterval(intervalId);
                 return;
@@ -2615,7 +2615,7 @@ function initTerminal() {
             // Self collision
             if (snake.some(s => s.x === newHead.x && s.y === newHead.y)) {
                 gameOver = true;
-                status.innerText = `💀 BIT SELF! Final Score: ${score} | [ENTER] Play Again | [Q] Exit`;
+                status.innerText = `BIT SELF! Final Score: ${score} | [ENTER] Play Again | [Q] Exit`;
                 draw();
                 clearInterval(intervalId);
                 return;
@@ -2700,7 +2700,7 @@ function initTerminal() {
     }
 
     // ==========================================
-    // 💥 VIOLENT GLITCH EASTER EGG (sudo rm -rf /)
+    // VIOLENT GLITCH EASTER EGG (sudo rm -rf /)
     // ==========================================
     function triggerViolentGlitch() {
         addLine("[CRITICAL] Unmounting root filesystem / ...", "term-error");
@@ -2715,73 +2715,103 @@ function initTerminal() {
         setTimeout(() => {
             document.body.classList.remove('violent-glitch-active');
             if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
-            addLine("Permission denied: Nice try, you can't delete my portfolio 😉.", "term-success");
+            addLine("Permission denied: Nice try, you can't delete my portfolio.", "term-success");
             body.scrollTop = body.scrollHeight;
             if (input) input.focus();
         }, 1500);
     }
 
+        // ==========================================
+    // ANIME CHARACTER DISPLAY (BLUELOCK, ONE PIECE, NARUTO)
     // ==========================================
-    // ⚡ ANIME ASCII & QUOTES (BLUELOCK, ONE PIECE, NARUTO)
-    // ==========================================
-    const animeQuotes = [
+    const animeCharacters = [
         {
-            ascii: `  ⚽ [ BLUE LOCK // PROJECT EGOIST ]
-     ▄▄▄▄▄▄▄
-    █ █   █ █    "I'm not here to be one of the eleven.
-    █ ▄▄█▄▄ █     I'm here to become the world's best egoist!"
-    █ █   █ █     — Yoichi Isagi (No. 11)`
-        },
-        {
-            ascii: `  ⚽ [ BLUE LOCK // MONSTER DRIBBLE ]
-    "If nobody passes to me, I'll just dribble
-     past everyone and score myself. Follow your monster."
-     — Meguru Bachira
+            ascii: `[ CHARACTER DISPLAY // BLUE LOCK ]
+NAME:   Yoichi Isagi (No. 11)
+WEAPON: Direct Shot / Spatial Vision
 
-    "Lukewarm. If you stand in my path, I'll devour you."
-     — Rin Itoshi (Egoist Prodigy)`
+          /\_/\
+         /     \
+        |  o  o |
+        |   -   |
+         \ === /
+         /|   |\
+        / | # | \
+          | 11|`
         },
         {
-            ascii: `  🏴‍☠️ [ STRAW HAT PIRATES // GRAND LINE ]
-       _~^~^~_
-      /       \     "If you don't take risks,
-    =============    you can't create a future!"
-    \  (o) (o)  /    — Monkey D. Luffy
-     \   ===   /       (King of the Pirates)`
-        },
-        {
-            ascii: `  ⚔️ [ THREE-SWORD STYLE // KING OF HELL ]
-     /| _______________________
-    O|===|_____________________\>
-     \|
-    "Scars on the back are a swordsman's shame.
-     When I decided to follow my dream, I had already discarded my life."
-     — Roronoa Zoro (Straw Hat Swordsman)`
-        },
-        {
-            ascii: `  🍥 [ HIDDEN LEAF // WILL OF FIRE ]
-       _______
-      /  ---  \    "I'm not gonna run away, I never go back on my word!
-     |  (@)    |    That's my nindo: my ninja way!"
-      \_______/     — Naruto Uzumaki (Seventh Hokage)`
-        },
-        {
-            ascii: `  🍃 [ SHINOBI CODE // HIDDEN LEAF ]
-    "A real ninja is one who endures no matter what gets thrown at him.
-     What matters is what you accomplished before you died."
-     — Jiraiya (The Gallant Toad Sage)
+            ascii: `[ CHARACTER DISPLAY // BLUE LOCK ]
+NAME:   Meguru Bachira (No. 8)
+WEAPON: Monster Dribble / Instinct
 
-    "Those who break the rules are scum, but those who abandon their friends
-     are worse than scum."
-     — Kakashi Hatake (Copy Ninja)`
+        _.-.-._
+       (       )
+       |  ^  ^ |
+       |   u   |
+        \ === /
+        /|   |\
+       / | 8 | \\`
+        },
+        {
+            ascii: `[ CHARACTER DISPLAY // ONE PIECE ]
+NAME:   Monkey D. Luffy
+ROLE:   Captain / Straw Hat Pirates
+
+          _~^~^~_
+         /       \
+       =============
+       |  o     o  |
+       \     -     /
+        \  \___/  /
+         /|     |\
+        / |  #  | \\`
+        },
+        {
+            ascii: `[ CHARACTER DISPLAY // ONE PIECE ]
+NAME:   Roronoa Zoro
+STYLE:  Santoryu (Three Swords)
+
+          .---.
+         /_____\
+        | -'  o |
+        |   -   |
+         \ === /
+         /|   |\   [///] Three
+        / |   | \        Swords`
+        },
+        {
+            ascii: `[ CHARACTER DISPLAY // NARUTO ]
+NAME:   Naruto Uzumaki
+ROLE:   Seventh Hokage / Konoha
+
+         \ | /
+       _.-"""-._
+      |  [---]  |
+      | : o  o :|
+      | :  __  :|
+       \       /
+        |  O  |`
+        },
+        {
+            ascii: `[ CHARACTER DISPLAY // NARUTO ]
+NAME:   Kakashi Hatake
+TITLE:  Copy Ninja / Sixth Hokage
+
+          / / /
+        _/_/_/
+       | [---] |
+       |   o   |
+       |#######|
+        \#####/
+         |   |`
         }
     ];
 
-    function printAnimeQuote() {
-        const quote = animeQuotes[Math.floor(Math.random() * animeQuotes.length)];
+    function printAnimeCharacter() {
+        const char = animeCharacters[Math.floor(Math.random() * animeCharacters.length)];
         const pre = document.createElement('pre');
         pre.className = 'term-ascii';
-        pre.textContent = quote.ascii;
+        pre.textContent = char.ascii;
         body.appendChild(pre);
         body.scrollTop = body.scrollHeight;
     }
@@ -2809,8 +2839,8 @@ function initTerminal() {
                 addLine("- about: Who am I?");
                 addLine("- skills: My tech stack");
                 addLine("- projects: View my work");
-                addLine("- snake: Play classic retro snake 🐍");
-                addLine("- anime: Blue Lock, One Piece, Naruto quotes ⚡");
+                addLine("- snake: Play classic retro snake");
+                addLine("- anime: Blue Lock, One Piece, Naruto characters");
                 addLine("- social: Connect with me");
                 addLine("- clear: Clear terminal");
                 addLine("- sudo rm -rf /: [RESTRICTED] ⚠️");
@@ -2819,7 +2849,7 @@ function initTerminal() {
                 startSnakeGame();
                 break;
             case 'anime':
-                printAnimeQuote();
+                printAnimeCharacter();
                 break;
             case 'about':
                 addLine("Yash Nitin Sarode. 2nd Year CSE @ VIT Vellore.");
