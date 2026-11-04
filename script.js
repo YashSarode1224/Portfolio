@@ -2337,13 +2337,62 @@ function initInteractions() {
 
 
 // ==========================================
-// TACTILE DRAGGABLE STICKER PHYSICS (ABOUT SECTION)
+// TACTILE DRAGGABLE STICKER PHYSICS & COLLISION RESPONSIVE EDGES
 // ==========================================
 function initDraggableStickers() {
     const stickers = document.querySelectorAll('.draggable-sticker');
     if (!stickers.length) return;
 
     let highestStickerZ = 2000;
+    let bumpAudioCtx = null;
+    let lastBumpSoundTime = 0;
+
+    // Lightweight native Web Audio synth for tactile haptic impact
+    function playTactileBump(intensity = 1) {
+        try {
+            if (!bumpAudioCtx) {
+                const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                if (AudioCtx) bumpAudioCtx = new AudioCtx();
+            }
+            if (!bumpAudioCtx) return;
+            if (bumpAudioCtx.state === 'suspended') {
+                bumpAudioCtx.resume();
+            }
+            const now = performance.now();
+            if (now - lastBumpSoundTime < 160) return;
+            lastBumpSoundTime = now;
+
+            const osc = bumpAudioCtx.createOscillator();
+            const gain = bumpAudioCtx.createGain();
+            osc.type = 'triangle';
+            const startFreq = 160 + Math.random() * 30;
+            osc.frequency.setValueAtTime(startFreq, bumpAudioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(35, bumpAudioCtx.currentTime + 0.07);
+
+            const vol = 0.07 * Math.min(1.5, Math.max(0.4, intensity));
+            gain.gain.setValueAtTime(vol, bumpAudioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, bumpAudioCtx.currentTime + 0.07);
+
+            osc.connect(gain);
+            gain.connect(bumpAudioCtx.destination);
+            osc.start();
+            osc.stop(bumpAudioCtx.currentTime + 0.08);
+        } catch (_) {}
+    }
+
+    // Identify interactive obstacle blocks on page
+    function getObstacles(currentSticker) {
+        const list = document.querySelectorAll(
+            '#education-card, .info-card, .fun-fact:not(.is-dragging), .about-text h2, .skills-section, .stat-card, .project-card, .contact-card'
+        );
+        const result = [];
+        list.forEach((el) => {
+            if (el !== currentSticker && !currentSticker.contains(el) && !el.contains(currentSticker)) {
+                result.push(el);
+            }
+        });
+        return result;
+    }
 
     stickers.forEach((sticker) => {
         let isDragging = false;
@@ -2354,6 +2403,7 @@ function initDraggableStickers() {
         const baseRotation = sticker.classList.contains('sticker-y') ? -7 : 0;
         let currentRotation = baseRotation;
         let hasMoved = false;
+        let currentBumpedBlock = null;
 
         const parentWrapper = sticker.closest('.about-image, .about-text');
         const container = sticker.closest('.about-container');
@@ -2397,13 +2447,178 @@ function initDraggableStickers() {
             const posX = currentTranslateX + deltaX;
             const posY = currentTranslateY + deltaY;
 
-            sticker.style.transform = `translate3d(${posX}px, ${posY}px, 0) rotate(${currentRotation}deg) scale(1.06)`;
+            // --- RESPONSIVE EDGE & CORNER COLLISION ENGINE ---
+            const vw = window.innerWidth;
+            const vh = window.innerHeight;
+            const sRect = sticker.getBoundingClientRect();
+
+            // 1. Check Viewport Screen Boundaries & Corners
+            let hitScreenX = 0;
+            let hitScreenY = 0;
+            const screenPad = 12;
+
+            if (sRect.left <= screenPad) hitScreenX = -1;
+            else if (sRect.right >= vw - screenPad) hitScreenX = 1;
+
+            if (sRect.top <= screenPad) hitScreenY = -1;
+            else if (sRect.bottom >= vh - screenPad) hitScreenY = 1;
+
+            const isScreenCorner = hitScreenX !== 0 && hitScreenY !== 0;
+
+            // 2. Check Candidate Obstacle Blocks & Their Corners
+            let hitBlock = null;
+            let hitInfo = null;
+            const obstacles = getObstacles(sticker);
+
+            for (let i = 0; i < obstacles.length; i++) {
+                const block = obstacles[i];
+                const bRect = block.getBoundingClientRect();
+
+                // Check intersection
+                if (
+                    sRect.right > bRect.left + 4 &&
+                    sRect.left < bRect.right - 4 &&
+                    sRect.bottom > bRect.top + 4 &&
+                    sRect.top < bRect.bottom - 4
+                ) {
+                    const overlapL = sRect.right - bRect.left;
+                    const overlapR = bRect.right - sRect.left;
+                    const overlapT = sRect.bottom - bRect.top;
+                    const overlapB = bRect.bottom - sRect.top;
+
+                    const minX = Math.min(overlapL, overlapR);
+                    const minY = Math.min(overlapT, overlapB);
+
+                    const sideX = overlapL < overlapR ? -1 : 1; // -1: left edge, 1: right edge
+                    const sideY = overlapT < overlapB ? -1 : 1; // -1: top edge, 1: bottom edge
+                    const isCorner = (minX < 38 && minY < 38) || Math.abs(minX - minY) < 24;
+
+                    hitBlock = block;
+                    hitInfo = { sideX, sideY, minX, minY, isCorner };
+                    break;
+                }
+            }
+
+            let scaleX = 1.06;
+            let scaleY = 1.06;
+            let skewX = 0;
+            let skewY = 0;
+            let rotAdj = 0;
+            let isColliding = false;
+
+            if (hitBlock && hitInfo) {
+                // COLLISION WITH A BLOCK OR CARD
+                isColliding = true;
+                const { sideX, sideY, minX, minY, isCorner } = hitInfo;
+
+                if (isCorner) {
+                    // Corner Hit: diagonal squash and corner recoil
+                    scaleX = 0.86;
+                    scaleY = 0.86;
+                    if (sideX === -1 && sideY === -1) {
+                        skewX = -5; skewY = -5; rotAdj = -5;
+                        hitBlock.style.transform = 'translate(10px, 8px) rotate(2.2deg)';
+                    } else if (sideX === 1 && sideY === -1) {
+                        skewX = 5; skewY = -5; rotAdj = 5;
+                        hitBlock.style.transform = 'translate(-10px, 8px) rotate(-2.2deg)';
+                    } else if (sideX === -1 && sideY === 1) {
+                        skewX = -5; skewY = 5; rotAdj = 5;
+                        hitBlock.style.transform = 'translate(10px, -8px) rotate(-2.2deg)';
+                    } else {
+                        skewX = 5; skewY = 5; rotAdj = -5;
+                        hitBlock.style.transform = 'translate(-10px, -8px) rotate(2.2deg)';
+                    }
+                } else if (minX < minY) {
+                    // Side Edge Hit (Horizontal compression against card)
+                    scaleX = 0.82;
+                    scaleY = 1.18;
+                    if (sideX === -1) {
+                        hitBlock.style.transform = 'translateX(12px) rotate(0.9deg)';
+                        rotAdj = deltaY > 0 ? 3 : -3;
+                    } else {
+                        hitBlock.style.transform = 'translateX(-12px) rotate(-0.9deg)';
+                        rotAdj = deltaY > 0 ? -3 : 3;
+                    }
+                } else {
+                    // Top / Bottom Edge Hit (Vertical compression against card)
+                    scaleX = 1.18;
+                    scaleY = 0.82;
+                    if (sideY === -1) {
+                        hitBlock.style.transform = 'translateY(10px)';
+                    } else {
+                        hitBlock.style.transform = 'translateY(-10px)';
+                    }
+                }
+
+                if (currentBumpedBlock && currentBumpedBlock !== hitBlock) {
+                    currentBumpedBlock.classList.remove('block-bumped');
+                    currentBumpedBlock.style.transition = 'transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1)';
+                    currentBumpedBlock.style.transform = '';
+                }
+
+                hitBlock.classList.add('block-bumped');
+                hitBlock.style.transition = 'transform 0.08s ease-out';
+                currentBumpedBlock = hitBlock;
+                playTactileBump(1);
+
+            } else if (hitScreenX !== 0 || hitScreenY !== 0) {
+                // COLLISION WITH SCREEN WALL OR CORNER
+                isColliding = true;
+                if (isScreenCorner) {
+                    scaleX = 0.84;
+                    scaleY = 0.84;
+                    if (hitScreenX === -1 && hitScreenY === -1) { skewX = 6; skewY = 6; rotAdj = -4; }
+                    else if (hitScreenX === 1 && hitScreenY === -1) { skewX = -6; skewY = 6; rotAdj = 4; }
+                    else if (hitScreenX === -1 && hitScreenY === 1) { skewX = 6; skewY = -6; rotAdj = 4; }
+                    else { skewX = -6; skewY = -6; rotAdj = -4; }
+                } else if (hitScreenX !== 0) {
+                    scaleX = 0.80;
+                    scaleY = 1.16;
+                } else {
+                    scaleX = 1.16;
+                    scaleY = 0.80;
+                }
+
+                if (currentBumpedBlock) {
+                    currentBumpedBlock.classList.remove('block-bumped');
+                    currentBumpedBlock.style.transition = 'transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1)';
+                    currentBumpedBlock.style.transform = '';
+                    currentBumpedBlock = null;
+                }
+                playTactileBump(0.8);
+
+            } else {
+                // NO COLLISION (FREE AIR)
+                if (currentBumpedBlock) {
+                    currentBumpedBlock.classList.remove('block-bumped');
+                    currentBumpedBlock.style.transition = 'transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1)';
+                    currentBumpedBlock.style.transform = '';
+                    currentBumpedBlock = null;
+                }
+            }
+
+            if (isColliding) {
+                sticker.classList.add('is-squished');
+            } else {
+                sticker.classList.remove('is-squished');
+            }
+
+            const finalRotation = currentRotation + rotAdj;
+            sticker.style.transform = `translate3d(${posX}px, ${posY}px, 0) rotate(${finalRotation}deg) skew(${skewX}deg, ${skewY}deg) scale(${scaleX}, ${scaleY})`;
         }
 
         function endDrag(e) {
             if (!isDragging) return;
             isDragging = false;
             sticker.classList.remove('is-dragging');
+            sticker.classList.remove('is-squished');
+
+            if (currentBumpedBlock) {
+                currentBumpedBlock.classList.remove('block-bumped');
+                currentBumpedBlock.style.transition = 'transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1)';
+                currentBumpedBlock.style.transform = '';
+                currentBumpedBlock = null;
+            }
 
             window.removeEventListener('pointermove', onMove);
             window.removeEventListener('pointerup', endDrag);
@@ -2417,7 +2632,7 @@ function initDraggableStickers() {
             }
 
             // Natural settling spring bounce
-            sticker.style.transition = 'transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease';
+            sticker.style.transition = 'transform 0.38s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease';
             sticker.style.transform = `translate3d(${currentTranslateX}px, ${currentTranslateY}px, 0) rotate(${baseRotation}deg) scale(1)`;
             // Permanently retain high z-index on drop so it stays on top of any block!
             sticker.style.setProperty('z-index', highestStickerZ + 5, 'important');
@@ -2427,7 +2642,7 @@ function initDraggableStickers() {
 
             setTimeout(() => {
                 sticker.style.transition = 'box-shadow 0.18s ease, transform 0.12s ease';
-            }, 350);
+            }, 380);
         }
 
         sticker.addEventListener('pointerdown', startDrag);
@@ -2453,10 +2668,16 @@ function initDraggableStickers() {
 
         // Double-click to snap back to original position
         sticker.addEventListener('dblclick', () => {
+            if (currentBumpedBlock) {
+                currentBumpedBlock.classList.remove('block-bumped');
+                currentBumpedBlock.style.transform = '';
+                currentBumpedBlock = null;
+            }
             currentTranslateX = 0;
             currentTranslateY = 0;
             currentRotation = baseRotation;
             sticker.classList.remove('has-moved');
+            sticker.classList.remove('is-squished');
             sticker.style.removeProperty('z-index');
             if (parentWrapper) {
                 parentWrapper.style.removeProperty('z-index');
@@ -2469,10 +2690,11 @@ function initDraggableStickers() {
         });
     });
 
-    // 3D perspective hover for Education Card
+    // 3D perspective hover for Education Card (respects bump recoil)
     const tiltCards = document.querySelectorAll('.tilt-card');
     tiltCards.forEach(card => {
         card.addEventListener('mousemove', (e) => {
+            if (card.classList.contains('block-bumped')) return;
             const rect = card.getBoundingClientRect();
             const x = e.clientX - rect.left;
             const y = e.clientY - rect.top;
@@ -2483,6 +2705,7 @@ function initDraggableStickers() {
             card.style.transform = `perspective(600px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-2px)`;
         });
         card.addEventListener('mouseleave', () => {
+            if (card.classList.contains('block-bumped')) return;
             card.style.transform = 'perspective(600px) rotateX(0deg) rotateY(0deg) translateY(0px)';
         });
     });

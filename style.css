@@ -317,6 +317,21 @@ p.subtitle::before { content: '↓ '; color: var(--ink); font-weight: 700; }
     transition: none !important;
 }
 
+.draggable-sticker.is-squished {
+    box-shadow: 4px 4px 0 var(--ink) !important;
+}
+
+/* Tactile Elastic Collision Response on Impacted Blocks */
+.block-bumped {
+    box-shadow: 8px 8px 0 var(--pink) !important;
+    transition: transform 0.08s ease-out, box-shadow 0.12s ease !important;
+}
+
+[data-theme="sketch"] .block-bumped {
+    box-shadow: 6px 6px 0 #161616 !important;
+    border-color: #ff3366 !important;
+}
+
 .sticker-y {
     position: absolute;
     top: 12px;
