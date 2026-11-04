@@ -2165,6 +2165,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     initInteractions();
     initTerminal();
+    initLiveStats();
 });
 
 function showSkeletonLoader() {
@@ -2834,16 +2835,16 @@ TITLE:  Copy Ninja / Sixth Hokage
         }
 
         switch(cmd) {
-            case 'help':
-                addLine("Available commands:");
-                addLine("- about: Who am I?");
-                addLine("- skills: My tech stack");
-                addLine("- projects: View my work");
-                addLine("- snake: Play classic retro snake");
-                addLine("- anime: Blue Lock, One Piece, Naruto characters");
-                addLine("- social: Connect with me");
-                addLine("- clear: Clear terminal");
-                addLine("- sudo rm -rf /: [RESTRICTED] ⚠️");
+                        case 'help':
+                addLine("Available commands:", "term-dim");
+                addLine("  about     Who am I?");
+                addLine("  skills    My tech stack");
+                addLine("  projects  View my work");
+                addLine("  snake     Play retro snake");
+                addLine("  anime     Anime character display");
+                addLine("  social    Connect with me");
+                addLine("  clear     Clear terminal");
+                addLine("  sudo      [RESTRICTED] ⚠️");
                 break;
             case 'snake':
                 startSnakeGame();
@@ -2859,6 +2860,19 @@ TITLE:  Copy Ninja / Sixth Hokage
                 addLine("AI & Data: Python, NumPy, Pandas, Matplotlib, Scikit-Learn, Supervised ML");
                 addLine("Web & 3D: HTML5, CSS3, JavaScript, React.js, Three.js, Firebase");
                 addLine("DSA & Systems: Java, DSA, C / C++");
+                break;
+            case 'stats':
+                addLine("📊 LIVE STATS TELEMETRY:", "term-success");
+                if (window.latestLeetCodeStats) {
+                    addLine(`LeetCode: ${window.latestLeetCodeStats.totalSolved} solved (Easy: ${window.latestLeetCodeStats.easySolved}, Med: ${window.latestLeetCodeStats.mediumSolved}, Hard: ${window.latestLeetCodeStats.hardSolved}) | Rank #${window.latestLeetCodeStats.ranking ? window.latestLeetCodeStats.ranking.toLocaleString() : 'N/A'}`);
+                } else {
+                    addLine("LeetCode: 106 solved (Easy: 67, Med: 33, Hard: 6) | Rank #1,631,568");
+                }
+                if (window.latestGitHubStats) {
+                    addLine(`GitHub: ${window.latestGitHubStats.publicRepos} public repos, ${window.latestGitHubStats.totalStars} stars, ${window.latestGitHubStats.followers} followers (Top: ${window.latestGitHubStats.topLang})`);
+                } else {
+                    addLine("GitHub: 5 repos, 1 star, 2 followers (Top: Python)");
+                }
                 break;
             case 'projects':
             case 'project': 
@@ -2890,3 +2904,222 @@ TITLE:  Copy Ninja / Sixth Hokage
     }
 }
 
+
+
+
+// ==========================================
+// 🚀 LIVE LEETCODE & GITHUB STATS SYNCHRONIZER
+// ==========================================
+function initLiveStats() {
+    fetchLeetCodeStats();
+    fetchGitHubStats();
+}
+
+// Number rolling / counting animation
+function animateStatNumber(element, targetVal, isFormatted = false, duration = 850) {
+    if (!element) return;
+    const rawEnd = typeof targetVal === 'string' ? parseInt(targetVal.replace(/[^0-9]/g, ''), 10) : targetVal;
+    if (isNaN(rawEnd)) {
+        element.innerText = targetVal;
+        return;
+    }
+    const currentText = element.innerText || '0';
+    const startVal = parseInt(currentText.replace(/[^0-9]/g, ''), 10) || 0;
+    if (startVal === rawEnd) {
+        element.innerText = isFormatted ? rawEnd.toLocaleString() : rawEnd;
+        return;
+    }
+
+    const startTime = performance.now();
+    function step(now) {
+        const elapsed = now - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        // Easing out cubic
+        const ease = 1 - Math.pow(1 - progress, 3);
+        const val = Math.floor(startVal + (rawEnd - startVal) * ease);
+        element.innerText = isFormatted ? val.toLocaleString() : val;
+
+        if (progress < 1) {
+            requestAnimationFrame(step);
+        } else {
+            element.innerText = isFormatted ? rawEnd.toLocaleString() : rawEnd;
+        }
+    }
+    requestAnimationFrame(step);
+}
+
+// LeetCode Stats Fetcher
+async function fetchLeetCodeStats() {
+    const totalEl = document.getElementById('lc-total-count');
+    const easyEl = document.getElementById('lc-easy-count');
+    const medEl = document.getElementById('lc-medium-count');
+    const hardEl = document.getElementById('lc-hard-count');
+    const rankEl = document.getElementById('lc-rank-count');
+    const indicator = document.getElementById('lc-live-indicator');
+
+    if (!totalEl) return;
+
+    const username = 'Yash_1224';
+    let dataLoaded = false;
+
+    // Helper to apply data
+    function applyLeetCodeData(data, sourceName) {
+        animateStatNumber(totalEl, data.totalSolved);
+        animateStatNumber(easyEl, data.easySolved);
+        animateStatNumber(medEl, data.mediumSolved);
+        animateStatNumber(hardEl, data.hardSolved);
+        if (data.ranking) {
+            animateStatNumber(rankEl, data.ranking, true);
+        }
+        if (indicator) {
+            indicator.title = `Synced live from ${sourceName} at ${new Date().toLocaleTimeString()}`;
+            indicator.classList.remove('syncing');
+        }
+        window.latestLeetCodeStats = data;
+        dataLoaded = true;
+    }
+
+    if (indicator) indicator.classList.add('syncing');
+
+    // 1. Try Primary endpoint: leetcode-api-faisalshohag
+    try {
+        const res = await fetch(`https://leetcode-api-faisalshohag.vercel.app/${username}`, { cache: 'no-cache' });
+        if (res.ok) {
+            const json = await res.json();
+            if (json && (json.totalSolved !== undefined || json.solvedProblem !== undefined)) {
+                applyLeetCodeData({
+                    totalSolved: json.totalSolved ?? json.solvedProblem,
+                    easySolved: json.easySolved,
+                    mediumSolved: json.mediumSolved,
+                    hardSolved: json.hardSolved,
+                    ranking: json.ranking
+                }, 'LeetCode API');
+                return;
+            }
+        }
+    } catch (err) {
+        // Fall through to backup
+    }
+
+    // 2. Try Secondary endpoint: alfa-leetcode-api
+    try {
+        const [solvedRes, userRes] = await Promise.allSettled([
+            fetch(`https://alfa-leetcode-api.onrender.com/${username}/solved`, { cache: 'no-cache' }),
+            fetch(`https://alfa-leetcode-api.onrender.com/userProfile/${username}`, { cache: 'no-cache' })
+        ]);
+
+        let solvedJson = null;
+        let userJson = null;
+
+        if (solvedRes.status === 'fulfilled' && solvedRes.value.ok) {
+            solvedJson = await solvedRes.value.json();
+        }
+        if (userRes.status === 'fulfilled' && userRes.value.ok) {
+            userJson = await userRes.value.json();
+        }
+
+        if (solvedJson && (solvedJson.solvedProblem !== undefined || solvedJson.totalSolved !== undefined)) {
+            applyLeetCodeData({
+                totalSolved: solvedJson.solvedProblem ?? solvedJson.totalSolved,
+                easySolved: solvedJson.easySolved,
+                mediumSolved: solvedJson.mediumSolved,
+                hardSolved: solvedJson.hardSolved,
+                ranking: userJson ? userJson.ranking : null
+            }, 'Alfa LeetCode API');
+            return;
+        }
+    } catch (err) {
+        // Fall through to tertiary
+    }
+
+    // 3. Try Tertiary endpoint: leetcode-stats-api (heroku)
+    try {
+        const res = await fetch(`https://leetcode-stats-api.herokuapp.com/${username}`, { cache: 'no-cache' });
+        if (res.ok) {
+            const json = await res.json();
+            if (json && json.status === 'success' && json.totalSolved !== undefined) {
+                applyLeetCodeData(json, 'Heroku API');
+                return;
+            }
+        }
+    } catch (err) {
+        // Handled
+    }
+
+    // Graceful fallback if offline
+    if (!dataLoaded) {
+        if (indicator) {
+            indicator.title = 'Offline mode (cached stats)';
+            indicator.classList.remove('syncing');
+        }
+    }
+}
+
+// GitHub Stats Fetcher
+async function fetchGitHubStats() {
+    const reposEl = document.getElementById('gh-repos-count');
+    const starsEl = document.getElementById('gh-stars-count');
+    const followersEl = document.getElementById('gh-followers-count');
+    const langEl = document.getElementById('gh-top-lang');
+    const indicator = document.getElementById('gh-live-indicator');
+
+    if (!reposEl) return;
+
+    const username = 'YashSarode1224';
+
+    if (indicator) indicator.classList.add('syncing');
+
+    try {
+        const [userRes, reposRes] = await Promise.allSettled([
+            fetch(`https://api.github.com/users/${username}`),
+            fetch(`https://api.github.com/users/${username}/repos?per_page=100`)
+        ]);
+
+        let publicRepos = 5;
+        let followers = 2;
+        let totalStars = 1;
+        let topLang = 'Python';
+
+        if (userRes.status === 'fulfilled' && userRes.value.ok) {
+            const userData = await userRes.value.json();
+            if (userData.public_repos !== undefined) publicRepos = userData.public_repos;
+            if (userData.followers !== undefined) followers = userData.followers;
+        }
+
+        if (reposRes.status === 'fulfilled' && reposRes.value.ok) {
+            const reposData = await reposRes.value.json();
+            if (Array.isArray(reposData)) {
+                totalStars = reposData.reduce((acc, r) => acc + (r.stargazers_count || 0), 0);
+                
+                // Count languages
+                const langCounts = {};
+                reposData.forEach(r => {
+                    if (r.language) {
+                        langCounts[r.language] = (langCounts[r.language] || 0) + 1;
+                    }
+                });
+                const sortedLangs = Object.entries(langCounts).sort((a, b) => b[1] - a[1]);
+                if (sortedLangs.length > 0) {
+                    topLang = sortedLangs[0][0];
+                }
+            }
+        }
+
+        animateStatNumber(reposEl, publicRepos);
+        animateStatNumber(starsEl, totalStars);
+        animateStatNumber(followersEl, followers);
+        if (langEl) langEl.innerText = topLang;
+
+        if (indicator) {
+            indicator.title = `Synced live from GitHub API at ${new Date().toLocaleTimeString()}`;
+            indicator.classList.remove('syncing');
+        }
+
+        window.latestGitHubStats = { publicRepos, totalStars, followers, topLang };
+    } catch (err) {
+        if (indicator) {
+            indicator.title = 'Offline mode (cached stats)';
+            indicator.classList.remove('syncing');
+        }
+    }
+}

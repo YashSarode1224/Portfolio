@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <!-- SECURITY HEADERS -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: https://via.placeholder.com; connect-src 'self' https://leetcode-stats-api.herokuapp.com;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: https://via.placeholder.com https://avatars.githubusercontent.com; connect-src 'self' https://leetcode-api-faisalshohag.vercel.app https://alfa-leetcode-api.onrender.com https://leetcode-stats-api.herokuapp.com https://api.github.com;">
 
     <!-- FAVICON -->
     <link rel="icon" href="favicon.png">
@@ -34,7 +34,7 @@
             <div class="terminal-header">
                 <span class="term-title">visitor@yash-portfolio:~</span>
                 <div class="term-controls">
-                    <span class="term-dot close" id="close-term"></span>
+                    <button class="term-dot close" id="close-term" type="button" title="Close Terminal">&times;</button>
                 </div>
             </div>
             <div class="terminal-body" id="terminal-body">
@@ -152,20 +152,16 @@
             <p class="subtitle">Full Stack Developer by day. Competitive gamer by night. Creating interactive experiences on the web.</p>
         </section>
 
-        <!-- Stats -->
+                <!-- Stats -->
         <section class="stats-container">
-            
-            
             <div class="stat-card leetcode-card">
                 <div class="stat-title">LeetCode</div>
                 <div class="lc-content">
-                   
                     <div class="lc-total">
                         <span class="lc-count">86</span> 
                         <span class="lc-label">Solved</span>
                     </div>
 
-                   
                     <div class="lc-details">
                         <div class="lc-item">
                             <span class="lc-dot easy"></span>
@@ -182,7 +178,6 @@
                             <span class="lc-type">Hard</span>
                             <span class="lc-num">1</span>
                         </div>
-                        
                         
                         <div class="lc-item" style="margin-top: 5px; padding-top: 5px; border-top: 1px dashed rgba(255,255,255,0.1);">
                             <span class="lc-type" style="color: var(--accent-color);">Rank</span>
