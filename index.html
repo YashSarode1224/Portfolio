@@ -19,7 +19,6 @@
             
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
-    
 </head>
 <body>
 
@@ -62,7 +61,7 @@
             </div>
         </nav>
 
-        <!-- About -->
+                <!-- About -->
         <section class="about-container" id="about">
             <div class="about-image">    
                 <!-- Placeholder -->
@@ -75,7 +74,7 @@
                     I love building things. Tech isn’t just a career, it’s fun. Most of my work is in web-adjacent and software projects, where I experiment, break things, and figure out how to turn ideas into reality.
                 </p>
                 <p>
-                    As a first-year Computer Science Engineering student at VIT Vellore, I’m sharpening my skills in DSA, problem-solving, and scalable systems.
+                    As a second-year Computer Science Engineering student at VIT Vellore, I'm sharpening my skills in DSA, problem-solving, and scalable systems.
                 </p>
                 <p class="fun-fact">
                     When I'm not coding, I'm watching anime or grinding Valorant!
@@ -87,34 +86,64 @@
                     <h3>Education</h3>
                     <div class="school-name">Vellore Institute of Technology,Vellore</div>
                     <div class="degree">B.Tech Computer Science</div>
-                    <div class="year-tag">1st Year</div>
+                    <div class="year-tag">2nd Year</div>
                 </div>
 
-                <div class="info-card">
-                    <h3>Tech Stack</h3>
-                    <div class="skills-wrapper">
-                        <span class="skill-tag">HTML</span>
-                        <span class="skill-tag">CSS</span>
-                        <span class="skill-tag">JavaScript</span>
-                        <span class="skill-tag">Python</span>
-                        <span class="skill-tag">C</span>
-                        <span class="skill-tag">C++</span>
-                        <span class="skill-tag firebase">Firebase</span>
+            </div>
+        </section>
+
+        <!-- Concept 3: Neobrutalist Synaptic Constellation Graph -->
+        <section class="skills-section" id="skills" aria-labelledby="skills-title">
+            <div class="skills-heading">
+                <p class="skills-kicker">TOOLS I BUILD WITH</p>
+                <h2 id="skills-title">MY <span class="gradient-text">SKILLS</span></h2>
+                <p class="skills-intro">An interactive synaptic constellation connecting AI & Machine Learning, Web & 3D, and DSA systems.</p>
+            </div>
+
+            <!-- Neobrutalist Synaptic Graph Card -->
+            <div class="synaptic-graph-card" id="synaptic-graph-card" aria-label="Interactive neural skill graph">
+                <!-- Top HUD Controls Bar -->
+                <div class="graph-hud-bar">
+                    <div class="graph-filter-group" role="tablist" aria-label="Skill Cluster Filters">
+                        <button class="graph-filter-btn active" data-filter="all" type="button" role="tab" aria-selected="true">
+                            <span class="filter-dot all-dot"></span> All <span class="filter-count">15</span>
+                        </button>
+                        <button class="graph-filter-btn" data-filter="ml" type="button" role="tab" aria-selected="false">
+                            <span class="filter-dot ml-dot"></span> AI & Data <span class="filter-count">6</span>
+                        </button>
+                        <button class="graph-filter-btn" data-filter="web" type="button" role="tab" aria-selected="false">
+                            <span class="filter-dot web-dot"></span> Web & 3D <span class="filter-count">6</span>
+                        </button>
+                        <button class="graph-filter-btn" data-filter="cs" type="button" role="tab" aria-selected="false">
+                            <span class="filter-dot cs-dot"></span> DSA <span class="filter-count">3</span>
+                        </button>
+                    </div>
+                    <div class="graph-hud-actions">
+                        <span class="graph-instruction-pill">Click node • Drag to move</span>
+                        <button class="graph-reset-btn" id="graph-reset-btn" type="button" title="Reset Graph Positions & Selection">↺ Reset</button>
                     </div>
                 </div>
-                <div class="info-card">
-                    <h3>Learning</h3>
-                    <div class="skills-wrapper">
-                        <span class="skill-tag">React.js</span>
-                        <span class="skill-tag">Three.js</span>
-                        <span class="skill-tag">JavaScript</span>
-                        <span class="skill-tag">Mastering DSA</span>
+
+                <!-- Canvas Viewport -->
+                <div class="graph-canvas-wrap" id="graph-canvas-wrap">
+                    <canvas id="synaptic-canvas"></canvas>
+
+                    <!-- Interactive Floating Node Hover Tooltip -->
+                    <div class="graph-node-card" id="graph-node-card">
+                        <span class="graph-card-badge" id="graph-card-badge">ECOSYSTEM</span>
+                        <h4 class="graph-card-title" id="graph-card-title">Tech Toolkit</h4>
+                        <p class="graph-card-connections" id="graph-card-connections">15 connected technologies</p>
                     </div>
+                </div>
+
+                <!-- Dedicated Workflow Exploration Panel -->
+                <div class="graph-workflow-panel" id="graph-workflow-panel" aria-live="polite" style="display: none;">
+                    <!-- Populated dynamically via script.js from skill-workflows.js -->
                 </div>
             </div>
         </section>
 
-        <!-- Hero -->
+<!-- Hero -->
         <section class="hero">
             <h1>Building <br> <span class="gradient-text">Digital Reality</span></h1>
             <p class="subtitle">Full Stack Developer by day. Competitive gamer by night. Creating interactive experiences on the web.</p>
@@ -129,7 +158,7 @@
                 <div class="lc-content">
                    
                     <div class="lc-total">
-                        <span class="lc-count">80</span> 
+                        <span class="lc-count">86</span> 
                         <span class="lc-label">Solved</span>
                     </div>
 
@@ -138,38 +167,31 @@
                         <div class="lc-item">
                             <span class="lc-dot easy"></span>
                             <span class="lc-type">Easy</span>
-                            <span class="lc-num">64</span> 
+                            <span class="lc-num">65</span> 
                         </div>
                         <div class="lc-item">
                             <span class="lc-dot medium"></span>
                             <span class="lc-type">Medium</span>
-                            <span class="lc-num">16</span> 
+                            <span class="lc-num">20</span> 
                         </div>
                         <div class="lc-item">
                             <span class="lc-dot hard"></span>
                             <span class="lc-type">Hard</span>
-                            <span class="lc-num">0</span>
+                            <span class="lc-num">1</span>
                         </div>
                         
                         
                         <div class="lc-item" style="margin-top: 5px; padding-top: 5px; border-top: 1px dashed rgba(255,255,255,0.1);">
                             <span class="lc-type" style="color: var(--accent-color);">Rank</span>
-                            <span class="lc-num">1,723,920</span>
-
+                            <span class="lc-num">1,928,401</span> 
                         </div>
                     </div>
                 </div>
             </div>
 
             <div class="stat-card">
-                <div class="stat-title">Valorant Rank</div>
-                <div class="stat-value">Gold 3</div>
-                <div class="rank-badge">Yoru Main</div>
-            </div>
-
-            <div class="stat-card">
                 <div class="stat-title">Anime Watched</div>
-                <div class="stat-value">12</div>
+                <div class="stat-value">14</div>
                 <div class="rank-badge">Binge Status: Active</div>
             </div>
 
@@ -214,6 +236,5 @@
     </main>
     
     <script src="script.js"></script>
-    <script defer src="https://va.vercel-scripts.com/v1/script.js"></script>
 </body>
 </html>
