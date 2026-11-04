@@ -1,6 +1,12 @@
 @import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=DM+Mono:wght@400;500;700&display=swap');
 
-:root {
+/* ==========================================================================
+   ARCHITECTURAL PAPER THEMES (CLASSIC / DARK NEWSPRINT / BLUEPRINT)
+   ========================================================================== */
+
+/* 1. Classic Dot-Grid Paper (Default) */
+:root,
+[data-theme="classic"] {
     --ink: #161616;
     --paper: #fffdf5;
     --paper-warm: #fff4cf;
@@ -10,6 +16,9 @@
     --green: #baf27e;
     --orange: #ff9b54;
     --muted: #5e5a51;
+    --bg-dot: var(--ink);
+    --border: 3px solid var(--ink);
+    --shadow: 7px 7px 0 var(--ink);
     /* Compatibility aliases for the existing inline styles and script-generated markup. */
     --accent-color: var(--pink);
     --accent-secondary: var(--orange);
@@ -17,8 +26,50 @@
     --text-muted: var(--muted);
     --glass-border: var(--ink);
     --glass-bg: var(--paper);
+}
+
+/* 2. Dark Newsprint Paper (Night Mode) */
+[data-theme="dark-newsprint"] {
+    --ink: #f5f3ec;
+    --paper: #121316;
+    --paper-warm: #1b1d22;
+    --yellow: #ffd60a;
+    --pink: #ff65a3;
+    --blue: #38bdf8;
+    --green: #a3e635;
+    --orange: #fb923c;
+    --muted: #9ca3af;
+    --bg-dot: rgba(245, 243, 236, 0.16);
     --border: 3px solid var(--ink);
     --shadow: 7px 7px 0 var(--ink);
+    --accent-color: var(--pink);
+    --accent-secondary: var(--orange);
+    --text-main: var(--ink);
+    --text-muted: var(--muted);
+    --glass-border: var(--ink);
+    --glass-bg: var(--paper);
+}
+
+/* 3. Blueprint Paper (Technical Architectural Grid) */
+[data-theme="blueprint"] {
+    --ink: #f0f6fc;
+    --paper: #0b2545;
+    --paper-warm: #133a68;
+    --yellow: #ffd166;
+    --pink: #f472b6;
+    --blue: #00f0ff;
+    --green: #6ee7b7;
+    --orange: #fca311;
+    --muted: #94a3b8;
+    --bg-dot: rgba(0, 240, 255, 0.18);
+    --border: 3px solid var(--ink);
+    --shadow: 7px 7px 0 var(--ink);
+    --accent-color: var(--blue);
+    --accent-secondary: var(--yellow);
+    --text-main: var(--ink);
+    --text-muted: var(--muted);
+    --glass-border: var(--ink);
+    --glass-bg: var(--paper);
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -28,11 +79,19 @@ body {
     min-width: 320px;
     overflow-x: hidden;
     background-color: var(--paper);
-    background-image: radial-gradient(var(--ink) 0.75px, transparent 0.75px);
+    background-image: radial-gradient(var(--bg-dot, var(--ink)) 0.75px, transparent 0.75px);
     background-size: 18px 18px;
     color: var(--ink);
     font-family: 'DM Mono', monospace;
     font-weight: 500;
+    transition: background-color 0.22s ease, color 0.22s ease;
+}
+
+[data-theme="blueprint"] body {
+    background-image: 
+        linear-gradient(rgba(0, 240, 255, 0.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 240, 255, 0.08) 1px, transparent 1px);
+    background-size: 20px 20px;
 }
 
 /* The Matrix canvas remains available to the script, but the visual language is deliberately flat. */
@@ -80,6 +139,45 @@ nav {
     transition: background 150ms ease, border-color 150ms ease, transform 150ms ease;
 }
 .social-links a:hover, .social-links a:focus-visible { background: var(--pink); border-color: var(--ink); transform: rotate(-2deg); outline: none; }
+
+.paper-theme-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 7px 12px;
+    border: 2px solid var(--ink);
+    border-radius: 0;
+    background: var(--paper-warm);
+    color: var(--ink);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.76rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    cursor: pointer;
+    box-shadow: 3px 3px 0 var(--ink);
+    user-select: none;
+    transition: transform 120ms ease, box-shadow 120ms ease, background 120ms ease;
+}
+
+.paper-theme-toggle:hover {
+    background: var(--yellow);
+    transform: translate(1px, 1px);
+    box-shadow: 2px 2px 0 var(--ink);
+}
+
+.paper-theme-toggle:active {
+    transform: translate(3px, 3px);
+    box-shadow: none;
+}
+
+.paper-theme-toggle .paper-theme-icon {
+    font-size: 0.95rem;
+    line-height: 1;
+}
+
+.paper-theme-toggle .paper-theme-label {
+    letter-spacing: 0.02em;
+}
 
 .hero { min-height: 62vh; display: flex; flex-direction: column; justify-content: center; position: relative; isolation: isolate; }
 .hero::after {
@@ -764,6 +862,7 @@ body.violent-glitch-active {
     main { padding: 18px 18px 52px; }
     nav { align-items: flex-start; flex-direction: column; gap: 16px; margin-bottom: 44px; }
     .social-links { justify-content: flex-start; }.social-links a { padding: 6px 7px; font-size: .68rem; }
+    .paper-theme-toggle { padding: 5px 8px; font-size: 0.68rem; }
     .hero { min-height: auto; padding: 38px 0 55px; }.hero::after { top: 2%; right: 2%; opacity: .42; }
     
     .contact-grid { grid-template-columns: 1fr; }.contact-card { min-height: 190px; }
@@ -842,7 +941,7 @@ body.violent-glitch-active {
     justify-content: space-between;
     padding: 8px 14px;
     border-bottom: 2.5px solid var(--ink);
-    background: #ffffff;
+    background: var(--paper);
     gap: 10px;
     flex-wrap: wrap;
     min-height: 44px;
@@ -924,7 +1023,7 @@ body.violent-glitch-active {
     gap: 3px;
     padding: 4px 9px;
     border: 1.5px solid var(--ink);
-    background: #ffffff;
+    background: var(--paper);
     font-family: 'DM Mono', monospace;
     font-size: 0.68rem;
     font-weight: 700;
@@ -954,7 +1053,7 @@ body.violent-glitch-active {
     width: 100%;
     height: 600px;
     background: var(--paper);
-    background-image: radial-gradient(rgba(22, 22, 22, 0.12) 1.2px, transparent 1.2px);
+    background-image: radial-gradient(var(--bg-dot, rgba(22, 22, 22, 0.12)) 1.2px, transparent 1.2px);
     background-size: 22px 22px;
     overflow: hidden;
 }
@@ -978,7 +1077,7 @@ body.violent-glitch-active {
     position: absolute;
     bottom: 14px;
     left: 14px;
-    background: #ffffff;
+    background: var(--paper);
     border: 1.5px solid var(--ink);
     box-shadow: 3px 3px 0 var(--ink);
     border-radius: 8px;
@@ -1052,7 +1151,7 @@ body.violent-glitch-active {
     font-weight: 800;
     padding: 1px 5px;
     border-radius: 10px;
-    background: #ffffff;
+    background: var(--paper);
     border: 1.5px solid var(--ink);
     margin-left: 4px;
     color: var(--ink);
@@ -1061,7 +1160,7 @@ body.violent-glitch-active {
 
 .graph-filter-btn.active .filter-count {
     background: var(--ink);
-    color: #ffffff;
+    color: var(--paper);
 }
 
 /* ========================================================
@@ -1127,7 +1226,7 @@ body.violent-glitch-active {
 }
 
 .workflow-cluster-summary-card {
-    background: #ffffff;
+    background: var(--paper);
     border: 2.5px solid var(--ink);
     border-radius: 10px;
     padding: 16px;
@@ -1231,7 +1330,7 @@ body.violent-glitch-active {
     width: 60px;
     height: 60px;
     border-radius: 50%;
-    background: #ffffff;
+    background: var(--paper);
     border: 3px solid var(--ink);
     box-shadow: 4px 4px 0 var(--ink);
     display: flex;
@@ -1291,7 +1390,7 @@ body.violent-glitch-active {
     gap: 6px;
     padding: 7px 14px;
     border: 2px solid var(--ink);
-    background: #ffffff;
+    background: var(--paper);
     font-family: 'DM Mono', monospace;
     font-size: 0.75rem;
     font-weight: 700;
@@ -1316,7 +1415,7 @@ body.violent-glitch-active {
 }
 
 .workflow-fact-card {
-    background: #ffffff;
+    background: var(--paper);
     border: 2.5px solid var(--ink);
     border-radius: 10px;
     padding: 16px 18px;
@@ -1374,7 +1473,7 @@ body.violent-glitch-active {
 }
 
 .workflow-conn-card {
-    background: #ffffff;
+    background: var(--paper);
     border: 2px solid var(--ink);
     border-radius: 8px;
     padding: 12px 14px;
@@ -1585,8 +1684,8 @@ body.violent-glitch-active {
     padding: 1px 6px;
     border: 1px solid var(--ink);
     border-radius: 3px;
-    background: #ffffff;
-    color: #1a56db;
+    background: var(--paper);
+    color: var(--ink);
     cursor: pointer;
     box-shadow: 1px 1px 0 var(--ink);
 }

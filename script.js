@@ -1166,6 +1166,9 @@ const container = document.getElementById('canvas-container');
     function draw() {
         ctx.clearRect(0, 0, width, height);
 
+        const currentInk = (typeof getComputedStyle === 'function' ? getComputedStyle(document.documentElement).getPropertyValue('--ink').trim() : '') || '#161616';
+        const currentPaper = (typeof getComputedStyle === 'function' ? getComputedStyle(document.documentElement).getPropertyValue('--paper').trim() : '') || '#fffdf5';
+
         const selectedNode = selectedNodeId ? nodes.find(n => n.id === selectedNodeId) : null;
         const now = performance.now() * 0.001;
 
@@ -1275,13 +1278,13 @@ const container = document.getElementById('canvas-container');
                     }
                 } else if (link.type === 'hub') {
                     // Central anchor hub line: remains subtle dashed structural line, NEVER active workflow
-                    ctx.strokeStyle = '#161616';
+                    ctx.strokeStyle = currentInk;
                     ctx.lineWidth = 1.2;
                     ctx.setLineDash([5, 5]);
                     ctx.globalAlpha = 0.08;
                 } else {
                     // Dimmed link
-                    ctx.strokeStyle = '#161616';
+                    ctx.strokeStyle = currentInk;
                     ctx.lineWidth = 1;
                     ctx.setLineDash([4, 4]);
                     ctx.globalAlpha = 0.04;
@@ -1289,12 +1292,12 @@ const container = document.getElementById('canvas-container');
             } else if (hoveredNode) {
                 // Hover preview
                 if (hoveredLinks.has(link)) {
-                    ctx.strokeStyle = hoveredNode.color || '#161616';
+                    ctx.strokeStyle = hoveredNode.color || currentInk;
                     ctx.lineWidth = link.type === 'primary' ? 3.2 : 2.4;
                     ctx.setLineDash(link.type === 'primary' ? [] : (link.type === 'optional' ? [3, 4] : [5, 4]));
                     ctx.globalAlpha = 1.0;
                 } else {
-                    ctx.strokeStyle = '#161616';
+                    ctx.strokeStyle = currentInk;
                     ctx.lineWidth = 1;
                     ctx.setLineDash([4, 4]);
                     ctx.globalAlpha = 0.05;
@@ -1302,7 +1305,7 @@ const container = document.getElementById('canvas-container');
             } else {
                 // Default view
                 if (isFilterActive) {
-                    ctx.strokeStyle = '#161616';
+                    ctx.strokeStyle = currentInk;
                     if (link.type === 'hub') {
                         ctx.lineWidth = 1.6;
                         ctx.setLineDash([5, 5]);
@@ -1325,7 +1328,7 @@ const container = document.getElementById('canvas-container');
                         ctx.globalAlpha = 0.16;
                     }
                 } else {
-                    ctx.strokeStyle = '#161616';
+                    ctx.strokeStyle = currentInk;
                     ctx.lineWidth = 1;
                     ctx.setLineDash([4, 4]);
                     ctx.globalAlpha = 0.04;
@@ -1493,7 +1496,7 @@ const container = document.getElementById('canvas-container');
                 }
 
                 // Circle Hard Shadow
-                ctx.fillStyle = '#161616';
+                ctx.fillStyle = currentInk;
                 ctx.beginPath();
                 ctx.arc(drawX + shadowOff, drawY + shadowOff, drawRadius, 0, Math.PI * 2);
                 ctx.fill();
@@ -1506,7 +1509,7 @@ const container = document.getElementById('canvas-container');
 
                 // Circle Ink Border
                 ctx.lineWidth = 3.5;
-                ctx.strokeStyle = '#161616';
+                ctx.strokeStyle = currentInk;
                 ctx.stroke();
 
                 // Code Bracket Icon </>
@@ -1542,20 +1545,20 @@ const container = document.getElementById('canvas-container');
                 }
 
                 // Circle Hard Shadow
-                ctx.fillStyle = '#161616';
+                ctx.fillStyle = currentInk;
                 ctx.beginPath();
                 ctx.arc(drawX + shadowOff, drawY + shadowOff, drawRadius, 0, Math.PI * 2);
                 ctx.fill();
 
                 // Circle Body
-                ctx.fillStyle = '#ffffff';
+                ctx.fillStyle = currentPaper;
                 ctx.beginPath();
                 ctx.arc(drawX, drawY, drawRadius, 0, Math.PI * 2);
                 ctx.fill();
 
                 // Circle Ink Border
                 ctx.lineWidth = isSelected ? 3.5 : (isHovered ? 3 : 2.5);
-                ctx.strokeStyle = '#161616';
+                ctx.strokeStyle = currentInk;
                 ctx.stroke();
 
                 // Draw Official Vector SVG Logo inside Circle
@@ -1577,22 +1580,22 @@ const container = document.getElementById('canvas-container');
                 const pillY = Math.round(drawY + drawRadius + 5);
 
                 // Pill Tag Hard Shadow
-                ctx.fillStyle = '#161616';
+                ctx.fillStyle = currentInk;
                 drawRoundRect(ctx, pillX + 2, pillY + 2, pillW, pillH, 4);
                 ctx.fill();
 
                 // Pill Tag Body
-                ctx.fillStyle = isSelected ? node.color : (isHovered ? node.color : '#ffffff');
+                ctx.fillStyle = isSelected ? node.color : (isHovered ? node.color : currentPaper);
                 drawRoundRect(ctx, pillX, pillY, pillW, pillH, 4);
                 ctx.fill();
 
                 // Pill Tag Ink Border
                 ctx.lineWidth = 1.5;
-                ctx.strokeStyle = '#161616';
+                ctx.strokeStyle = currentInk;
                 ctx.stroke();
 
                 // Pill Tag Text
-                ctx.fillStyle = '#161616';
+                ctx.fillStyle = (isSelected || isHovered) ? '#161616' : currentInk;
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
                 ctx.fillText(node.label, drawX, Math.round(pillY + pillH / 2));
@@ -2165,7 +2168,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     initInteractions();
     initTerminal();
-    });
+    initPaperTheme();
+});
 
 function showSkeletonLoader() {
     const titleEl = document.getElementById('project-title');
@@ -2910,18 +2914,34 @@ function initTerminal() {
             return;
         }
 
-        switch(cmd) {
+        const parts = cmd.split(/\s+/);
+        const mainCmd = parts[0];
+        const arg = parts[1] || '';
+
+        switch(mainCmd) {
             case 'help':
                 addLine("Available commands:", "term-dim");
                 addLine("  about    :- Who am I?");
                 addLine("  skills   :- My tech stack");
                 addLine("  projects :- View my work");
+                addLine("  theme    :- Cycle paper theme (Classic / Newsprint / Blueprint)");
                 addLine("  snake    :- Play retro snake");
                 addLine("  anime    :- Anime character display");
                 addLine("  social   :- Connect with me");
                 addLine("  clear    :- Clear terminal");
                 addLine("  sudo     :- [RESTRICTED]");
                 break;
+            case 'theme': {
+                let targetTheme = null;
+                if (arg === 'classic' || arg === 'light' || arg === 'paper') targetTheme = 'classic';
+                else if (arg === 'dark' || arg === 'newsprint' || arg === 'night') targetTheme = 'dark-newsprint';
+                else if (arg === 'blue' || arg === 'blueprint' || arg === 'draft') targetTheme = 'blueprint';
+
+                const applied = targetTheme ? applyPaperTheme(targetTheme) : cyclePaperTheme();
+                const info = PAPER_THEMES_INFO[applied] || { label: applied };
+                addLine(`Switched paper theme to: ${info.label}`);
+                break;
+            }
             case 'snake':
                 startSnakeGame();
                 break;
@@ -2964,6 +2984,59 @@ function initTerminal() {
         body.appendChild(div);
     }
 }
+
+// ==========================================
+// ARCHITECTURAL PAPER THEME ENGINE
+// ==========================================
+const PAPER_THEMES = ['classic', 'dark-newsprint', 'blueprint'];
+const PAPER_THEMES_INFO = {
+    'classic': { label: 'Paper: Classic', icon: '📄' },
+    'dark-newsprint': { label: 'Paper: Dark Newsprint', icon: '📰' },
+    'blueprint': { label: 'Paper: Blueprint', icon: '📐' }
+};
+
+function getActivePaperTheme() {
+    return localStorage.getItem('yash_portfolio_paper_theme') || 'classic';
+}
+
+function applyPaperTheme(theme) {
+    if (!PAPER_THEMES.includes(theme)) theme = 'classic';
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('yash_portfolio_paper_theme', theme);
+
+    const info = PAPER_THEMES_INFO[theme] || PAPER_THEMES_INFO.classic;
+    document.querySelectorAll('.paper-theme-label').forEach(el => {
+        el.textContent = info.label;
+    });
+    document.querySelectorAll('.paper-theme-icon').forEach(el => {
+        el.textContent = info.icon;
+    });
+    return theme;
+}
+
+function cyclePaperTheme() {
+    const current = getActivePaperTheme();
+    const nextIdx = (PAPER_THEMES.indexOf(current) + 1) % PAPER_THEMES.length;
+    const nextTheme = PAPER_THEMES[nextIdx];
+    return applyPaperTheme(nextTheme);
+}
+
+function initPaperTheme() {
+    // 1. Sync button labels with currently active theme
+    applyPaperTheme(getActivePaperTheme());
+
+    // 2. Attach click handlers to any paper theme buttons
+    document.querySelectorAll('.paper-theme-toggle').forEach(btn => {
+        btn.addEventListener('click', () => {
+            cyclePaperTheme();
+        });
+    });
+}
+
+// Expose globally for terminal & external calls
+window.cyclePaperTheme = cyclePaperTheme;
+window.applyPaperTheme = applyPaperTheme;
+window.initPaperTheme = initPaperTheme;
 
 
 

@@ -19,6 +19,12 @@
             
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <script>
+        (function() {
+            var t = localStorage.getItem('yash_portfolio_paper_theme');
+            if (t) document.documentElement.setAttribute('data-theme', t);
+        })();
+    </script>
 </head>
 <body>
 
@@ -54,7 +60,11 @@
             <div class="logo">Portfolio</div>
             <div class="nav-right">
                 <div class="social-links">
-                    <a href="resume.pdf" rel="noopener noreferrer" >Resume</a>
+                    <button class="paper-theme-toggle" id="paper-theme-btn" type="button" title="Cycle Paper Theme (Classic / Dark Newsprint / Blueprint)">
+                        <span class="paper-theme-icon">📄</span>
+                        <span class="paper-theme-label">Paper: Classic</span>
+                    </button>
+                    <a href="resume.pdf" rel="noopener noreferrer">Resume</a>
                     <a href="projects.html">Projects</a>
                     <a href="#contact">Let's Connect</a>
                 </div>
