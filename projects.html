@@ -18,7 +18,7 @@
             referrerpolicy="no-referrer"></script>
             
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=2.3">
+    <link rel="stylesheet" href="style.css?v=2.4">
     <script>
         (function() {
             var savedTheme = localStorage.getItem('yash_portfolio_theme');
@@ -31,6 +31,21 @@
 <body>
 
     <div id="canvas-container"></div>
+
+    <!-- SKETCH MODE ONLY: Full-Page Interactive Blue Ink Doodle Canvas ("CURSOR IS INK") -->
+    <canvas id="inkCanvas" class="ink-canvas sketch-only" aria-hidden="true"></canvas>
+
+    <!-- SKETCH MODE ONLY: Floating Doodle & Erase Control Bar in Bottom Right -->
+    <div class="floating-doodle-bar sketch-only" id="floatingDoodleBar" role="toolbar" aria-label="Doodle Controls">
+        <button class="doodle-tool-btn active" id="doodlePenBtn" type="button" title="Doodle Pen: Drag mouse or finger to draw blue ink on paper">
+            <span class="tool-icon">✏️</span>
+            <span class="tool-label">doodle</span>
+        </button>
+        <button class="doodle-tool-btn" id="doodleEraseBtn" type="button" title="Erase blue ink scribbles">
+            <span class="tool-icon">⌫</span>
+            <span class="tool-label">erase</span>
+        </button>
+    </div>
 
     <main>
         <nav>
@@ -104,6 +119,6 @@
         </section>
     </main>
 
-    <script src="script.js?v=2.3"></script>
+    <script src="script.js?v=2.4"></script>
 </body>
 </html>

@@ -2175,57 +2175,159 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ==========================================================================
-// 13. FULL-PAGE INTERACTIVE BLUE INK DOODLE CANVAS ("CURSOR IS INK")
+// 13. FULL-PAGE INTERACTIVE BLUE INK DOODLE CANVAS & CURSOR INK TRAIL
 // ==========================================================================
 function initInkDoodler() {
-    const canvas = document.getElementById('inkCanvas');
-    if (!canvas) return;
+    let canvas = document.getElementById('inkCanvas');
+    if (!canvas) {
+        canvas = document.createElement('canvas');
+        canvas.id = 'inkCanvas';
+        canvas.className = 'ink-canvas sketch-only';
+        canvas.setAttribute('aria-hidden', 'true');
+        document.body.prepend(canvas);
+    }
 
     const ctx = canvas.getContext('2d');
     let isDrawing = false;
     let doodleEnabled = true;
     let activeStroke = [];
     let allStrokes = [];
+    let cursorTrail = [];
+    let animFrameId = null;
+    let lastX = 0;
+    let lastY = 0;
+    let lastMoveTime = 0;
+    const TRAIL_DURATION = 2200; // 2.2s of blue ink trailing behind moving cursor
 
     function resizeCanvas() {
+        const dpr = window.devicePixelRatio || 1;
         const width = window.innerWidth;
         const height = window.innerHeight;
         
-        canvas.width = width;
-        canvas.height = height;
+        canvas.width = width * dpr;
+        canvas.height = height * dpr;
+        canvas.style.width = width + 'px';
+        canvas.style.height = height + 'px';
 
-        redrawAllStrokes();
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.scale(dpr, dpr);
+
+        requestRedraw();
     }
 
-    function redrawAllStrokes() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        allStrokes.forEach(stroke => {
-            if (stroke.length < 2) return;
-            drawStroke(stroke);
-        });
-    }
-
-    function drawStroke(points) {
+    function drawPermanentStroke(points) {
         if (points.length < 2) return;
+        const scrollY = window.scrollY || 0;
+
+        ctx.save();
         ctx.strokeStyle = '#104bb8'; // Authentic blue ballpoint ink
         ctx.lineWidth = 3.2;
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
         ctx.beginPath();
-        ctx.moveTo(points[0].x, points[0].y);
+        ctx.moveTo(points[0].x, points[0].y - scrollY);
 
         for (let i = 1; i < points.length; i++) {
             const p1 = points[i - 1];
             const p2 = points[i];
             const midX = (p1.x + p2.x) / 2;
-            const midY = (p1.y + p2.y) / 2;
-            ctx.quadraticCurveTo(p1.x, p1.y, midX, midY);
+            const midY = ((p1.y + p2.y) / 2) - scrollY;
+            ctx.quadraticCurveTo(p1.x, p1.y - scrollY, midX, midY);
         }
-        ctx.lineTo(points[points.length - 1].x, points[points.length - 1].y);
+        ctx.lineTo(points[points.length - 1].x, points[points.length - 1].y - scrollY);
         ctx.stroke();
+        ctx.restore();
+    }
+
+    function drawInkTrail(trail, now) {
+        if (trail.length < 2) return;
+
+        ctx.save();
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+
+        for (let i = 1; i < trail.length; i++) {
+            const p0 = trail[i - 1];
+            const p1 = trail[i];
+            const age = now - p1.time;
+            if (age >= TRAIL_DURATION) continue;
+
+            const progress = Math.max(0, Math.min(1, 1 - (age / TRAIL_DURATION)));
+            const strokeWidth = (p1.width || 3.2) * (0.35 + 0.65 * progress);
+            const alpha = Math.max(0.04, progress * 0.92);
+
+            ctx.beginPath();
+            ctx.strokeStyle = `rgba(16, 75, 184, ${alpha})`;
+            ctx.lineWidth = strokeWidth;
+
+            const midX = (p0.x + p1.x) / 2;
+            const midY = (p0.y + p1.y) / 2;
+            ctx.moveTo(p0.x, p0.y);
+            ctx.quadraticCurveTo(p0.x, p0.y, midX, midY);
+            ctx.lineTo(p1.x, p1.y);
+            ctx.stroke();
+        }
+
+        // Fresh wet ink bead right at pen cursor tip
+        const head = trail[trail.length - 1];
+        if (now - head.time < 180) {
+            ctx.beginPath();
+            ctx.arc(head.x, head.y, (head.width || 3.2) * 0.55, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(16, 75, 184, 0.95)';
+            ctx.fill();
+        }
+        ctx.restore();
+    }
+
+    function renderLoop(now) {
+        const isSketch = document.documentElement.getAttribute('data-theme') === 'sketch';
+        if (!isSketch) {
+            ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+            cursorTrail = [];
+            animFrameId = null;
+            return;
+        }
+
+        // Clean up expired trail points
+        cursorTrail = cursorTrail.filter(pt => now - pt.time < TRAIL_DURATION);
+
+        // Clear canvas
+        ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+
+        // 1. Draw all permanent doodles
+        for (let s = 0; s < allStrokes.length; s++) {
+            drawPermanentStroke(allStrokes[s]);
+        }
+
+        // 2. Draw active dragging stroke
+        if (isDrawing && activeStroke.length > 1) {
+            drawPermanentStroke(activeStroke);
+        }
+
+        // 3. Draw cursor ink trail leaving ink behind the moving cursor
+        if (cursorTrail.length > 1) {
+            drawInkTrail(cursorTrail, now);
+        }
+
+        if (cursorTrail.length > 0 || isDrawing) {
+            animFrameId = requestAnimationFrame(renderLoop);
+        } else {
+            animFrameId = null;
+        }
+    }
+
+    function startAnimationLoop() {
+        if (!animFrameId) {
+            animFrameId = requestAnimationFrame(renderLoop);
+        }
+    }
+
+    function requestRedraw() {
+        startAnimationLoop();
     }
 
     window.addEventListener('resize', resizeCanvas);
+    window.addEventListener('scroll', requestRedraw, { passive: true });
     resizeCanvas();
 
     // Initial playful doodle line (top-left curl from user's screenshot)
@@ -2233,81 +2335,98 @@ function initInkDoodler() {
         const isSketch = document.documentElement.getAttribute('data-theme') === 'sketch';
         if (!isSketch || allStrokes.length > 0) return;
 
+        const scrollY = window.scrollY || 0;
         const welcomePath = [
-            { x: 34, y: 125 },
-            { x: 65, y: 145 },
-            { x: 125, y: 185 },
-            { x: 185, y: 220 },
-            { x: 235, y: 248 }
+            { x: 34, y: 125 + scrollY },
+            { x: 65, y: 145 + scrollY },
+            { x: 125, y: 185 + scrollY },
+            { x: 185, y: 220 + scrollY },
+            { x: 235, y: 248 + scrollY }
         ];
         allStrokes.push(welcomePath);
-        drawStroke(welcomePath);
+        requestRedraw();
     }
     window.triggerWelcomeDoodle = drawWelcomeDoodle;
     setTimeout(drawWelcomeDoodle, 400);
 
-    // Pointer events for ultra-smooth cross-device ink drawing
-    function startDrawing(e) {
+    // Pointer events for cursor ink trail & freehand drawing
+    function handlePointerMove(e) {
         const isSketch = document.documentElement.getAttribute('data-theme') === 'sketch';
         if (!isSketch || !doodleEnabled) return;
-        
+
+        const x = e.clientX;
+        const y = e.clientY;
+        const now = performance.now();
+
+        // Calculate velocity for natural ink line thickness
+        const dt = Math.max(1, now - lastMoveTime);
+        const dist = Math.hypot(x - lastX, y - lastY);
+        const speed = dist / dt;
+        lastX = x;
+        lastY = y;
+        lastMoveTime = now;
+
+        const targetWidth = Math.max(2.0, Math.min(4.4, 3.8 - speed * 0.35));
+
+        // Append to cursor ink trail (leaves ink behind cursor as it moves!)
+        cursorTrail.push({
+            x,
+            y,
+            time: now,
+            width: targetWidth
+        });
+
+        if (cursorTrail.length > 320) {
+            cursorTrail.shift();
+        }
+
+        // If mouse button is held, also record permanent doodle stroke
+        if (isDrawing) {
+            const scrollY = window.scrollY || 0;
+            activeStroke.push({ x, y: y + scrollY });
+        }
+
+        startAnimationLoop();
+    }
+
+    function handlePointerDown(e) {
+        const isSketch = document.documentElement.getAttribute('data-theme') === 'sketch';
+        if (!isSketch || !doodleEnabled) return;
+
         // Prevent drawing on interactive UI elements so buttons, links, inputs work perfectly
         const target = e.target;
-        if (target.closest('a, button, input, textarea, select, .terminal-window, .blueprint-modal, #notebook-character')) {
+        if (target.closest('a, button, input, textarea, select, .terminal-window, #notebook-character, .theme-toggle-btn')) {
             return;
         }
 
         isDrawing = true;
+        const scrollY = window.scrollY || 0;
         const x = e.clientX;
-        const y = e.clientY;
+        const y = e.clientY + scrollY;
         activeStroke = [{ x, y }];
+        startAnimationLoop();
     }
 
-    function continueDrawing(e) {
-        if (!isDrawing) return;
-        const x = e.clientX;
-        const y = e.clientY;
-        activeStroke.push({ x, y });
-
-        // Draw incremental segment
-        if (activeStroke.length >= 2) {
-            ctx.strokeStyle = '#104bb8';
-            ctx.lineWidth = 3.2;
-            ctx.lineCap = 'round';
-            ctx.lineJoin = 'round';
-            const len = activeStroke.length;
-            const p1 = activeStroke[len - 2];
-            const p2 = activeStroke[len - 1];
-            ctx.beginPath();
-            ctx.moveTo(p1.x, p1.y);
-            ctx.lineTo(p2.x, p2.y);
-            ctx.stroke();
-        }
-    }
-
-    function endDrawing() {
+    function handlePointerUp() {
         if (!isDrawing) return;
         isDrawing = false;
         if (activeStroke.length > 1) {
             allStrokes.push([...activeStroke]);
         }
         activeStroke = [];
-        redrawAllStrokes(); // Smoothes with quadratic curves on stroke finish!
+        requestRedraw();
     }
 
-    window.addEventListener('pointerdown', startDrawing);
-    window.addEventListener('pointermove', continueDrawing);
-    window.addEventListener('pointerup', endDrawing);
-    window.addEventListener('pointercancel', endDrawing);
+    window.addEventListener('pointermove', handlePointerMove, { passive: true });
+    window.addEventListener('pointerdown', handlePointerDown);
+    window.addEventListener('pointerup', handlePointerUp);
+    window.addEventListener('pointercancel', handlePointerUp);
 
     // Floating Doodle Toolbar
     const penBtn = document.getElementById('doodlePenBtn');
     const eraseBtn = document.getElementById('doodleEraseBtn');
 
     if (penBtn) {
-        const isSketch = document.documentElement.getAttribute('data-theme') === 'sketch';
-        if (isSketch) document.body.classList.add('pen-cursor-active');
-
         penBtn.addEventListener('click', (e) => {
             e.preventDefault();
             e.stopPropagation();
@@ -2322,7 +2441,8 @@ function initInkDoodler() {
             e.preventDefault();
             e.stopPropagation();
             allStrokes = [];
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            cursorTrail = [];
+            ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
             eraseBtn.style.transform = 'scale(0.9)';
             setTimeout(() => eraseBtn.style.transform = '', 150);
         });
