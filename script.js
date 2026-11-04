@@ -2710,12 +2710,14 @@ function initTerminal() {
         const overlay = document.createElement('div');
         overlay.className = 'violent-glitch-overlay';
         document.body.appendChild(overlay);
+        document.documentElement.classList.add('violent-glitch-active');
         document.body.classList.add('violent-glitch-active');
 
         setTimeout(() => {
+            document.documentElement.classList.remove('violent-glitch-active');
             document.body.classList.remove('violent-glitch-active');
             if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
-            addLine("Permission denied: Nice try, you can't delete my portfolio.", "term-success");
+            addLine("Permission denied: Nice try, you can't delete my portfolio 😉.", "term-success");
             body.scrollTop = body.scrollHeight;
             if (input) input.focus();
         }, 1500);
@@ -2827,14 +2829,20 @@ TITLE:  Copy Ninja / Sixth Hokage
     function processCommand(cmd) {
         addLine(`➜ ~ ${cmd}`, 'cmd-highlight');
 
-        // Check for sudo rm -rf / or rm -rf
-        if (cmd === 'sudo rm -rf /' || cmd === 'rm -rf /' || cmd.startsWith('sudo rm -rf') || cmd.startsWith('rm -rf')) {
+        // Check for sudo or rm -rf commands to trigger violent glitch
+        if (
+            cmd === 'sudo' || 
+            cmd === 'sudo rm -rf /' || 
+            cmd === 'rm -rf /' || 
+            cmd.startsWith('sudo ') || 
+            cmd.startsWith('rm -rf')
+        ) {
             triggerViolentGlitch();
             return;
         }
 
         switch(cmd) {
-                        case 'help':
+            case 'help':
                 addLine("Available commands:", "term-dim");
                 addLine("  about     Who am I?");
                 addLine("  skills    My tech stack");
@@ -2872,9 +2880,6 @@ TITLE:  Copy Ninja / Sixth Hokage
                 break;
             case 'clear':
                 body.innerHTML = '';
-                break;
-            case 'sudo':
-                addLine("Permission denied: You are not root.", "term-error");
                 break;
             default:
                 addLine(`Command not found: ${cmd}. Type 'help' for available commands.`, "term-error");
