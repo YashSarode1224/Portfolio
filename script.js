@@ -2728,84 +2728,132 @@ function initTerminal() {
     // ==========================================
     const animeCharacters = [
         {
-            ascii: `[ CHARACTER DISPLAY // BLUE LOCK ]
-NAME:   Yoichi Isagi (No. 11)
-WEAPON: Direct Shot / Spatial Vision
-
-          /\_/\
-         /     \
-        |  o  o |
-        |   -   |
-         \ === /
-         /|   |\
-        / | # | \
-          | 11|`
+            ascii: `+-------------------------------------+
+|  BLUE LOCK // Yoichi Isagi  #11     |
+|  Weapon: Direct Shot                |
++-------------------------------------+
+|                                     |
+|         ___________                 |
+|        /    |||    \\                |
+|       /  ___|||___  \\              |
+|      |  /         \\  |             |
+|      | |  []   []  | |             |
+|      |  \\    <    /  |             |
+|       \\  \\______/  /              |
+|        \\___|  |___/                |
+|            |##|                     |
+|           /|  |\\                   |
+|          / |  | \\                  |
+|         [11]  [11]                  |
+|                                     |
++-------------------------------------+`
         },
         {
-            ascii: `[ CHARACTER DISPLAY // BLUE LOCK ]
-NAME:   Meguru Bachira (No. 8)
-WEAPON: Monster Dribble / Instinct
-
-        _.-.-._
-       (       )
-       |  ^  ^ |
-       |   u   |
-        \ === /
-        /|   |\
-       / | 8 | \\`
+            ascii: `+-------------------------------------+
+|  BLUE LOCK // Meguru Bachira  #8    |
+|  Weapon: Monster Dribble            |
++-------------------------------------+
+|                                     |
+|        .~~~~~~~~~~~.                |
+|       / ~ ~ ~ ~ ~ ~ \\             |
+|      /  ___________  \\             |
+|     |  /           \\  |            |
+|     | |  *       *  | |            |
+|     |  \\    \\~/    /  |            |
+|      \\  \\_  vv  _/  /             |
+|       \\___|    |___/               |
+|           | ## |                    |
+|          /| 08 |\\                  |
+|         / |    | \\                 |
+|        o  |    |  o  <-- ball      |
+|                                     |
++-------------------------------------+`
         },
         {
-            ascii: `[ CHARACTER DISPLAY // ONE PIECE ]
-NAME:   Monkey D. Luffy
-ROLE:   Captain / Straw Hat Pirates
-
-          _~^~^~_
-         /       \
-       =============
-       |  o     o  |
-       \     -     /
-        \  \___/  /
-         /|     |\
-        / |  #  | \\`
+            ascii: `+-------------------------------------+
+|  ONE PIECE // Monkey D. Luffy       |
+|  Role: Captain / Straw Hats         |
++-------------------------------------+
+|                                     |
+|      .===============.              |
+|     / _  STRAW HAT  _ \\            |
+|    /_______.---._______ \\          |
+|           /     \\                   |
+|          |  O   O  |                |
+|          |    >    |                 |
+|          |  \\___/  |  GOMU         |
+|           \\_______/   GOMU NO      |
+|            |  X  |    GATLING!      |
+|           /| ### |\\                |
+|          / |     | \\               |
+|         /  |     |  \\              |
+|                                     |
++-------------------------------------+`
         },
         {
-            ascii: `[ CHARACTER DISPLAY // ONE PIECE ]
-NAME:   Roronoa Zoro
-STYLE:  Santoryu (Three Swords)
-
-          .---.
-         /_____\
-        | -'  o |
-        |   -   |
-         \ === /
-         /|   |\   [///] Three
-        / |   | \        Swords`
+            ascii: `+-------------------------------------+
+|  ONE PIECE // Roronoa Zoro          |
+|  Style: Santoryu / Three Swords     |
++-------------------------------------+
+|                                     |
+|    |         ___         |          |
+|    |        / _ \\        |         |
+|    |       | |_| |       |         |
+|    |       |  _  |       |         |
+|   [|]      | O O |      [|]        |
+|    |        \\ = /        |         |
+|    |     ____| |____     |         |
+|    |    /    | X |   \\   |         |
+|    |   /     |   |    \\  |         |
+|    |  / SWORD| # |SWORD\\ |        |
+|            MOUTH                    |
+|          THREE SWORD STYLE          |
+|                                     |
++-------------------------------------+`
         },
         {
-            ascii: `[ CHARACTER DISPLAY // NARUTO ]
-NAME:   Naruto Uzumaki
-ROLE:   Seventh Hokage / Konoha
-
-         \ | /
-       _.-"""-._
-      |  [---]  |
-      | : o  o :|
-      | :  __  :|
-       \       /
-        |  O  |`
+            ascii: `+-------------------------------------+
+|  NARUTO // Naruto Uzumaki           |
+|  Title: Seventh Hokage              |
++-------------------------------------+
+|                                     |
+|          \\  |||  /                  |
+|           \\ ||| /                   |
+|        ____\\|||/____                |
+|       |  [KONOHA]   |              |
+|       |  ___   ___  |              |
+|       | | O | | O | |              |
+|        \\|___|_|___|/               |
+|        / === _ === \\               |
+|       |   /     \\   |              |
+|        \\_|  ---  |_/               |
+|          |_______|                  |
+|           |  H  |                   |
+|          /| ### |\\  DATTEBAYO!     |
+|                                     |
++-------------------------------------+`
         },
         {
-            ascii: `[ CHARACTER DISPLAY // NARUTO ]
-NAME:   Kakashi Hatake
-TITLE:  Copy Ninja / Sixth Hokage
-
-          / / /
-        _/_/_/
-       | [---] |
-       |   o   |
-       |#######|
-        \#####/
-         |   |`
+            ascii: `+-------------------------------------+
+|  NARUTO // Kakashi Hatake           |
+|  Title: Copy Ninja / Sixth Hokage   |
++-------------------------------------+
+|                                     |
+|           _/  /  /_                 |
+|          / / / / /                  |
+|         /_/_/_/_/                   |
+|        |  [LEAF]  |                |
+|        | \\      / |                |
+|        |  X    O  |  <- Sharingan  |
+|        |##########|                |
+|        |##########|  <- Mask       |
+|         \\########/                 |
+|          |   H  |                   |
+|         /|  ### |\\                 |
+|        / |      | \\                |
+|       THOUSAND YEARS OF DEATH       |
+|                                     |
++-------------------------------------+`
         }
     ];
 
