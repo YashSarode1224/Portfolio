@@ -898,8 +898,18 @@ const container = document.getElementById('canvas-container');
     let downX = 0;
     let downY = 0;
     let hasMoved = false;
+    let isPointerDown = false;
     let isVisible = true;
     let animFrameId = null;
+    let nodeScale = 1;
+    let lastLayoutIsPortrait = null;
+
+    function getDrawRadius(node, isSelected = false, isHovered = false) {
+        const base = node.radius * nodeScale;
+        if (isSelected) return base + 3 * nodeScale;
+        if (isHovered) return base + 2 * nodeScale;
+        return base;
+    }
 
     // Canvas Resize & DPR Handling
     function resize() {
@@ -908,18 +918,20 @@ const container = document.getElementById('canvas-container');
         width = wrap.clientWidth;
         height = wrap.clientHeight;
         dpr = window.devicePixelRatio || 1;
+        nodeScale = Math.max(0.68, Math.min(1, width / 620));
+        const isPortrait = width < 580;
 
         canvas.width = Math.round(width * dpr);
         canvas.height = Math.round(height * dpr);
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-        if (nodes.length === 0) {
+        if (nodes.length === 0 || (lastLayoutIsPortrait !== null && lastLayoutIsPortrait !== isPortrait)) {
             initPositions();
         } else if (oldW > 0 && oldH > 0 && (oldW !== width || oldH !== height)) {
             const scaleX = width / oldW;
             const scaleY = height / oldH;
             const cx = width / 2;
-            const cy = height / 2 - 15;
+            const cy = isPortrait ? height * 0.48 : height / 2 - 15;
             nodes.forEach((n) => {
                 if (n.isHub) {
                     n.x = cx;
@@ -928,13 +940,17 @@ const container = document.getElementById('canvas-container');
                     n.vy = 0;
                     return;
                 }
-                const pad = n.radius + 20;
-                n.x = Math.max(pad, Math.min(width - pad, n.x * scaleX));
-                n.y = Math.max(pad, Math.min(height - pad, n.y * scaleY));
+                const r = n.radius * nodeScale;
+                const padX = r + 24;
+                const padTop = r + 18;
+                const padBottom = r + 30;
+                n.x = Math.max(padX, Math.min(width - padX, n.x * scaleX));
+                n.y = Math.max(padTop, Math.min(height - padBottom, n.y * scaleY));
                 n.vx = 0;
                 n.vy = 0;
             });
         }
+        lastLayoutIsPortrait = isPortrait;
     }
 
     // Helper: Draw Neobrutalist Rounded Rectangle
@@ -954,38 +970,46 @@ const container = document.getElementById('canvas-container');
 
     // Initialize Positions in 3 Organic Clusters with Central TOOLKIT Anchor
     function initPositions() {
+        const isPortrait = width < 580;
         const cx = width / 2;
-        const cy = height / 2 - 15;
+        const cy = isPortrait ? height * 0.48 : height / 2 - 15;
+        lastLayoutIsPortrait = isPortrait;
 
-        // Cluster Centers
-        const mlCenter = { x: cx - Math.min(width * 0.25, 230), y: cy - 25 };
-        const webCenter = { x: cx + Math.min(width * 0.25, 230), y: cy - 25 };
-        const csCenter = { x: cx, y: cy + Math.min(height * 0.28, 145) };
+        // Cluster Centers & Responsive Relative Offsets
+        const offScale = isPortrait ? Math.max(0.54, Math.min(0.82, width / 460)) : 1;
+        const mlCenter = isPortrait
+            ? { x: cx - Math.min(width * 0.14, 52), y: height * 0.21 }
+            : { x: cx - Math.min(width * 0.25, 230), y: cy - 25 };
+        const webCenter = isPortrait
+            ? { x: cx + Math.min(width * 0.14, 52), y: height * 0.72 }
+            : { x: cx + Math.min(width * 0.25, 230), y: cy - 25 };
+        const csCenter = isPortrait
+            ? { x: cx - Math.min(width * 0.24, 88), y: height * 0.56 }
+            : { x: cx, y: cy + Math.min(height * 0.28, 145) };
 
-        // Relative polar distribution within clusters
         const mlOffsets = {
             python: { x: 0, y: 0 },
-            numpy: { x: -85, y: -65 },
-            pandas: { x: -105, y: 35 },
-            matplotlib: { x: -35, y: 95 },
-            scikitlearn: { x: 65, y: -80 },
-            supervised: { x: 95, y: 30 }
+            numpy: { x: -85 * offScale, y: -65 * offScale },
+            pandas: { x: -105 * offScale, y: 35 * offScale },
+            matplotlib: { x: -35 * offScale, y: 95 * offScale },
+            scikitlearn: { x: 65 * offScale, y: -80 * offScale },
+            supervised: { x: 95 * offScale, y: 30 * offScale }
         };
 
         const webOffsets = {
             javascript: { x: 0, y: 0 },
-            html: { x: -65, y: -85 },
-            css: { x: -105, y: 15 },
-            react: { x: 70, y: -75 },
-            three: { x: 105, y: 15 },
-            firebase: { x: 25, y: 95 }
+            html: { x: -65 * offScale, y: -85 * offScale },
+            css: { x: -105 * offScale, y: 15 * offScale },
+            react: { x: 70 * offScale, y: -75 * offScale },
+            three: { x: 105 * offScale, y: 15 * offScale },
+            firebase: { x: 25 * offScale, y: 95 * offScale }
         };
 
-        const csScale = Math.min(width / 800, 1);
+        const csScale = isPortrait ? offScale * 0.85 : Math.min(width / 800, 1);
         const csOffsets = {
-            c: { x: -110 * csScale, y: 15 },
-            java: { x: 0 * csScale, y: 10 },
-            dsa: { x: 110 * csScale, y: 25 }
+            c: { x: -110 * csScale, y: 15 * offScale },
+            java: { x: 0 * csScale, y: 10 * offScale },
+            dsa: { x: 110 * csScale, y: 25 * offScale }
         };
 
         nodes = rawNodes.map((n) => {
@@ -1009,12 +1033,15 @@ const container = document.getElementById('canvas-container');
                 posY = csCenter.y + off.y;
             }
 
-            const pad = n.radius + 24;
+            const r = n.radius * nodeScale;
+            const padX = r + 24;
+            const padTop = r + 18;
+            const padBottom = r + 30;
 
             return {
                 ...n,
-                x: Math.max(pad, Math.min(width - pad, posX)),
-                y: Math.max(pad, Math.min(height - pad, posY)),
+                x: Math.max(padX, Math.min(width - padX, posX)),
+                y: Math.max(padTop, Math.min(height - padBottom, posY)),
                 vx: 0,
                 vy: 0,
                 fx: n.isHub ? cx : null,
@@ -1036,8 +1063,11 @@ const container = document.getElementById('canvas-container');
     // Physics Simulation with Central Toolkit Anchor
     function updatePhysics() {
         const damping = 0.86;
+        const isPortrait = width < 580;
         const cx = width / 2;
-        const cy = height / 2 - 15;
+        const cy = isPortrait ? height * 0.48 : height / 2 - 15;
+        const repulsionK = 11000 * nodeScale * nodeScale;
+        const springScale = Math.max(0.65, nodeScale);
 
         // 1. Coulomb Repulsion
         for (let i = 0; i < nodes.length; i++) {
@@ -1049,7 +1079,7 @@ const container = document.getElementById('canvas-container');
                 const distSq = dx * dx + dy * dy || 1;
                 const dist = Math.sqrt(distSq);
 
-                const force = 11000 / (distSq + 320);
+                const force = repulsionK / (distSq + 320);
                 const fx = (dx / dist) * force;
                 const fy = (dy / dist) * force;
 
@@ -1066,7 +1096,7 @@ const container = document.getElementById('canvas-container');
                 const dx = nb.x - na.x;
                 const dy = nb.y - na.y;
                 const dist = Math.hypot(dx, dy) || 1;
-                const minDist = na.radius + nb.radius + 36;
+                const minDist = (na.radius + nb.radius) * nodeScale + (32 * nodeScale);
 
                 if (dist < minDist) {
                     const overlap = (minDist - dist) / 2;
@@ -1088,7 +1118,7 @@ const container = document.getElementById('canvas-container');
             const dx = t.x - s.x;
             const dy = t.y - s.y;
             const dist = Math.hypot(dx, dy) || 1;
-            const delta = dist - l.length;
+            const delta = dist - (l.length * springScale);
             const force = delta * 0.032 * (l.strength || 1);
 
             const fx = (dx / dist) * force;
@@ -1126,15 +1156,28 @@ const container = document.getElementById('canvas-container');
                 // Cluster anchor gentle pull
                 let targetX = cx;
                 let targetY = cy;
-                if (n.cluster === 'ml') {
-                    targetX = cx - Math.min(width * 0.22, 180);
-                    targetY = cy - 20;
-                } else if (n.cluster === 'web') {
-                    targetX = cx + Math.min(width * 0.22, 180);
-                    targetY = cy - 20;
-                } else if (n.cluster === 'cs') {
-                    targetX = cx;
-                    targetY = cy + Math.min(height * 0.25, 130);
+                if (isPortrait) {
+                    if (n.cluster === 'ml') {
+                        targetX = cx - Math.min(width * 0.10, 40);
+                        targetY = height * 0.21;
+                    } else if (n.cluster === 'web') {
+                        targetX = cx + Math.min(width * 0.10, 40);
+                        targetY = height * 0.72;
+                    } else if (n.cluster === 'cs') {
+                        targetX = cx - Math.min(width * 0.20, 70);
+                        targetY = height * 0.56;
+                    }
+                } else {
+                    if (n.cluster === 'ml') {
+                        targetX = cx - Math.min(width * 0.22, 180);
+                        targetY = cy - 20;
+                    } else if (n.cluster === 'web') {
+                        targetX = cx + Math.min(width * 0.22, 180);
+                        targetY = cy - 20;
+                    } else if (n.cluster === 'cs') {
+                        targetX = cx;
+                        targetY = cy + Math.min(height * 0.25, 130);
+                    }
                 }
 
                 n.vx += (targetX - n.x) * 0.0018;
@@ -1151,14 +1194,16 @@ const container = document.getElementById('canvas-container');
                 n.y += n.vy;
             }
 
-            // Boundary containment
-            const padX = n.radius + 35;
-            const padY = n.radius + 30;
+            // Boundary containment (respects pill label below circle)
+            const r = n.radius * nodeScale;
+            const padX = r + Math.round(30 * nodeScale);
+            const padTop = r + 18;
+            const padBottom = r + 30;
 
             if (n.x < padX) { n.x = padX; n.vx *= -0.5; }
             if (n.x > width - padX) { n.x = width - padX; n.vx *= -0.5; }
-            if (n.y < padY) { n.y = padY; n.vy *= -0.5; }
-            if (n.y > height - padY) { n.y = height - padY; n.vy *= -0.5; }
+            if (n.y < padTop) { n.y = padTop; n.vy *= -0.5; }
+            if (n.y > height - padBottom) { n.y = height - padBottom; n.vy *= -0.5; }
         });
     }
 
@@ -1479,15 +1524,16 @@ const container = document.getElementById('canvas-container');
 
             const drawX = Math.round((isSelected || isHovered) ? node.x - 3 : node.x);
             const drawY = Math.round((isSelected || isHovered) ? node.y - 3 : node.y);
-            const shadowOff = isSelected ? 6.5 : (isHovered ? 5.0 : 3.5);
-            const drawRadius = isSelected ? node.radius + 3 : (isHovered ? node.radius + 2 : node.radius);
+            const shadowOff = (isSelected ? 6.5 : (isHovered ? 5.0 : 3.5)) * nodeScale;
+            const drawRadius = getDrawRadius(node, isSelected, isHovered);
+            const isCompact = nodeScale < 0.85;
 
             if (node.isHub) {
                 // --- Central TOOLKIT Node: Iconic Yellow Circle & Clean Centered Text ---
                 if (isSelected || isHovered) {
                     ctx.save();
                     ctx.beginPath();
-                    ctx.arc(drawX, drawY, drawRadius + 7, 0, Math.PI * 2);
+                    ctx.arc(drawX, drawY, drawRadius + 7 * nodeScale, 0, Math.PI * 2);
                     ctx.strokeStyle = '#ffe54c';
                     ctx.lineWidth = 2.5;
                     ctx.setLineDash([5, 5]);
@@ -1508,35 +1554,35 @@ const container = document.getElementById('canvas-container');
                 ctx.fill();
 
                 // Circle Ink Border
-                ctx.lineWidth = 3.5;
+                ctx.lineWidth = isCompact ? 2.5 : 3.5;
                 ctx.strokeStyle = currentInk;
                 ctx.stroke();
 
                 // Code Bracket Icon </>
                 const hubImg = loadedImages.core;
                 if (hubImg && hubImg.complete) {
-                    const iconSize = 24;
-                    ctx.drawImage(hubImg, Math.round(drawX - iconSize / 2), Math.round(drawY - iconSize / 2 - 5), iconSize, iconSize);
+                    const iconSize = Math.round(24 * nodeScale);
+                    ctx.drawImage(hubImg, Math.round(drawX - iconSize / 2), Math.round(drawY - iconSize / 2 - 5 * nodeScale), iconSize, iconSize);
                 } else {
                     ctx.fillStyle = '#161616';
-                    ctx.font = 'bold 15px JetBrains Mono, monospace';
+                    ctx.font = `bold ${Math.round(15 * nodeScale)}px JetBrains Mono, monospace`;
                     ctx.textAlign = 'center';
                     ctx.textBaseline = 'middle';
-                    ctx.fillText('</>', drawX, drawY - 5);
+                    ctx.fillText('</>', drawX, drawY - 5 * nodeScale);
                 }
 
                 // TOOLKIT Text inside Circle
                 ctx.fillStyle = '#161616';
-                ctx.font = 'bold 9.5px Archivo Black, sans-serif';
+                ctx.font = `bold ${isCompact ? '7.5' : '9.5'}px Archivo Black, sans-serif`;
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
-                ctx.fillText('TOOLKIT', drawX, drawY + 12);
+                ctx.fillText('TOOLKIT', drawX, drawY + Math.round(11 * nodeScale));
             } else {
                 // --- Standard Skill Node: Circle with Official Logo + Pill Tag Below ---
                 if (isSelected) {
                     ctx.save();
                     ctx.beginPath();
-                    ctx.arc(drawX, drawY, drawRadius + 7, 0, Math.PI * 2);
+                    ctx.arc(drawX, drawY, drawRadius + 7 * nodeScale, 0, Math.PI * 2);
                     ctx.strokeStyle = node.color;
                     ctx.lineWidth = 2.5;
                     ctx.setLineDash([5, 5]);
@@ -1557,27 +1603,28 @@ const container = document.getElementById('canvas-container');
                 ctx.fill();
 
                 // Circle Ink Border
-                ctx.lineWidth = isSelected ? 3.5 : (isHovered ? 3 : 2.5);
+                ctx.lineWidth = isSelected ? (isCompact ? 2.8 : 3.5) : (isHovered ? 3 : 2.2);
                 ctx.strokeStyle = currentInk;
                 ctx.stroke();
 
                 // Draw Official Vector SVG Logo inside Circle
                 const logoImg = loadedImages[node.id];
                 if (logoImg && logoImg.complete) {
-                    const iconSize = isSelected ? 28 : (node.isSubHub ? 26 : 24);
+                    const iconSize = Math.round((isSelected ? 28 : (node.isSubHub ? 26 : 24)) * nodeScale);
                     ctx.drawImage(logoImg, Math.round(drawX - iconSize / 2), Math.round(drawY - iconSize / 2), iconSize, iconSize);
                 }
 
                 // Dedicated Neobrutalist Label Pill Tag BELOW Circle (ZERO TEXT OVERFLOW)
-                ctx.font = isSelected 
-                    ? 'bold 10.5px Archivo Black, sans-serif'
-                    : (node.isSubHub ? 'bold 10px Archivo Black, sans-serif' : 'bold 9.5px DM Mono, monospace');
+                const pillFontSize = isCompact ? (isSelected ? 9 : 8.5) : (isSelected ? 10.5 : (node.isSubHub ? 10 : 9.5));
+                ctx.font = (isSelected || node.isSubHub)
+                    ? `bold ${pillFontSize}px Archivo Black, sans-serif`
+                    : `bold ${pillFontSize}px DM Mono, monospace`;
 
                 const textWidth = ctx.measureText(node.label).width;
-                const pillW = Math.round(textWidth + 14);
-                const pillH = 18;
+                const pillW = Math.round(textWidth + (isCompact ? 10 : 14));
+                const pillH = isCompact ? 15 : 18;
                 const pillX = Math.round(drawX - pillW / 2);
-                const pillY = Math.round(drawY + drawRadius + 5);
+                const pillY = Math.round(drawY + drawRadius + (isCompact ? 4 : 5));
 
                 // Pill Tag Hard Shadow
                 ctx.fillStyle = currentInk;
@@ -1631,10 +1678,12 @@ const container = document.getElementById('canvas-container');
 
     // Exact Hit Testing (Circle + Pill Tag Below)
     function getNodeAt(x, y) {
+        const isCompact = nodeScale < 0.85;
         for (let i = nodes.length - 1; i >= 0; i--) {
             const node = nodes[i];
             const isSelected = selectedNodeId === node.id;
-            const testRadius = isSelected ? node.radius + 6 : node.radius + 4;
+            const drawR = getDrawRadius(node, isSelected, false);
+            const testRadius = drawR + (isCompact ? 8 : 5);
 
             // 1. Circle Hit Test
             if (Math.hypot(node.x - x, node.y - y) <= testRadius) {
@@ -1643,12 +1692,13 @@ const container = document.getElementById('canvas-container');
 
             // 2. Exact Pill Tag Hit Test (only non-hub nodes have pills)
             if (!node.isHub) {
-                ctx.font = node.isSubHub ? 'bold 10px Archivo Black, sans-serif' : 'bold 9.5px DM Mono, monospace';
+                const pillFontSize = isCompact ? 8.5 : (node.isSubHub ? 10 : 9.5);
+                ctx.font = node.isSubHub ? `bold ${pillFontSize}px Archivo Black, sans-serif` : `bold ${pillFontSize}px DM Mono, monospace`;
                 const textWidth = ctx.measureText(node.label).width;
-                const pillW = textWidth + 14;
-                const pillH = 18;
+                const pillW = textWidth + (isCompact ? 10 : 14);
+                const pillH = isCompact ? 15 : 18;
                 const pillX = node.x - pillW / 2;
-                const pillY = node.y + node.radius + 5;
+                const pillY = node.y + drawR + (isCompact ? 4 : 5);
 
                 if (x >= pillX && x <= pillX + pillW && y >= pillY && y <= pillY + pillH) {
                     return node;
@@ -1863,6 +1913,7 @@ const container = document.getElementById('canvas-container');
         downX = mouseX;
         downY = mouseY;
         hasMoved = false;
+        isPointerDown = true;
 
         const target = getNodeAt(mouseX, mouseY);
         if (target) {
@@ -1880,7 +1931,8 @@ const container = document.getElementById('canvas-container');
         mouseX = e.clientX - rect.left;
         mouseY = e.clientY - rect.top;
 
-        if (Math.hypot(mouseX - downX, mouseY - downY) > 6) {
+        const moveThreshold = e.pointerType === 'touch' ? 10 : 6;
+        if (isPointerDown && Math.hypot(mouseX - downX, mouseY - downY) > moveThreshold) {
             hasMoved = true;
         }
 
@@ -1898,6 +1950,9 @@ const container = document.getElementById('canvas-container');
     });
 
     function handlePointerUp(e) {
+        if (!isPointerDown) return;
+        isPointerDown = false;
+
         if (!hasMoved) {
             // Clean Click Disambiguation
             const target = getNodeAt(mouseX, mouseY);
@@ -2430,11 +2485,14 @@ function initInkDoodler() {
     const eraseBtn = document.getElementById('doodleEraseBtn');
 
     if (penBtn) {
+        penBtn.setAttribute('aria-pressed', 'false');
         penBtn.addEventListener('click', (e) => {
             e.preventDefault();
             e.stopPropagation();
             doodleEnabled = !doodleEnabled;
             penBtn.classList.toggle('active', doodleEnabled);
+            penBtn.setAttribute('aria-pressed', String(doodleEnabled));
+            document.body.classList.toggle('doodle-mode-on', doodleEnabled);
         });
     }
 
@@ -2674,6 +2732,32 @@ function initSlider() {
         
         newPrev.addEventListener('click', () => goToSlide(currentIndex - 1));
         newNext.addEventListener('click', () => goToSlide(currentIndex + 1));
+
+        const sliderContainer = track.closest('.slider-container');
+        if (sliderContainer && !sliderContainer.dataset.swipeBound) {
+            sliderContainer.dataset.swipeBound = '1';
+            let touchStartX = 0;
+            let touchStartY = 0;
+            sliderContainer.addEventListener('touchstart', (e) => {
+                if (e.touches.length === 1) {
+                    touchStartX = e.touches[0].clientX;
+                    touchStartY = e.touches[0].clientY;
+                }
+            }, { passive: true });
+            sliderContainer.addEventListener('touchend', (e) => {
+                if (!e.changedTouches.length) return;
+                const dx = e.changedTouches[0].clientX - touchStartX;
+                const dy = e.changedTouches[0].clientY - touchStartY;
+                if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy) * 1.2) {
+                    if (dx < 0) {
+                        newNext.click();
+                    } else {
+                        newPrev.click();
+                    }
+                }
+            }, { passive: true });
+        }
+
         updateText(0);
     }, 100);
 }
@@ -2716,8 +2800,9 @@ function initDraggableStickers() {
         let hasMoved = false;
 
         sticker.addEventListener('pointerdown', (e) => {
-            // Only primary mouse button or touch
+            // Only primary mouse button or touch; keep paragraph blocks scrollable on mobile touch
             if (e.button !== undefined && e.button !== 0) return;
+            if (e.pointerType === 'touch' && sticker.classList.contains('sticker-funfact') && window.innerWidth <= 720) return;
             isDragging = true;
             hasMoved = false;
             startPointerX = e.clientX;
@@ -3332,10 +3417,14 @@ function applyPortfolioTheme(theme) {
         document.documentElement.setAttribute('data-theme', 'sketch');
         localStorage.setItem('yash_portfolio_theme', 'sketch');
         document.body.classList.add('pen-cursor-active');
+        const penBtn = document.getElementById('doodlePenBtn');
+        if (penBtn && penBtn.classList.contains('active')) {
+            document.body.classList.add('doodle-mode-on');
+        }
     } else {
         document.documentElement.removeAttribute('data-theme');
         localStorage.setItem('yash_portfolio_theme', 'brutalist');
-        document.body.classList.remove('pen-cursor-active');
+        document.body.classList.remove('pen-cursor-active', 'is-doodling', 'doodle-mode-on');
     }
 
     document.querySelectorAll('.theme-toggle-label').forEach(el => {
@@ -3344,6 +3433,10 @@ function applyPortfolioTheme(theme) {
     document.querySelectorAll('.theme-toggle-icon').forEach(el => {
         el.textContent = isSketch ? '🎨' : '✏️';
     });
+
+    if (typeof requestAnimationFrame === 'function') {
+        requestAnimationFrame(() => window.dispatchEvent(new Event('resize')));
+    }
 
     return isSketch ? 'sketch' : 'brutalist';
 }
