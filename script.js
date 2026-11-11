@@ -818,7 +818,6 @@ const container = document.getElementById('canvas-container');
     const hudDesc = document.getElementById('graph-card-connections');
     const resetBtn = document.getElementById('graph-reset-btn');
     const filterBtns = document.querySelectorAll('.graph-filter-btn');
-    const workflowPanel = document.getElementById('graph-workflow-panel');
 
     if (!wrap || !canvas) return;
 
@@ -1722,10 +1721,10 @@ const container = document.getElementById('canvas-container');
 
         const selectedNode = selectedNodeId ? nodes.find(n => n.id === selectedNodeId) : null;
         if (selectedNode) {
-            hudBadge.textContent = 'ACTIVE SKILL';
-            hudBadge.style.background = selectedNode.color;
+            hudBadge.textContent = (selectedNode.clusterName || 'ACTIVE SKILL').toUpperCase();
+            hudBadge.style.background = selectedNode.color || '#ffe54c';
             hudTitle.textContent = selectedNode.name;
-            hudDesc.textContent = 'Exploring workflow details below • Click TOOLKIT to reset';
+            hudDesc.textContent = selectedNode.shortDescription || 'Click TOOLKIT or empty space to reset';
         } else {
             hudBadge.textContent = 'ECOSYSTEM';
             hudBadge.style.background = '#ffe54c';
@@ -1734,164 +1733,8 @@ const container = document.getElementById('canvas-container');
         }
     }
 
-    // Render Dedicated Workflow Exploration Panel Below Canvas (Opens only on skill selection)
-    function renderWorkflowPanel(shouldScroll = false) {
-        if (!workflowPanel) return;
-
-        if (!selectedNodeId) {
-            // Remove ecosystem overview block when no node is selected
-            workflowPanel.innerHTML = '';
-            workflowPanel.style.display = 'none';
-            return;
-        }
-
-        // Active Skill Details View
-        workflowPanel.style.display = 'block';
-        const skill = db.getSkill(selectedNodeId);
-        if (!skill) return;
-
-        const relationships = db.getRelationshipsFor(selectedNodeId);
-
-        workflowPanel.innerHTML = `
-            <div class="workflow-active-state">
-                <!-- Header -->
-                <div class="workflow-header">
-                    <div class="workflow-header-left">
-                        <div class="workflow-icon-bubble" style="box-shadow: 4px 4px 0 var(--ink);">
-                            ${skill.icon}
-                        </div>
-                        <div class="workflow-title-meta">
-                            <div class="workflow-title-row">
-                                <h3 class="workflow-skill-title">${skill.name}</h3>
-                                <span class="workflow-category-pill" style="background: ${skill.color};">
-                                    ${skill.clusterName}
-                                </span>
-                                <span class="workflow-category-pill" style="background: var(--paper-warm);">
-                                    ${skill.category}
-                                </span>
-                            </div>
-                            <p class="workflow-short-desc">${skill.shortDescription}</p>
-                        </div>
-                    </div>
-
-                    <button class="workflow-close-btn" id="workflow-close-btn" type="button" title="Deselect Skill">
-                        ✕ Deselect
-                    </button>
-                </div>
-
-                <!-- Two-Column Facts Grid -->
-                <div class="workflow-facts-grid">
-                    <div class="workflow-fact-card">
-                        <span class="workflow-fact-badge">WHAT IT'S USED FOR</span>
-                        <p class="workflow-fact-content">${skill.whatItsUsedFor}</p>
-                    </div>
-                    <div class="workflow-fact-card">
-                        <span class="workflow-fact-badge">PRACTICAL REAL-WORLD EXAMPLE</span>
-                        <p class="workflow-fact-content">${skill.practicalExample}</p>
-                    </div>
-                </div>
-
-                <!-- Connected Technologies & Technical Roles -->
-                <div class="workflow-connections-section">
-                    <h4 class="workflow-section-title">
-                        Connected Technologies & Roles
-                        <span class="workflow-section-count">${relationships.length}</span>
-                    </h4>
-                    <div class="workflow-connected-grid">
-                        ${relationships.map(r => {
-                            const otherId = r.source === skill.id ? r.target : r.source;
-                            const otherSkill = db.getSkill(otherId);
-                            if (!otherSkill) return '';
-
-                            return `
-                                <div class="workflow-conn-card" data-skill-id="${otherSkill.id}" title="Click to inspect ${otherSkill.name}">
-                                    <div class="workflow-conn-header">
-                                        <div class="workflow-conn-target">
-                                            ${otherSkill.icon}
-                                            <span class="workflow-conn-target-name">${otherSkill.name}</span>
-                                        </div>
-                                        <span class="workflow-conn-type-badge ${r.type}">
-                                            ${r.type}
-                                        </span>
-                                    </div>
-                                    <p class="workflow-conn-desc">${r.description}</p>
-                                </div>
-                            `;
-                        }).join('')}
-                    </div>
-                </div>
-
-                <!-- Step-by-Step Practical Workflow -->
-                <div class="workflow-stepper-section">
-                    <h4 class="workflow-section-title">
-                        ${skill.name} Engineering Workflow
-                        <span class="workflow-section-count">${skill.workflow.length} Steps</span>
-                    </h4>
-
-                    <div class="workflow-steps-timeline">
-                        ${skill.workflow.map(step => `
-                            <div class="workflow-step-item">
-                                <div class="workflow-step-num">${String(step.step).padStart(2, '0')}</div>
-                                <div class="workflow-step-body">
-                                    <div class="workflow-step-top">
-                                        <h5 class="workflow-step-title">${step.title}</h5>
-                                        <span class="workflow-step-type-pill ${step.type}">${step.type}</span>
-                                    </div>
-                                    <p class="workflow-step-text">${step.explanation}</p>
-
-                                    <div class="workflow-step-tags">
-                                        ${step.highlightTerms.map(term => `
-                                            <span class="workflow-term-tag">${term}</span>
-                                        `).join('')}
-
-                                        ${step.connectedTools.map(tId => {
-                                            const tool = db.getSkill(tId);
-                                            return tool ? `
-                                                <button class="workflow-tool-tag" type="button" data-skill-id="${tool.id}" title="Jump to ${tool.name}">
-                                                    ${tool.name}
-                                                </button>
-                                            ` : '';
-                                        }).join('')}
-                                    </div>
-                                </div>
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
-            </div>
-        `;
-
-        // Attach event listener to close button
-        const closeBtn = document.getElementById('workflow-close-btn');
-        if (closeBtn) {
-            closeBtn.addEventListener('click', () => {
-                selectSkill(null);
-            });
-        }
-
-        // Attach event listeners to connected tool cards
-        workflowPanel.querySelectorAll('.workflow-conn-card').forEach((card) => {
-            card.addEventListener('click', (e) => {
-                e.stopPropagation();
-                selectSkill(card.dataset.skillId, true);
-            });
-        });
-
-        // Attach event listeners to workflow step tool tags
-        workflowPanel.querySelectorAll('.workflow-tool-tag').forEach((btn) => {
-            btn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                selectSkill(btn.dataset.skillId, true);
-            });
-        });
-
-        if (shouldScroll) {
-            workflowPanel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        }
-    }
-
     // Central Skill Selection Controller
-    function selectSkill(skillId, shouldScroll = false) {
+    function selectSkill(skillId) {
         if (!skillId || skillId === selectedNodeId || skillId === 'core') {
             selectedNodeId = null;
         } else {
@@ -1899,10 +1742,9 @@ const container = document.getElementById('canvas-container');
         }
 
         updateFloatingHud(null);
-        renderWorkflowPanel(shouldScroll);
     }
 
-    // Expose selectSkill globally for interactive buttons and breadcrumbs
+    // Expose selectSkill globally
     window.selectSkill = selectSkill;
 
     // Pointer Events: Drag & Lightweight Hover & Clean Click Disambiguation
@@ -1961,7 +1803,7 @@ const container = document.getElementById('canvas-container');
                     // Clicking TOOLKIT restores overall ecosystem overview
                     selectSkill(null);
                 } else {
-                    selectSkill(target.id, true);
+                    selectSkill(target.id);
                 }
             } else {
                 // Clicked on empty canvas space clears selection
@@ -2013,7 +1855,6 @@ const container = document.getElementById('canvas-container');
 
             initPositions();
             updateFloatingHud(null);
-            renderWorkflowPanel(false);
         });
     }
 
@@ -2048,7 +1889,6 @@ const container = document.getElementById('canvas-container');
     // Initialize
     resize();
     window.addEventListener('resize', resize);
-    renderWorkflowPanel(false);
     animFrameId = requestAnimationFrame(loop);
 })();
 // --- Background Visuals (Matrix + Three.js) ---
