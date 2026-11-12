@@ -29,7 +29,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Patrick+Hand&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=3.0">
+    <link rel="stylesheet" href="style.css?v=3.3">
 </head>
 <body>
 
@@ -90,11 +90,11 @@
                 </span>
             </div>
             <div class="nav-right">
+                <button class="theme-toggle-btn" id="theme-toggle-btn" type="button" title="Switch Theme (Brutalist ↔ Hand-Drawn Sketch)">
+                    <span class="theme-toggle-icon">✏️</span>
+                    <span class="theme-toggle-label">Sketch Mode</span>
+                </button>
                 <div class="social-links">
-                    <button class="theme-toggle-btn" id="theme-toggle-btn" type="button" title="Switch Theme (Brutalist ↔ Hand-Drawn Sketch)">
-                        <span class="theme-toggle-icon">✏️</span>
-                        <span class="theme-toggle-label">Sketch Mode</span>
-                    </button>
                     <!-- Brutalist nav links -->
                     <a href="resume.pdf" class="brutalist-only" rel="noopener noreferrer">Resume</a>
                     <a href="projects.html" class="brutalist-only">Projects</a>
@@ -223,12 +223,13 @@
                 <div class="graph-canvas-wrap" id="graph-canvas-wrap">
                     <canvas id="synaptic-canvas"></canvas>
 
-                    <!-- Interactive Floating Node Hover Tooltip -->
-                    <div class="graph-node-card" id="graph-node-card">
-                        <span class="graph-card-badge" id="graph-card-badge">ECOSYSTEM</span>
-                        <h4 class="graph-card-title" id="graph-card-title">Tech Toolkit</h4>
-                        <p class="graph-card-connections" id="graph-card-connections">15 connected technologies</p>
-                    </div>
+                </div>
+
+                <!-- Interactive Floating Node Tooltip / Docked Mobile Bar -->
+                <div class="graph-node-card" id="graph-node-card">
+                    <span class="graph-card-badge" id="graph-card-badge">ECOSYSTEM</span>
+                    <h4 class="graph-card-title" id="graph-card-title">Tech Toolkit</h4>
+                    <p class="graph-card-connections" id="graph-card-connections">15 connected technologies</p>
                 </div>
             </div>
         </section>
@@ -320,6 +321,6 @@
 
     </main>
     
-    <script src="script.js?v=3.1"></script>
+    <script src="script.js?v=3.2"></script>
 </body>
 </html>

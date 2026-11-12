@@ -29,7 +29,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Patrick+Hand&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=3.0">
+    <link rel="stylesheet" href="style.css?v=3.3">
 </head>
 <body>
 
@@ -60,11 +60,11 @@
                 </span>
             </div>
             <div class="nav-right">
+                <button class="theme-toggle-btn" id="theme-toggle-btn" type="button" title="Switch Theme (Brutalist ↔ Hand-Drawn Sketch)">
+                    <span class="theme-toggle-icon">✏️</span>
+                    <span class="theme-toggle-label">Sketch Mode</span>
+                </button>
                 <div class="social-links">
-                    <button class="theme-toggle-btn" id="theme-toggle-btn" type="button" title="Switch Theme (Brutalist ↔ Hand-Drawn Sketch)">
-                        <span class="theme-toggle-icon">✏️</span>
-                        <span class="theme-toggle-label">Sketch Mode</span>
-                    </button>
                     <a href="projects.html">← Back to Projects</a>
                 </div>
             </div>
@@ -94,9 +94,9 @@
                     <!-- SKELETON INJECTED HERE -->
                 </div>
 
-                <div id="dynamic-content" class="description-section" style="min-height: 150px;">
-                    <h3 id="slide-title" style="color: var(--accent-color); margin-bottom: 10px;"></h3>
-                    <p id="slide-desc" style="color: var(--text-main); line-height: 1.6;"></p>
+                <div id="dynamic-content" class="description-section">
+                    <h3 id="slide-title"></h3>
+                    <p id="slide-desc"></p>
                 </div>
                 
                 <div class="info-card" style="margin-top: 30px;">
@@ -110,12 +110,12 @@
                 <div class="btn-group">
                     <!-- SECURE LINKS -->
                     <a href="#" id="live-link" class="visit-btn" target="_blank" rel="noopener noreferrer">View Live</a>
-                    <a href="#" id="repo-link" class="visit-btn" style="border-color: var(--text-muted); color: var(--text-muted);" target="_blank" rel="noopener noreferrer">GitHub</a>
+                    <a href="#" id="repo-link" class="visit-btn visit-btn--secondary" target="_blank" rel="noopener noreferrer">GitHub</a>
                 </div>
             </div>
         </section>
     </main>
     
-    <script src="script.js?v=3.0"></script>
+    <script src="script.js?v=3.2"></script>
 </body>
 </html>

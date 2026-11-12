@@ -975,15 +975,15 @@ const container = document.getElementById('canvas-container');
         lastLayoutIsPortrait = isPortrait;
 
         // Cluster Centers & Responsive Relative Offsets
-        const offScale = isPortrait ? Math.max(0.54, Math.min(0.82, width / 460)) : 1;
+        const offScale = isPortrait ? Math.max(0.48, Math.min(0.74, width / 490)) : 1;
         const mlCenter = isPortrait
-            ? { x: cx - Math.min(width * 0.14, 52), y: height * 0.21 }
+            ? { x: cx - Math.min(width * 0.08, 30), y: height * 0.21 }
             : { x: cx - Math.min(width * 0.25, 230), y: cy - 25 };
         const webCenter = isPortrait
-            ? { x: cx + Math.min(width * 0.14, 52), y: height * 0.72 }
+            ? { x: cx + Math.min(width * 0.08, 30), y: height * 0.74 }
             : { x: cx + Math.min(width * 0.25, 230), y: cy - 25 };
         const csCenter = isPortrait
-            ? { x: cx - Math.min(width * 0.24, 88), y: height * 0.56 }
+            ? { x: cx - Math.min(width * 0.16, 56), y: height * 0.56 }
             : { x: cx, y: cy + Math.min(height * 0.28, 145) };
 
         const mlOffsets = {
@@ -1033,9 +1033,9 @@ const container = document.getElementById('canvas-container');
             }
 
             const r = n.radius * nodeScale;
-            const padX = r + 24;
-            const padTop = r + 18;
-            const padBottom = r + 30;
+            const padX = r + (isPortrait ? 38 : 26);
+            const padTop = r + 20;
+            const padBottom = r + 32;
 
             return {
                 ...n,
@@ -1095,7 +1095,7 @@ const container = document.getElementById('canvas-container');
                 const dx = nb.x - na.x;
                 const dy = nb.y - na.y;
                 const dist = Math.hypot(dx, dy) || 1;
-                const minDist = (na.radius + nb.radius) * nodeScale + (32 * nodeScale);
+                const minDist = (na.radius + nb.radius) * nodeScale + ((isPortrait ? 36 : 32) * nodeScale);
 
                 if (dist < minDist) {
                     const overlap = (minDist - dist) / 2;
@@ -1157,13 +1157,13 @@ const container = document.getElementById('canvas-container');
                 let targetY = cy;
                 if (isPortrait) {
                     if (n.cluster === 'ml') {
-                        targetX = cx - Math.min(width * 0.10, 40);
+                        targetX = cx - Math.min(width * 0.08, 30);
                         targetY = height * 0.21;
                     } else if (n.cluster === 'web') {
-                        targetX = cx + Math.min(width * 0.10, 40);
-                        targetY = height * 0.72;
+                        targetX = cx + Math.min(width * 0.08, 30);
+                        targetY = height * 0.74;
                     } else if (n.cluster === 'cs') {
-                        targetX = cx - Math.min(width * 0.20, 70);
+                        targetX = cx - Math.min(width * 0.16, 56);
                         targetY = height * 0.56;
                     }
                 } else {
@@ -1195,9 +1195,9 @@ const container = document.getElementById('canvas-container');
 
             // Boundary containment (respects pill label below circle)
             const r = n.radius * nodeScale;
-            const padX = r + Math.round(30 * nodeScale);
-            const padTop = r + 18;
-            const padBottom = r + 30;
+            const padX = r + (isPortrait ? Math.round(42 * nodeScale) : Math.round(30 * nodeScale));
+            const padTop = r + 20;
+            const padBottom = r + 32;
 
             if (n.x < padX) { n.x = padX; n.vx *= -0.5; }
             if (n.x > width - padX) { n.x = width - padX; n.vx *= -0.5; }
@@ -1758,7 +1758,7 @@ const container = document.getElementById('canvas-container');
         isPointerDown = true;
 
         const target = getNodeAt(mouseX, mouseY);
-        if (target) {
+        if (target && e.pointerType !== 'touch') {
             draggedNode = target;
             draggedNode.fx = mouseX;
             draggedNode.fy = mouseY;
@@ -2021,19 +2021,19 @@ const projectData = {
         fullDesc: "VIT Collab Hub connects students through emails, offering a comprehensive suite for project collaboration. Users can create detailed profiles, recruit team members, and manage workflows using a drag-and-drop Taskboard. The platform features real-time chat for seamless communication and a project discovery section to explore and join public projects, fostering a collaborative environment for students to innovate together. The website is live with use of firebase hosting.",
         links: { live: "#", repo: "#" },
         images: [
-            { src: "main(vitcollabhub).png", title: "Main Page", desc: "Home Page,Where you have option like features ,how the apllication works,contact" },
-            { src: "login(vitcollabhub).png", title: "Login page", desc: "Sign up or Login into our website" },
-            { src: "profilesetup(vitcollabhub).png", title: "Profile set up", desc: "When you login first time you have to set up your profile for further use,It includes your Name,Registration number,Block,bio and also show case your project through github links" },
-            { src: "dashboard(1-vitcollabhub).png", title: "Dashboard", desc: "Here you can start to create the project,Have option to browse members,edit/view your profile,logout,view your recent message conversations chatbox" },
-            { src: "dashboard(2-vitcollabhub).png", title: "Dashboard", desc: "Under create your project you can see your created project,Enrolled project,Public/available projects" },
-            { src: "yourproject.png", title: "Your project", desc: "When you create your project you can view the option like join request where you can accept the external requests,Delete project,view members" },
-            { src: "teamchat(vitcollabhub).png", title: "Teamchat", desc: "Here you can chat with your teammembers" },
-            { src: "Taskmanager(vitcollabhub).png", title: "Taskmanager", desc: "You can add your task,add to in progress and done box,but when you add the task to done box you have to add your github link for the same task" },
-            { src: "publicproject(vitcollabhub).png", title: "Public project", desc: "You can send request to the creator to contribute also you can see the team members" },
-            { src: "lockedchat(vitcollabhub).png", title: "Locked Groupchat", desc: "When you are not the part of the project you can't access the teamchat option" },
-            { src: "Browsemembers(vitcollabhub).png", title: "Browse members", desc: "You can browse the members where you can access their profiles" },
-            { src: "otherprofile(vitcollabhub).png", title: "Other's profile", desc: "Access other's profile , you can also send Dm to their chatbox" },
-            { src: "dm(vitcollabhub).png", title: "Direct message", desc: "Setup your conversation with one to one chat feature" }
+            { src: "main(vitcollabhub).png", title: "Main Page", desc: "Home page featuring project highlights, how the application works, and contact details." },
+            { src: "login(vitcollabhub).png", title: "Login page", desc: "Sign up or log in to your account." },
+            { src: "profilesetup(vitcollabhub).png", title: "Profile setup", desc: "First-time profile setup including your name, registration number, block, bio, and GitHub links." },
+            { src: "dashboard(1-vitcollabhub).png", title: "Dashboard", desc: "Create a project, browse members, edit or view your profile, log out, and check recent chat messages." },
+            { src: "dashboard(2-vitcollabhub).png", title: "Projects Overview", desc: "View your created projects, enrolled projects, and public/available projects." },
+            { src: "yourproject.png", title: "Your Project", desc: "Manage join requests from external contributors, view members, or delete the project." },
+            { src: "teamchat(vitcollabhub).png", title: "Team Chat", desc: "Real-time messaging channel with your project teammates." },
+            { src: "Taskmanager(vitcollabhub).png", title: "Task Manager", desc: "Track tasks across To-Do, In Progress, and Done columns with GitHub links required on completion." },
+            { src: "publicproject(vitcollabhub).png", title: "Public Project", desc: "Send a request to the creator to contribute and view existing team members." },
+            { src: "lockedchat(vitcollabhub).png", title: "Locked Groupchat", desc: "Access control ensures non-members cannot open private project team chats." },
+            { src: "Browsemembers(vitcollabhub).png", title: "Browse Members", desc: "Discover collaborators across the platform and inspect their profiles." },
+            { src: "otherprofile(vitcollabhub).png", title: "Member Profile", desc: "View another member's profile and send them a direct message." },
+            { src: "dm(vitcollabhub).png", title: "Direct Message", desc: "One-to-one direct chat messaging with other builders." }
         ]
     },
     "weather": {
@@ -2043,7 +2043,7 @@ const projectData = {
         links: { live: "#", repo: "#" },
         images: [
             { src: "Weather(weather).png", title: "Main Interface", desc: "Clean UI showing temperature and conditions." },
-            { src: "error(weather).png", title: "Error handling", desc: "Shows error when city is not found,similarly every possible error is handled" }
+            { src: "error(weather).png", title: "Error Handling", desc: "Displays helpful error states when a city is not found or the network fails." }
         ]
     }
 };
@@ -2360,12 +2360,12 @@ function initCharacterAvatar() {
     const $ = s => document.querySelector(s);
     const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 
-    // 1. Initial draw-in of the strokes
-    $$('#boy path,#boy circle,#boy ellipse,#boy rect').forEach((el, i) => {
-        if (el.closest('.pup')) return;
-        el.setAttribute('pathLength', '1');
-        el.classList.add('dr');
-        el.style.animationDelay = (i * 22) + 'ms';
+    // 1. Render strokes immediately without staggered head-hiding delay
+    $$('#boy path,#boy circle,#boy ellipse,#boy rect').forEach((el) => {
+        el.classList.remove('dr');
+        el.style.animationDelay = '';
+        el.style.strokeDasharray = '';
+        el.style.strokeDashoffset = '';
     });
 
     // 2. Boy reacts to cursor (head tilting, pupils following, blinking, talking)
